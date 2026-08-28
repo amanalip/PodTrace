@@ -39,6 +39,7 @@ import {
 import { AnimationController } from '../animation/AnimationController.tsx';
 import { DiagramLegend } from './DiagramLegend.tsx';
 import { FailureOverlay } from '../scenarios/FailureOverlay.tsx';
+import { ComponentInspector } from '../inspector/ComponentInspector.tsx';
 import styles from './DiagramCanvas.module.css';
 
 export const DiagramCanvas: React.FC = () => {
@@ -103,6 +104,7 @@ export const DiagramCanvas: React.FC = () => {
         />
       </ReactFlow>
       <FailureOverlay />
+      <ComponentInspector />
       <DiagramLegend />
       <AnimationController />
     </div>
