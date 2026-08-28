@@ -1,0 +1,13 @@
+export const DEFAULT_SAMPLE_YAML = `apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.25
+      ports:
+        - containerPort: 80
+`;

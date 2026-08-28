@@ -6,6 +6,7 @@ import type {
   LifecycleStep,
   ThemeMode,
 } from '../model/types.ts';
+import { DEFAULT_SAMPLE_YAML } from '../model/constants.ts';
 
 export interface EditorSlice {
   yaml: string;
@@ -67,7 +68,7 @@ export type AppStore = EditorSlice &
 
 export const useAppStore = create<AppStore>((set) => ({
   // Editor Slice
-  yaml: '',
+  yaml: DEFAULT_SAMPLE_YAML,
   parsedResources: [],
   validationErrors: [],
   setYaml: (yaml) => set({ yaml }),

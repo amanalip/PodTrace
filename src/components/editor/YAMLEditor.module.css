@@ -1,0 +1,86 @@
+.editorContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: var(--bg-secondary);
+  position: relative;
+  overflow: hidden;
+}
+
+.toolbar {
+  height: 36px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.toolbarTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.toolbarActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.toolButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.15s ease;
+}
+
+.toolButton:hover {
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+
+.codeArea {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.codeArea :global(.cm-editor) {
+  height: 100%;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.codeArea :global(.cm-scroller) {
+  overflow: auto;
+  font-family: var(--font-mono);
+}
+
+.codeArea :global(.cm-gutters) {
+  background-color: var(--bg-secondary);
+  color: var(--text-muted);
+  border-right: 1px solid var(--border-subtle);
+}
+
+.codeArea :global(.cm-activeLineGutter) {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.codeArea :global(.cm-activeLine) {
+  background-color: rgba(56, 189, 248, 0.05);
+}
+
+.codeArea :global(.cm-cursor) {
+  border-left-color: var(--accent);
+}
