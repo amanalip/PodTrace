@@ -154,6 +154,8 @@ export interface PVCResource extends K8sResource {
   };
 }
 
+export type PersistentVolumeClaimResource = PVCResource;
+
 export interface PVResource extends K8sResource {
   kind: 'PersistentVolume';
   spec: {

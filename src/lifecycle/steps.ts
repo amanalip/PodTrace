@@ -3,6 +3,7 @@ import { createPodLifecycleSteps } from './pod-lifecycle.ts';
 import { createDeploymentLifecycleSteps } from './deployment-lifecycle.ts';
 import { createServiceLifecycleSteps } from './service-lifecycle.ts';
 import { createIngressLifecycleSteps } from './ingress-lifecycle.ts';
+import { createConfigLifecycleSteps } from './config-lifecycle.ts';
 import { DeploymentResource, ServiceResource, IngressResource } from '../parser/resource-types.ts';
 
 export function getLifecycleStepsForResources(resources: K8sResource[]): LifecycleStep[] {
@@ -40,6 +41,12 @@ export function getLifecycleStepsForResources(resources: K8sResource[]): Lifecyc
       const path = firstPath?.path || '/';
       const serviceName = firstPath?.backend?.service?.name || `${ingressName}-service`;
       return createIngressLifecycleSteps(ingressName, host, path, serviceName);
+    }
+    case 'ConfigMap':
+    case 'Secret':
+    case 'PersistentVolumeClaim': {
+      const name = primaryResource.metadata?.name || 'config';
+      return createConfigLifecycleSteps(primaryResource.kind, name);
     }
     default:
       return createPodLifecycleSteps('nginx-pod');
