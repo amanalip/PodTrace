@@ -27,6 +27,7 @@ describe('Sidebar', () => {
     const scenariosTab = screen.getByRole('tab', { name: /scenarios/i });
     fireEvent.click(scenariosTab);
     expect(useAppStore.getState().activeSidebarTab).toBe('scenarios');
-    expect(screen.getByText(/interactive learning scenarios/i)).toBeInTheDocument();
+    expect(screen.getByTestId('scenario-list')).toBeInTheDocument();
+    expect(screen.getByText(/troubleshooting progress/i)).toBeInTheDocument();
   });
 });

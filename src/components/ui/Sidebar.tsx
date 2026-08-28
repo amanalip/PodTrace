@@ -4,6 +4,7 @@ import { useAppStore } from '../../store/index.ts';
 import { YAMLEditor } from '../editor/YAMLEditor.tsx';
 import { CONCEPT_CARDS } from '../../concepts/concept-data.ts';
 import { ConceptCard } from '../explanation/ConceptCard.tsx';
+import { ScenarioList } from '../scenarios/ScenarioList.tsx';
 import styles from './Sidebar.module.css';
 
 export const Sidebar: React.FC = () => {
@@ -50,8 +51,8 @@ export const Sidebar: React.FC = () => {
         {activeSidebarTab === 'editor' && <YAMLEditor />}
 
         {activeSidebarTab === 'scenarios' && (
-          <div style={{ padding: 16, color: 'var(--text-muted)', fontSize: 12 }}>
-            <p>15 interactive learning scenarios available in Phase 4.</p>
+          <div style={{ padding: 16 }}>
+            <ScenarioList />
           </div>
         )}
 
