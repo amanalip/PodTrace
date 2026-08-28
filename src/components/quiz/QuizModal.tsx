@@ -1,0 +1,168 @@
+import React, { useState } from 'react';
+import { X, Award, CheckCircle2, XCircle, ArrowRight, RotateCcw } from 'lucide-react';
+import { QUIZ_QUESTIONS } from '../../quiz/quiz-data.ts';
+import styles from './QuizModal.module.css';
+
+interface QuizModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [score, setScore] = useState(0);
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  if (!isOpen) return null;
+
+  const currentQ = QUIZ_QUESTIONS[currentIndex];
+  const total = QUIZ_QUESTIONS.length;
+
+  const handleSelectOption = (idx: number) => {
+    if (selectedAnswer !== null) return;
+    setSelectedAnswer(idx);
+    if (idx === currentQ.correctIndex) {
+      setScore((prev) => prev + 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentIndex + 1 < total) {
+      setCurrentIndex((prev) => prev + 1);
+      setSelectedAnswer(null);
+    } else {
+      setIsCompleted(true);
+    }
+  };
+
+  const handleReset = () => {
+    setCurrentIndex(0);
+    setSelectedAnswer(null);
+    setScore(0);
+    setIsCompleted(false);
+  };
+
+  const getRankBadge = () => {
+    const percentage = Math.round((score / total) * 100);
+    if (percentage === 100) return 'Kubernetes Master';
+    if (percentage >= 70) return 'Cluster Operator';
+    if (percentage >= 40) return 'Kubernetes Apprentice';
+    return 'Kubernetes Novice';
+  };
+
+  return (
+    <div className={styles.overlay} onClick={onClose} data-testid="quiz-modal-overlay">
+      <div
+        className={styles.modal}
+        onClick={(e) => e.stopPropagation()}
+        data-testid="quiz-modal"
+      >
+        <div className={styles.header}>
+          <div className={styles.titleArea}>
+            <Award size={18} color="#38bdf8" />
+            <div className={styles.title}>Kubernetes Architecture Quiz</div>
+          </div>
+          <button
+            type="button"
+            className={styles.closeBtn}
+            onClick={onClose}
+            aria-label="Close Quiz"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        <div className={styles.body}>
+          {isCompleted ? (
+            <div className={styles.resultsCard} data-testid="quiz-results">
+              <Award size={48} color="#38bdf8" />
+              <div className={styles.scoreValue}>
+                {score} / {total}
+              </div>
+              <div className={styles.scoreBadge}>{getRankBadge()}</div>
+              <p style={{ color: '#cbd5e1', fontSize: 13 }}>
+                You scored {Math.round((score / total) * 100)}% on the Kubernetes architecture and lifecycle assessment.
+              </p>
+              <button
+                type="button"
+                className={styles.nextBtn}
+                onClick={handleReset}
+                data-testid="quiz-retry-btn"
+                style={{ marginTop: 12 }}
+              >
+                <RotateCcw size={14} />
+                <span>Retry Quiz</span>
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className={styles.progressRow}>
+                <span>
+                  Question {currentIndex + 1} of {total}
+                </span>
+                <span className={styles.badgeCategory}>{currentQ.category}</span>
+              </div>
+
+              <div className={styles.questionText}>{currentQ.question}</div>
+
+              <div className={styles.optionsList}>
+                {currentQ.options.map((opt, idx) => {
+                  let optionClass = styles.optionBtn;
+                  if (selectedAnswer !== null) {
+                    if (idx === currentQ.correctIndex) {
+                      optionClass = `${styles.optionBtn} ${styles.optionCorrect}`;
+                    } else if (idx === selectedAnswer) {
+                      optionClass = `${styles.optionBtn} ${styles.optionIncorrect}`;
+                    }
+                  }
+
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      className={optionClass}
+                      onClick={() => handleSelectOption(idx)}
+                      disabled={selectedAnswer !== null}
+                      data-testid={`quiz-opt-${idx}`}
+                    >
+                      <span>{opt}</span>
+                      {selectedAnswer !== null && idx === currentQ.correctIndex && (
+                        <CheckCircle2 size={16} color="#22c55e" />
+                      )}
+                      {selectedAnswer !== null &&
+                        idx === selectedAnswer &&
+                        idx !== currentQ.correctIndex && (
+                          <XCircle size={16} color="#ef4444" />
+                        )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {selectedAnswer !== null && (
+                <div className={styles.explanationBox} data-testid="quiz-explanation">
+                  <strong>Explanation:</strong> {currentQ.explanation}
+                </div>
+              )}
+
+              {selectedAnswer !== null && (
+                <div className={styles.footer}>
+                  <button
+                    type="button"
+                    className={styles.nextBtn}
+                    onClick={handleNext}
+                    data-testid="quiz-next-btn"
+                  >
+                    <span>{currentIndex + 1 === total ? 'View Results' : 'Next Question'}</span>
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};

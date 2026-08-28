@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Layers, Sun, Moon, Share2, Download } from 'lucide-react';
+import { Layers, Sun, Moon, Share2, Download, Award } from 'lucide-react';
 import { useAppStore } from '../../store/index.ts';
 import { ExportModal } from '../export/ExportModal.tsx';
+import { QuizModal } from '../quiz/QuizModal.tsx';
 import styles from './Header.module.css';
 
 export const Header: React.FC = () => {
   const { theme, toggleTheme } = useAppStore();
   const [isExportOpen, setIsExportOpen] = useState(false);
+  const [isQuizOpen, setIsQuizOpen] = useState(false);
 
   return (
     <>
@@ -32,6 +34,17 @@ export const Header: React.FC = () => {
 
           <button
             className={styles.actionButton}
+            onClick={() => setIsQuizOpen(true)}
+            aria-label="Take Quiz"
+            title="Kubernetes Quiz"
+            data-testid="quiz-launcher-btn"
+          >
+            <Award size={14} color="#38bdf8" />
+            <span>Quiz</span>
+          </button>
+
+          <button
+            className={styles.actionButton}
             onClick={() => setIsExportOpen(true)}
             aria-label="Share diagram"
             title="Share diagram"
@@ -53,6 +66,7 @@ export const Header: React.FC = () => {
       </header>
 
       <ExportModal isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} />
+      <QuizModal isOpen={isQuizOpen} onClose={() => setIsQuizOpen(false)} />
     </>
   );
 };
