@@ -11,6 +11,7 @@ import { useAppStore } from '../../store/index.ts';
 import { DEFAULT_SAMPLE_YAML } from '../../model/constants.ts';
 import { parseAndValidateYaml } from '../../parser/yaml-parser.ts';
 import { mapResourcesToDiagram } from '../../mapper/resource-mapper.ts';
+import { getLifecycleStepsForResources } from '../../lifecycle/steps.ts';
 import { FormatButton } from './FormatButton.tsx';
 import { SamplePicker } from './SamplePicker.tsx';
 import { ValidationPanel } from './ValidationPanel.tsx';
@@ -76,6 +77,7 @@ export const YAMLEditor: React.FC = () => {
     setValidationErrors,
     setNodes,
     setEdges,
+    setSteps,
   } = useAppStore();
 
   const handleDocUpdate = useCallback(
@@ -88,9 +90,11 @@ export const YAMLEditor: React.FC = () => {
         const diagram = mapResourcesToDiagram(resources);
         setNodes(diagram.nodes);
         setEdges(diagram.edges);
+        const steps = getLifecycleStepsForResources(resources);
+        setSteps(steps);
       }
     },
-    [setYaml, setParsedResources, setValidationErrors, setNodes, setEdges],
+    [setYaml, setParsedResources, setValidationErrors, setNodes, setEdges, setSteps],
   );
 
   const handleDocUpdateRef = useRef(handleDocUpdate);
@@ -110,6 +114,8 @@ export const YAMLEditor: React.FC = () => {
       const diagram = mapResourcesToDiagram(resources);
       setNodes(diagram.nodes);
       setEdges(diagram.edges);
+      const steps = getLifecycleStepsForResources(resources);
+      setSteps(steps);
     }
 
     const state = EditorState.create({
@@ -154,7 +160,7 @@ export const YAMLEditor: React.FC = () => {
       view.destroy();
       viewRef.current = null;
     };
-  }, [setParsedResources, setValidationErrors, setNodes, setEdges]);
+  }, [setParsedResources, setValidationErrors, setNodes, setEdges, setSteps]);
 
   // Sync external changes if changed from outside
   useEffect(() => {
@@ -175,9 +181,11 @@ export const YAMLEditor: React.FC = () => {
         const diagram = mapResourcesToDiagram(resources);
         setNodes(diagram.nodes);
         setEdges(diagram.edges);
+        const steps = getLifecycleStepsForResources(resources);
+        setSteps(steps);
       }
     }
-  }, [yamlContent, setParsedResources, setValidationErrors, setNodes, setEdges]);
+  }, [yamlContent, setParsedResources, setValidationErrors, setNodes, setEdges, setSteps]);
 
   const handleFormat = useCallback(() => {
     if (!viewRef.current) return;
