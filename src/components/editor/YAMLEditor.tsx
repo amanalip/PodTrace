@@ -5,10 +5,13 @@ import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirro
 import { yaml } from '@codemirror/lang-yaml';
 import { bracketMatching, foldGutter, foldKeymap, syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language';
 import { linter, Diagnostic } from '@codemirror/lint';
+import { autocompletion } from '@codemirror/autocomplete';
 import jsyaml from 'js-yaml';
 import { useAppStore } from '../../store/index.ts';
 import { DEFAULT_SAMPLE_YAML } from '../../model/constants.ts';
 import { FormatButton } from './FormatButton.tsx';
+import { SamplePicker } from './SamplePicker.tsx';
+import { k8sCompletionSource } from './k8s-autocomplete.ts';
 import styles from './YAMLEditor.module.css';
 
 const yamlLinter = linter((view) => {
@@ -89,6 +92,7 @@ export const YAMLEditor: React.FC = () => {
         syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
         yaml(),
         yamlLinter,
+        autocompletion({ override: [k8sCompletionSource] }),
         darkEditorTheme,
         keymap.of([
           ...defaultKeymap,
@@ -168,6 +172,7 @@ export const YAMLEditor: React.FC = () => {
       <div className={styles.toolbar}>
         <span className={styles.toolbarTitle}>Manifest Source</span>
         <div className={styles.toolbarActions}>
+          <SamplePicker />
           <FormatButton onFormat={handleFormat} />
         </div>
       </div>
