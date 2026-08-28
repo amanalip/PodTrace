@@ -1,0 +1,129 @@
+.panel {
+  position: absolute;
+  bottom: 80px;
+  left: 20px;
+  max-width: 420px;
+  background: var(--bg-card, #1e293b);
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 12px;
+}
+
+.header {
+  padding: 10px 14px;
+  background: var(--bg-secondary, #0f172a);
+  border-bottom: 1px solid var(--border-color, #334155);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.title {
+  font-weight: 700;
+  color: var(--text-primary, #f8fafc);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.select {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f8fafc;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  outline: none;
+  cursor: pointer;
+  max-width: 220px;
+}
+
+.body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.description {
+  color: var(--text-secondary, #cbd5e1);
+  line-height: 1.4;
+}
+
+.sectionTitle {
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #f59e0b;
+  letter-spacing: 0.5px;
+}
+
+.consequencesList {
+  margin: 0;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--text-secondary, #cbd5e1);
+}
+
+.mitigationBox {
+  padding: 8px 10px;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: 6px;
+  color: #86efac;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.restoreBtn {
+  margin-top: 4px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color, #334155);
+  color: var(--text-primary, #f8fafc);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.restoreBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.launcherBtn {
+  position: absolute;
+  bottom: 80px;
+  left: 20px;
+  padding: 8px 12px;
+  background: var(--bg-card, #1e293b);
+  border: 1px solid var(--border-color, #334155);
+  color: var(--text-primary, #f8fafc);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  z-index: 80;
+  transition: all 0.2s ease;
+}
+
+.launcherBtn:hover {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}

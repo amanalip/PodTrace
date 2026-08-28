@@ -63,6 +63,15 @@ export interface ScenariosSlice {
   markScenarioCompleted: (id: string) => void;
 }
 
+import { WhatIfScenario } from '../whatif/whatif-types.ts';
+
+export interface WhatIfSlice {
+  activeWhatIfId: string | null;
+  activeWhatIf: WhatIfScenario | null;
+  applyWhatIf: (scenario: WhatIfScenario) => void;
+  clearWhatIf: () => void;
+}
+
 export interface UISlice {
   theme: ThemeMode;
   activeSidebarTab: 'editor' | 'scenarios' | 'concepts';
@@ -79,6 +88,7 @@ export type AppStore = EditorSlice &
   DiagramSlice &
   AnimationSlice &
   ScenariosSlice &
+  WhatIfSlice &
   UISlice;
 
 export const useAppStore = create<AppStore>((set) => ({
@@ -229,6 +239,70 @@ export const useAppStore = create<AppStore>((set) => ({
         ? state.completedScenarioIds
         : [...state.completedScenarioIds, id],
     })),
+
+  // What-If Slice
+  activeWhatIfId: null,
+  activeWhatIf: null,
+  applyWhatIf: (scenario) =>
+    set((state) => {
+      const updatedNodes = state.nodes.map((node) => {
+        const overrideStatus = scenario.nodeStatusOverrides[node.id];
+        if (overrideStatus) {
+          return {
+            ...node,
+            data: {
+              ...(node.data || {}),
+              status: overrideStatus,
+            },
+          };
+        }
+        return node;
+      });
+
+      const updatedEdges = state.edges.map((edge) => {
+        const overrideEdgeStatus = scenario.edgeStatusOverrides?.[edge.id];
+        if (overrideEdgeStatus) {
+          return {
+            ...edge,
+            data: {
+              ...(edge.data || {}),
+              status: overrideEdgeStatus,
+            },
+          };
+        }
+        return edge;
+      });
+
+      return {
+        activeWhatIfId: scenario.id,
+        activeWhatIf: scenario,
+        nodes: updatedNodes,
+        edges: updatedEdges,
+      };
+    }),
+  clearWhatIf: () =>
+    set((state) => {
+      const restoredNodes = state.nodes.map((node) => ({
+        ...node,
+        data: {
+          ...(node.data || {}),
+          status: 'idle',
+        },
+      }));
+      const restoredEdges = state.edges.map((edge) => ({
+        ...edge,
+        data: {
+          ...(edge.data || {}),
+          status: 'inactive',
+        },
+      }));
+      return {
+        activeWhatIfId: null,
+        activeWhatIf: null,
+        nodes: restoredNodes,
+        edges: restoredEdges,
+      };
+    }),
 
   // UI Slice
   theme: 'dark',
