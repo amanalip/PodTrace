@@ -1,0 +1,57 @@
+.stepIndicator {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 180px;
+}
+
+.stepText {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stepTitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 220px;
+}
+
+.progressBar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 6px;
+}
+
+.stepSegment {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background-color: var(--border-default);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  padding: 0;
+}
+
+.stepSegment:hover {
+  height: 6px;
+  background-color: var(--accent);
+}
+
+.stepSegment_completed {
+  background-color: var(--status-success);
+}
+
+.stepSegment_current {
+  background-color: var(--status-active);
+  height: 6px;
+  box-shadow: 0 0 6px var(--status-active);
+}

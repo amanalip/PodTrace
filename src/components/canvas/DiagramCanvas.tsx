@@ -36,6 +36,7 @@ import {
   STATIC_INITIAL_NODES,
   STATIC_INITIAL_EDGES,
 } from './initial-elements.ts';
+import { AnimationController } from '../animation/AnimationController.tsx';
 import styles from './DiagramCanvas.module.css';
 
 export const DiagramCanvas: React.FC = () => {
@@ -99,6 +100,7 @@ export const DiagramCanvas: React.FC = () => {
           maskColor="rgba(15, 20, 28, 0.7)"
         />
       </ReactFlow>
+      <AnimationController />
     </div>
   );
 };
