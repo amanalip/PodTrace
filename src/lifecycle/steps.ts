@@ -2,7 +2,8 @@ import { K8sResource, LifecycleStep } from '../model/types.ts';
 import { createPodLifecycleSteps } from './pod-lifecycle.ts';
 import { createDeploymentLifecycleSteps } from './deployment-lifecycle.ts';
 import { createServiceLifecycleSteps } from './service-lifecycle.ts';
-import { DeploymentResource, ServiceResource } from '../parser/resource-types.ts';
+import { createIngressLifecycleSteps } from './ingress-lifecycle.ts';
+import { DeploymentResource, ServiceResource, IngressResource } from '../parser/resource-types.ts';
 
 export function getLifecycleStepsForResources(resources: K8sResource[]): LifecycleStep[] {
   if (!resources || resources.length === 0) {
@@ -28,6 +29,17 @@ export function getLifecycleStepsForResources(resources: K8sResource[]): Lifecyc
       const serviceType = svc.spec?.type || 'ClusterIP';
       const clusterIP = svc.spec?.clusterIP || '10.96.0.42';
       return createServiceLifecycleSteps(serviceName, serviceType, clusterIP);
+    }
+    case 'Ingress': {
+      const ing = primaryResource as IngressResource;
+      const ingressName = ing.metadata?.name || 'ingress';
+      const rules = ing.spec?.rules || [];
+      const firstRule = rules[0];
+      const host = firstRule?.host || 'app.example.com';
+      const firstPath = firstRule?.http?.paths?.[0];
+      const path = firstPath?.path || '/';
+      const serviceName = firstPath?.backend?.service?.name || `${ingressName}-service`;
+      return createIngressLifecycleSteps(ingressName, host, path, serviceName);
     }
     default:
       return createPodLifecycleSteps('nginx-pod');
