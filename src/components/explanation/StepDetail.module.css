@@ -1,0 +1,123 @@
+.stepCard {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.25s ease;
+  font-family: var(--font-family);
+}
+
+.stepCard_past {
+  opacity: 0.65;
+  border-color: var(--border-subtle);
+  background-color: rgba(22, 30, 43, 0.4);
+}
+
+.stepCard_current {
+  opacity: 1;
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
+  background-color: var(--bg-secondary);
+}
+
+.stepCard_future {
+  opacity: 0.4;
+  border-color: var(--border-subtle);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.stepBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  background-color: rgba(56, 189, 248, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.stepBadge_completed {
+  color: var(--status-success);
+  background-color: rgba(34, 197, 94, 0.1);
+}
+
+.stepTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sectionContent {
+  font-size: 12px;
+  color: var(--text-primary);
+  line-height: 1.45;
+}
+
+.componentSpotlight {
+  margin-top: 4px;
+  padding: 8px 10px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.componentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.componentName {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.docsLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.docsLink:hover {
+  color: var(--accent);
+}
+
+.componentRole {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}

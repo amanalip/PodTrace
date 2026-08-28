@@ -1,0 +1,28 @@
+.panelContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  gap: 12px;
+  padding: 4px;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  gap: 10px;
+  background-color: var(--bg-secondary);
+  border: 1px dashed var(--border-subtle);
+  border-radius: 8px;
+}
+
+.emptyIcon {
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
