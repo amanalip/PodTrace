@@ -1,0 +1,73 @@
+import { describe, it, expect, beforeEach } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { LiveRegion } from './LiveRegion.tsx';
+import { useAppStore } from '../../store/index.ts';
+
+describe('LiveRegion', () => {
+  beforeEach(() => {
+    useAppStore.setState({
+      steps: [
+        {
+          stepNumber: 1,
+          title: 'Apply Pod Manifest',
+          componentName: 'kubectl',
+          componentRole: 'CLI',
+          what: 'kubectl sends HTTP POST to kube-apiserver',
+          why: 'Initiates resource creation',
+        },
+      ],
+      currentStepIndex: 0,
+      scenarioState: 'idle',
+      activeScenario: null,
+    });
+  });
+
+  it('announces current step details to screen readers', () => {
+    render(<LiveRegion />);
+    const region = screen.getByTestId('aria-live-region');
+    expect(region).toHaveAttribute('aria-live', 'polite');
+    expect(region).toHaveTextContent(/step 1 of 1: apply pod manifest/i);
+    expect(region).toHaveTextContent(/kubectl sends http post/i);
+  });
+
+  it('announces scenario failure when scenario fails', () => {
+    useAppStore.setState({
+      scenarioState: 'failed',
+      activeScenario: {
+        id: 'crashloopbackoff',
+        title: 'CrashLoopBackOff on Startup',
+        category: 'pod-lifecycle',
+        difficulty: 'Beginner',
+        description: 'Test',
+        yamlTemplate: '...',
+        failureStep: 9,
+        failureDetails: {
+          errorType: 'CrashLoopBackOff',
+          failingStep: 9,
+          failingNodeId: 'node-pod',
+          logs: [],
+          events: [],
+          fixHint: 'Fix',
+        },
+        successMessage: 'Success',
+        explanation: 'Exp',
+        validator: () => ({ isFixed: false }),
+      },
+    });
+
+    render(<LiveRegion />);
+    const region = screen.getByTestId('aria-live-region');
+    expect(region).toHaveTextContent(/scenario failed: crashloopbackoff on startup/i);
+    expect(region).toHaveTextContent(/error: crashloopbackoff/i);
+  });
+
+  it('announces scenario resolution when resolved', () => {
+    useAppStore.setState({
+      scenarioState: 'completed',
+    });
+
+    render(<LiveRegion />);
+    const region = screen.getByTestId('aria-live-region');
+    expect(region).toHaveTextContent(/scenario resolved successfully!/i);
+  });
+});

@@ -4,10 +4,13 @@ import { Sidebar } from './components/ui/Sidebar.tsx';
 import { DiagramCanvas } from './components/canvas/DiagramCanvas.tsx';
 import { ExplanationPanel } from './components/explanation/ExplanationPanel.tsx';
 import { decodeStateFromHash } from './export/export-utils.ts';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts.ts';
+import { LiveRegion } from './components/ui/LiveRegion.tsx';
 import { useAppStore } from './store/index.ts';
 
 export const App: React.FC = () => {
   const { setYaml, setCurrentStepIndex, setTheme } = useAppStore();
+  useKeyboardShortcuts();
 
   useEffect(() => {
     if (window.location.hash) {
@@ -21,11 +24,14 @@ export const App: React.FC = () => {
   }, [setYaml, setCurrentStepIndex, setTheme]);
 
   return (
-    <AppShell
-      editorSlot={<Sidebar />}
-      canvasSlot={<DiagramCanvas />}
-      explanationSlot={<ExplanationPanel />}
-    />
+    <>
+      <LiveRegion />
+      <AppShell
+        editorSlot={<Sidebar />}
+        canvasSlot={<DiagramCanvas />}
+        explanationSlot={<ExplanationPanel />}
+      />
+    </>
   );
 };
 
