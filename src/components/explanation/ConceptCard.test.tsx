@@ -1,0 +1,31 @@
+import { describe, it, expect } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { ConceptCard } from './ConceptCard.tsx';
+import { ConceptCardData } from '../../model/types.ts';
+
+describe('ConceptCard', () => {
+  const sampleConcept: ConceptCardData = {
+    id: 'test-concept',
+    title: 'What is a Test Component?',
+    definition: 'A test component verifies system behavior under controlled circumstances.',
+    keyFact: 'Testing ensures regressions are caught before shipping to production.',
+    docsUrl: 'https://kubernetes.io/docs/',
+  };
+
+  it('renders collapsed title by default', () => {
+    render(<ConceptCard concept={sampleConcept} />);
+    expect(screen.getByText('What is a Test Component?')).toBeInTheDocument();
+    expect(screen.queryByText(/A test component verifies/i)).not.toBeInTheDocument();
+  });
+
+  it('expands definition, key fact, and documentation link on click', () => {
+    render(<ConceptCard concept={sampleConcept} />);
+    const headerBtn = screen.getByRole('button');
+    fireEvent.click(headerBtn);
+
+    expect(screen.getByText(/A test component verifies/i)).toBeInTheDocument();
+    expect(screen.getByText(/Testing ensures regressions/i)).toBeInTheDocument();
+    const link = screen.getByRole('link', { name: /kubernetes documentation/i });
+    expect(link).toHaveAttribute('href', 'https://kubernetes.io/docs/');
+  });
+});
