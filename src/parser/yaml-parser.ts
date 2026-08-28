@@ -49,3 +49,5 @@ export function parseAndValidateYaml(rawYaml: string): ParseResult {
 
   return { resources, errors };
 }
+
+export const parseK8sYaml = parseAndValidateYaml;

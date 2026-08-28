@@ -51,6 +51,14 @@ export const FlowEdge: React.FC<EdgeProps> = ({
     strokeColor = '#22c55e';
     strokeDasharray = 'none';
     strokeWidth = 2;
+  } else if (status === 'error') {
+    strokeColor = '#ef4444';
+    strokeDasharray = 'none';
+    strokeWidth = 2.5;
+  } else if (status === 'warning') {
+    strokeColor = '#f59e0b';
+    strokeDasharray = 'none';
+    strokeWidth = 2;
   }
 
   const labelClass =

@@ -8,6 +8,12 @@ import type {
 } from '../model/types.ts';
 import { DEFAULT_SAMPLE_YAML } from '../model/constants.ts';
 
+import { Scenario, ScenarioState } from '../scenarios/scenario-types.ts';
+import { evaluateScenarioFix, injectScenarioFailureIntoSteps } from '../scenarios/scenario-runner.ts';
+import { mapResourcesToDiagram } from '../mapper/resource-mapper.ts';
+import { getLifecycleStepsForResources } from '../lifecycle/steps.ts';
+import { parseK8sYaml } from '../parser/yaml-parser.ts';
+
 export interface EditorSlice {
   yaml: string;
   parsedResources: K8sResource[];
@@ -43,8 +49,17 @@ export interface AnimationSlice {
 
 export interface ScenariosSlice {
   activeScenarioId: string | null;
+  activeScenario: Scenario | null;
+  scenarioState: ScenarioState;
+  scenarioFeedback: string | null;
   completedScenarioIds: string[];
   setActiveScenarioId: (id: string | null) => void;
+  loadScenario: (scenario: Scenario) => void;
+  setScenarioState: (state: ScenarioState) => void;
+  setScenarioFeedback: (feedback: string | null) => void;
+  checkScenarioFix: (yaml: string, resources: K8sResource[]) => boolean;
+  resolveScenario: () => void;
+  resetScenario: () => void;
   markScenarioCompleted: (id: string) => void;
 }
 
@@ -114,8 +129,100 @@ export const useAppStore = create<AppStore>((set) => ({
 
   // Scenarios Slice
   activeScenarioId: null,
+  activeScenario: null,
+  scenarioState: 'idle',
+  scenarioFeedback: null,
   completedScenarioIds: [],
   setActiveScenarioId: (activeScenarioId) => set({ activeScenarioId }),
+  loadScenario: (scenario) => {
+    const parsed = parseK8sYaml(scenario.yamlTemplate);
+    const { nodes, edges } = mapResourcesToDiagram(parsed.resources);
+    const normalSteps = getLifecycleStepsForResources(parsed.resources);
+    const stepsWithFailure = injectScenarioFailureIntoSteps(normalSteps, scenario);
+
+    set({
+      activeScenarioId: scenario.id,
+      activeScenario: scenario,
+      scenarioState: 'failed',
+      scenarioFeedback: null,
+      yaml: scenario.yamlTemplate,
+      parsedResources: parsed.resources,
+      validationErrors: parsed.errors,
+      nodes,
+      edges,
+      steps: stepsWithFailure,
+      currentStepIndex: Math.max(0, scenario.failureStep - 1),
+      isPlaying: false,
+    });
+  },
+  setScenarioState: (scenarioState) => set({ scenarioState }),
+  setScenarioFeedback: (scenarioFeedback) => set({ scenarioFeedback }),
+  checkScenarioFix: (yaml, resources) => {
+    let fixed = false;
+    set((state) => {
+      if (!state.activeScenario) return state;
+      const result = evaluateScenarioFix(state.activeScenario, yaml, resources);
+      fixed = result.isFixed;
+      if (result.isFixed) {
+        const { nodes, edges } = mapResourcesToDiagram(resources);
+        const resolvedSteps = getLifecycleStepsForResources(resources);
+        return {
+          scenarioState: 'resolved',
+          scenarioFeedback: state.activeScenario.successMessage,
+          nodes,
+          edges,
+          steps: resolvedSteps,
+        };
+      }
+      return {
+        scenarioState: 'fixing',
+        scenarioFeedback: result.feedback || null,
+      };
+    });
+    return fixed;
+  },
+  resolveScenario: () =>
+    set((state) => {
+      if (!state.activeScenarioId) return state;
+      const completed = state.completedScenarioIds.includes(state.activeScenarioId)
+        ? state.completedScenarioIds
+        : [...state.completedScenarioIds, state.activeScenarioId];
+      return {
+        scenarioState: 'completed',
+        completedScenarioIds: completed,
+      };
+    }),
+  resetScenario: () =>
+    set((state) => {
+      if (!state.activeScenario) {
+        return {
+          activeScenarioId: null,
+          activeScenario: null,
+          scenarioState: 'idle',
+          scenarioFeedback: null,
+        };
+      }
+      const parsed = parseK8sYaml(state.activeScenario.yamlTemplate);
+      const { nodes, edges } = mapResourcesToDiagram(parsed.resources);
+      const normalSteps = getLifecycleStepsForResources(parsed.resources);
+      const stepsWithFailure = injectScenarioFailureIntoSteps(
+        normalSteps,
+        state.activeScenario,
+      );
+
+      return {
+        scenarioState: 'failed',
+        scenarioFeedback: null,
+        yaml: state.activeScenario.yamlTemplate,
+        parsedResources: parsed.resources,
+        validationErrors: parsed.errors,
+        nodes,
+        edges,
+        steps: stepsWithFailure,
+        currentStepIndex: Math.max(0, state.activeScenario.failureStep - 1),
+        isPlaying: false,
+      };
+    }),
   markScenarioCompleted: (id) =>
     set((state) => ({
       completedScenarioIds: state.completedScenarioIds.includes(id)

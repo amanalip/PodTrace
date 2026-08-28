@@ -1,6 +1,6 @@
 export type ThemeMode = 'dark' | 'light';
 export type NodeStatus = 'idle' | 'active' | 'success' | 'error' | 'warning';
-export type EdgeStatus = 'inactive' | 'active' | 'complete';
+export type EdgeStatus = 'inactive' | 'active' | 'complete' | 'error' | 'warning';
 export type ZoneType = 'workstation' | 'cluster' | 'control-plane' | 'worker-node' | 'namespace';
 
 export interface K8sResourceMetadata {
