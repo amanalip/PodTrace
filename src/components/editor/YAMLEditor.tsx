@@ -10,6 +10,7 @@ import jsyaml from 'js-yaml';
 import { useAppStore } from '../../store/index.ts';
 import { DEFAULT_SAMPLE_YAML } from '../../model/constants.ts';
 import { parseAndValidateYaml } from '../../parser/yaml-parser.ts';
+import { mapResourcesToDiagram } from '../../mapper/resource-mapper.ts';
 import { FormatButton } from './FormatButton.tsx';
 import { SamplePicker } from './SamplePicker.tsx';
 import { ValidationPanel } from './ValidationPanel.tsx';
@@ -68,14 +69,29 @@ export const YAMLEditor: React.FC = () => {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const isInternalChangeRef = useRef(false);
-  const { yaml: yamlContent, setYaml, setParsedResources, setValidationErrors } = useAppStore();
+  const {
+    yaml: yamlContent,
+    setYaml,
+    setParsedResources,
+    setValidationErrors,
+    setNodes,
+    setEdges,
+  } = useAppStore();
 
-  const handleDocUpdate = useCallback((newContent: string) => {
-    setYaml(newContent);
-    const { resources, errors } = parseAndValidateYaml(newContent);
-    setParsedResources(resources);
-    setValidationErrors(errors);
-  }, [setYaml, setParsedResources, setValidationErrors]);
+  const handleDocUpdate = useCallback(
+    (newContent: string) => {
+      setYaml(newContent);
+      const { resources, errors } = parseAndValidateYaml(newContent);
+      setParsedResources(resources);
+      setValidationErrors(errors);
+      if (errors.length === 0 && resources.length > 0) {
+        const diagram = mapResourcesToDiagram(resources);
+        setNodes(diagram.nodes);
+        setEdges(diagram.edges);
+      }
+    },
+    [setYaml, setParsedResources, setValidationErrors, setNodes, setEdges],
+  );
 
   const handleDocUpdateRef = useRef(handleDocUpdate);
   handleDocUpdateRef.current = handleDocUpdate;
@@ -90,6 +106,11 @@ export const YAMLEditor: React.FC = () => {
     const { resources, errors } = parseAndValidateYaml(initialContent);
     setParsedResources(resources);
     setValidationErrors(errors);
+    if (errors.length === 0 && resources.length > 0) {
+      const diagram = mapResourcesToDiagram(resources);
+      setNodes(diagram.nodes);
+      setEdges(diagram.edges);
+    }
 
     const state = EditorState.create({
       doc: initialContent,
@@ -133,7 +154,7 @@ export const YAMLEditor: React.FC = () => {
       view.destroy();
       viewRef.current = null;
     };
-  }, [setParsedResources, setValidationErrors]);
+  }, [setParsedResources, setValidationErrors, setNodes, setEdges]);
 
   // Sync external changes if changed from outside
   useEffect(() => {
@@ -150,8 +171,13 @@ export const YAMLEditor: React.FC = () => {
       const { resources, errors } = parseAndValidateYaml(yamlContent);
       setParsedResources(resources);
       setValidationErrors(errors);
+      if (errors.length === 0 && resources.length > 0) {
+        const diagram = mapResourcesToDiagram(resources);
+        setNodes(diagram.nodes);
+        setEdges(diagram.edges);
+      }
     }
-  }, [yamlContent, setParsedResources, setValidationErrors]);
+  }, [yamlContent, setParsedResources, setValidationErrors, setNodes, setEdges]);
 
   const handleFormat = useCallback(() => {
     if (!viewRef.current) return;
