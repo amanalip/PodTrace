@@ -1,0 +1,35 @@
+.canvasWrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-color: var(--bg-primary);
+}
+
+.canvasWrapper :global(.react-flow) {
+  background-color: var(--bg-primary);
+}
+
+.canvasWrapper :global(.react-flow__controls) {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: var(--bg-secondary);
+}
+
+.canvasWrapper :global(.react-flow__controls-button) {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  fill: var(--text-primary);
+}
+
+.canvasWrapper :global(.react-flow__controls-button:hover) {
+  background-color: var(--bg-tertiary);
+}
+
+.canvasWrapper :global(.react-flow__minimap) {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+}

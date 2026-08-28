@@ -1,0 +1,128 @@
+.baseNode {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-secondary);
+  border: 1.5px solid var(--border-default);
+  border-radius: 8px;
+  padding: 8px 12px;
+  min-width: 140px;
+  max-width: 220px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: var(--font-family);
+  position: relative;
+}
+
+.baseNode:hover {
+  border-color: var(--accent);
+}
+
+.nodeHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.titleArea {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.subLabel {
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+
+.status_idle {
+  background-color: var(--status-idle);
+}
+
+.status_active {
+  background-color: var(--status-active);
+  box-shadow: 0 0 8px var(--status-active);
+  animation: pulse 1.5s infinite;
+}
+
+.status_success {
+  background-color: var(--status-success);
+  box-shadow: 0 0 6px var(--status-success);
+}
+
+.status_error {
+  background-color: var(--status-error);
+  box-shadow: 0 0 6px var(--status-error);
+}
+
+.status_warning {
+  background-color: var(--status-warning);
+  box-shadow: 0 0 6px var(--status-warning);
+}
+
+.podContainersList {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.containerBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  background-color: var(--bg-tertiary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--text-secondary);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+}
