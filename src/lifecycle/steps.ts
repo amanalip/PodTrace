@@ -4,11 +4,22 @@ import { createDeploymentLifecycleSteps } from './deployment-lifecycle.ts';
 import { createServiceLifecycleSteps } from './service-lifecycle.ts';
 import { createIngressLifecycleSteps } from './ingress-lifecycle.ts';
 import { createConfigLifecycleSteps } from './config-lifecycle.ts';
+import { createCompositeLifecycleSteps } from './composite-lifecycle.ts';
 import { DeploymentResource, ServiceResource, IngressResource } from '../parser/resource-types.ts';
 
 export function getLifecycleStepsForResources(resources: K8sResource[]): LifecycleStep[] {
   if (!resources || resources.length === 0) {
     return createPodLifecycleSteps('nginx-pod');
+  }
+
+  if (resources.length > 1) {
+    const deployment = resources.find((r) => r.kind === 'Deployment');
+    const service = resources.find((r) => r.kind === 'Service');
+    const ingress = resources.find((r) => r.kind === 'Ingress');
+    const depName = deployment?.metadata?.name || 'app-deployment';
+    const svcName = service?.metadata?.name || `${depName}-service`;
+    const ingName = ingress?.metadata?.name || `${depName}-ingress`;
+    return createCompositeLifecycleSteps(resources.length, depName, svcName, ingName);
   }
 
   const primaryResource = resources[0];

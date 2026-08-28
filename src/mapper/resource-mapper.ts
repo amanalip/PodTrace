@@ -14,6 +14,7 @@ import { mapDeploymentResource } from './deployment-mapper.ts';
 import { mapServiceResource } from './service-mapper.ts';
 import { mapIngressResource } from './ingress-mapper.ts';
 import { mapConfigResource } from './config-mapper.ts';
+import { mapCompositeResources } from './composite-mapper.ts';
 import { STATIC_INITIAL_NODES, STATIC_INITIAL_EDGES } from '../components/canvas/initial-elements.ts';
 
 export interface DiagramMappingResult {
@@ -27,6 +28,10 @@ export function mapResourcesToDiagram(resources: K8sResource[]): DiagramMappingR
       nodes: STATIC_INITIAL_NODES,
       edges: STATIC_INITIAL_EDGES,
     };
+  }
+
+  if (resources.length > 1) {
+    return mapCompositeResources(resources);
   }
 
   const primaryResource = resources[0];
