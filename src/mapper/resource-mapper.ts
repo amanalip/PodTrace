@@ -1,7 +1,8 @@
 import { Node, Edge } from '@xyflow/react';
 import { K8sResource } from '../model/types.ts';
-import { PodResource } from '../parser/resource-types.ts';
+import { PodResource, DeploymentResource } from '../parser/resource-types.ts';
 import { mapPodResource } from './pod-mapper.ts';
+import { mapDeploymentResource } from './deployment-mapper.ts';
 import { STATIC_INITIAL_NODES, STATIC_INITIAL_EDGES } from '../components/canvas/initial-elements.ts';
 
 export interface DiagramMappingResult {
@@ -22,6 +23,8 @@ export function mapResourcesToDiagram(resources: K8sResource[]): DiagramMappingR
   switch (primaryResource.kind) {
     case 'Pod':
       return mapPodResource(primaryResource as PodResource);
+    case 'Deployment':
+      return mapDeploymentResource(primaryResource as DeploymentResource);
     default:
       return {
         nodes: STATIC_INITIAL_NODES,

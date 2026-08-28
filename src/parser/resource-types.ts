@@ -63,7 +63,7 @@ export interface DeploymentResource extends K8sResource {
       matchLabels?: Record<string, string>;
     };
     template: {
-      metadata?: K8sResourceMetadata;
+      metadata?: Partial<K8sResourceMetadata>;
       spec: {
         containers: ContainerSpec[];
         volumes?: VolumeSpec[];
