@@ -9,34 +9,30 @@ import { autocompletion } from '@codemirror/autocomplete';
 import jsyaml from 'js-yaml';
 import { useAppStore } from '../../store/index.ts';
 import { DEFAULT_SAMPLE_YAML } from '../../model/constants.ts';
+import { parseAndValidateYaml } from '../../parser/yaml-parser.ts';
 import { FormatButton } from './FormatButton.tsx';
 import { SamplePicker } from './SamplePicker.tsx';
+import { ValidationPanel } from './ValidationPanel.tsx';
 import { k8sCompletionSource } from './k8s-autocomplete.ts';
 import styles from './YAMLEditor.module.css';
 
-const yamlLinter = linter((view) => {
+const k8sLinter = linter((view) => {
   const diagnostics: Diagnostic[] = [];
   const doc = view.state.doc.toString();
   if (!doc.trim()) return diagnostics;
 
-  try {
-    jsyaml.loadAll(doc);
-  } catch (err: unknown) {
-    if (err && typeof err === 'object' && 'mark' in err) {
-      const mark = (err as { mark?: { line?: number; column?: number; position?: number }; reason?: string }).mark;
-      const reason = (err as { reason?: string }).reason || 'YAML syntax error';
-      if (mark && typeof mark.position === 'number') {
-        const from = Math.min(mark.position, view.state.doc.length);
-        const to = Math.min(from + 1, view.state.doc.length);
-        diagnostics.push({
-          from,
-          to,
-          severity: 'error',
-          message: reason,
-        });
-      }
-    }
+  const { errors } = parseAndValidateYaml(doc);
+  for (const err of errors) {
+    const lineNum = err.line ? Math.min(err.line, view.state.doc.lines) : 1;
+    const lineObj = view.state.doc.line(lineNum);
+    diagnostics.push({
+      from: lineObj.from,
+      to: lineObj.to,
+      severity: 'error',
+      message: err.message,
+    });
   }
+
   return diagnostics;
 });
 
@@ -72,13 +68,28 @@ export const YAMLEditor: React.FC = () => {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const isInternalChangeRef = useRef(false);
-  const { yaml: yamlContent, setYaml } = useAppStore();
+  const { yaml: yamlContent, setYaml, setParsedResources, setValidationErrors } = useAppStore();
+
+  const handleDocUpdate = useCallback((newContent: string) => {
+    setYaml(newContent);
+    const { resources, errors } = parseAndValidateYaml(newContent);
+    setParsedResources(resources);
+    setValidationErrors(errors);
+  }, [setYaml, setParsedResources, setValidationErrors]);
+
+  const handleDocUpdateRef = useRef(handleDocUpdate);
+  handleDocUpdateRef.current = handleDocUpdate;
 
   // Initialize editor
   useEffect(() => {
     if (!editorRef.current) return;
 
     const initialContent = useAppStore.getState().yaml ?? DEFAULT_SAMPLE_YAML;
+
+    // Initial parse
+    const { resources, errors } = parseAndValidateYaml(initialContent);
+    setParsedResources(resources);
+    setValidationErrors(errors);
 
     const state = EditorState.create({
       doc: initialContent,
@@ -91,7 +102,7 @@ export const YAMLEditor: React.FC = () => {
         foldGutter(),
         syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
         yaml(),
-        yamlLinter,
+        k8sLinter,
         autocompletion({ override: [k8sCompletionSource] }),
         darkEditorTheme,
         keymap.of([
@@ -104,7 +115,7 @@ export const YAMLEditor: React.FC = () => {
           if (update.docChanged) {
             isInternalChangeRef.current = true;
             const newContent = update.state.doc.toString();
-            setYaml(newContent);
+            handleDocUpdateRef.current(newContent);
             isInternalChangeRef.current = false;
           }
         }),
@@ -122,7 +133,7 @@ export const YAMLEditor: React.FC = () => {
       view.destroy();
       viewRef.current = null;
     };
-  }, [setYaml]);
+  }, [setParsedResources, setValidationErrors]);
 
   // Sync external changes if changed from outside
   useEffect(() => {
@@ -136,8 +147,11 @@ export const YAMLEditor: React.FC = () => {
           insert: yamlContent,
         },
       });
+      const { resources, errors } = parseAndValidateYaml(yamlContent);
+      setParsedResources(resources);
+      setValidationErrors(errors);
     }
-  }, [yamlContent]);
+  }, [yamlContent, setParsedResources, setValidationErrors]);
 
   const handleFormat = useCallback(() => {
     if (!viewRef.current) return;
@@ -161,11 +175,11 @@ export const YAMLEditor: React.FC = () => {
           insert: formatted,
         },
       });
-      setYaml(formatted);
+      handleDocUpdate(formatted);
     } catch {
       // If parsing fails due to syntax error, leave as is
     }
-  }, [setYaml]);
+  }, [handleDocUpdate]);
 
   return (
     <div className={styles.editorContainer}>
@@ -177,6 +191,7 @@ export const YAMLEditor: React.FC = () => {
         </div>
       </div>
       <div className={styles.codeArea} ref={editorRef} data-testid="yaml-editor-container" />
+      <ValidationPanel />
     </div>
   );
 };
