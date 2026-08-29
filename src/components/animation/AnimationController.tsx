@@ -33,22 +33,14 @@ export const AnimationController: React.FC = () => {
   useEffect(() => {
     if (steps.length === 0) return;
     const currentStep = steps[currentStepIndex];
-    setNodes((currNodes) => {
-      const { nodes: updatedNodes } = applyStepToDiagram(
-        currentStep,
-        currNodes,
-        useAppStore.getState().edges,
-      );
-      return updatedNodes;
-    });
-    setEdges((currEdges) => {
-      const { edges: updatedEdges } = applyStepToDiagram(
-        currentStep,
-        useAppStore.getState().nodes,
-        currEdges,
-      );
-      return updatedEdges;
-    });
+    const { nodes: currentNodes, edges: currentEdges } = useAppStore.getState();
+    const { nodes: updatedNodes, edges: updatedEdges } = applyStepToDiagram(
+      currentStep,
+      currentNodes,
+      currentEdges,
+    );
+    setNodes(updatedNodes);
+    setEdges(updatedEdges);
   }, [currentStepIndex, steps, setNodes, setEdges]);
 
   // Animation autoplay loop

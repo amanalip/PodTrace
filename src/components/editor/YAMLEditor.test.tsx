@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { YAMLEditor } from './YAMLEditor.tsx';
 import { useAppStore } from '../../store/index.ts';
@@ -47,5 +47,20 @@ describe('YAMLEditor', () => {
 
     const formattedYaml = useAppStore.getState().yaml;
     expect(formattedYaml).toContain('kind: Pod');
+  });
+
+  it('copies YAML to clipboard when copy button is clicked', () => {
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: vi.fn().mockResolvedValue(undefined),
+      },
+    });
+
+    render(<YAMLEditor />);
+
+    const copyBtn = screen.getByTestId('copy-yaml-btn');
+    fireEvent.click(copyBtn);
+
+    expect(navigator.clipboard.writeText).toHaveBeenCalled();
   });
 });

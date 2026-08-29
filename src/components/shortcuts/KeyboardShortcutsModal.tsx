@@ -36,6 +36,9 @@ export const KeyboardShortcutsModal: React.FC = () => {
       <div
         className={styles.modal}
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Keyboard Shortcuts"
         data-testid="shortcuts-modal"
       >
         <div className={styles.header}>
@@ -56,7 +59,7 @@ export const KeyboardShortcutsModal: React.FC = () => {
 
         <div className={styles.body}>
           {SHORTCUTS.map((s, idx) => (
-            <div key={idx} className={styles.shortcutRow}>
+            <div key={idx} className={styles.shortcutRow} aria-label={`${s.key}: ${s.description}`}>
               <span className={styles.shortcutLabel}>{s.description}</span>
               <kbd className={styles.keyCap}>{s.key}</kbd>
             </div>

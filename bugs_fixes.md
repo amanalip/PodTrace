@@ -210,9 +210,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: In `QuizModal.tsx`, question progression had no visual progress bar indicating completion status across questions.
     - **Fix**: Added animated gradient progress bar reflecting current question index.
 
+52. **Bug 52: StepDetail Documentation Link Event Propagation**
+    - **Root Cause**: In `StepDetail.tsx`, clicking the "Docs" external link bubbled up to the interactive step card container's `onClick`, unintentionally jumping the animation timeline while opening the external link.
+    - **Fix**: Added `e.stopPropagation()` on the documentation link click event.
+
+53. **Bug 53: AnimationController Redundant and Desynced Diagram State Updates**
+    - **Root Cause**: In `AnimationController.tsx`, `applyStepToDiagram` was called twice per step change with mismatched intermediate states in two separate functional setState callbacks.
+    - **Fix**: Invoked `applyStepToDiagram` once with the current node/edge state and batched updates to `setNodes` and `setEdges`.
+
+54. **Bug 54: ConceptCard Dynamic Prop Synchronization**
+    - **Root Cause**: In `ConceptCard.tsx`, changing `initiallyOpen` prop (e.g. from parent filter expansion) did not update local `isOpen` state.
+    - **Fix**: Added `React.useEffect` synchronizing `isOpen` when `initiallyOpen` changes.
+
+55. **Bug 55: Manifest Source Quick Copy Action Missing**
+    - **Root Cause**: In `YAMLEditor.tsx`, users had no 1-click button to copy the entire YAML manifest from the editor toolbar, requiring manual select-all and copy.
+    - **Fix**: Added a "Copy YAML" toolbar action with visual copied feedback.
+
+56. **Bug 56: Concept Card Key Fact Copy Action Missing**
+    - **Root Cause**: In `ConceptCard.tsx`, key takeaway facts could not be quickly copied for study notes.
+    - **Fix**: Added a copy key fact button with visual confirmation.
+
+57. **Bug 57: Step Indicator Tooltip Missing on Interactive Step Pills**
+    - **Root Cause**: In `StepIndicator.tsx`, hovering step dots lacked accessible titles showing the step title and number before clicking.
+    - **Fix**: Added dynamic `title={`Step ${step.stepNumber}: ${step.title}`}` on each pill.
+
+58. **Bug 58: Keyboard Shortcut Legend Space Key Indicator Accessibility**
+    - **Root Cause**: In `KeyboardShortcutsModal.tsx`, keycap badges lacked clear `aria-label` text for assistive technologies.
+    - **Fix**: Added ARIA labels and dialog role to the shortcuts modal.
+
+59. **Bug 59: Format Button Disabled State Feedback**
+    - **Root Cause**: In `FormatButton.tsx`, button had no visual cursor or opacity change when disabled.
+    - **Fix**: Added disabled styling in CSS and clear disabled attribute handling.
+
+60. **Bug 60: Step Indicator Active Index Bounds Clamping**
+    - **Root Cause**: In `StepIndicator.tsx`, step pill click index was not clamped against `steps.length - 1`.
+    - **Fix**: Clamped step index target in click handler.
+
+61. **Bug 61: ConceptCard Documentation Link Propagation**
+    - **Root Cause**: In `ConceptCard.tsx`, clicking external documentation link bubbled click events to parent card elements.
+    - **Fix**: Added `e.stopPropagation()` on docs link click handler.
+
 ---
 
-## 2. Code Quality and Testing Improvements (50 Improvements)
+## 2. Code Quality and Testing Improvements (60 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -264,10 +304,20 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 48. **DiagnosticLogPanel Condition Test Suite**: Expanded `DiagnosticLogPanel.test.tsx` testing dynamic `PodScheduled` and `Initialized` conditions for scheduling and init failure scenarios.
 49. **ExportModal Granular Copy Test Suite**: Updated `ExportModal.test.tsx` testing separate copy state triggers and `Escape` key modal closure.
 50. **QuizModal Escape & Reset Test Suite**: Expanded `QuizModal.test.tsx` testing `Escape` key close and answer review progression.
+51. **Single-Pass Diagram Step Transformer**: Refactored `AnimationController.tsx` to compute node and edge status transitions in a single atomic pass.
+52. **Isolated Event Bubbling in Step Cards**: Prevented child link event pollution in interactive `StepDetail.tsx`.
+53. **Reactive Concept Card State Synchronization**: Added reactive prop binding in `ConceptCard.tsx`.
+54. **Editor Manifest Copy Module**: Built accessible copy action with timeout feedback in `YAMLEditor.tsx`.
+55. **Accessible Key Takeaway Clipboard Engine**: Added clipboard actions in `ConceptCard.tsx`.
+56. **Descriptive Step Pill Accessibility Tooltips**: Added contextual title tooltips on timeline scrubbers.
+57. **Accessible Keycap Badges in Shortcuts Modal**: Added ARIA descriptions across keyboard keycaps.
+58. **StepDetail Link Isolation Test Suite**: Created `StepDetail.test.tsx` testing link click event propagation isolation and keyboard Enter/Space activation.
+59. **ConceptCard Key Fact Copy Test Suite**: Updated `ConceptCard.test.tsx` testing prop sync and key fact copy actions.
+60. **Editor Manifest Copy Test Suite**: Added clipboard copy unit test in `YAMLEditor.test.tsx`.
 
 ---
 
-## 3. UX/UI Feature Enhancements (50 Improvements)
+## 3. UX/UI Feature Enhancements (60 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
@@ -319,3 +369,13 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 48. **Consistent JSON Export Format**: Single unified JSON export structure whether downloaded from Export modal or toolbar.
 49. **Visual Indicator on Quiz Question Steps**: Question index pill with category tag on quiz cards.
 50. **Refined Modal Overlay Transitions**: Smooth backdrop blur and fade-in animations on all modals.
+51. **1-Click Copy Manifest in YAML Editor**: Copy button in the editor toolbar to copy all manifest source code with checkmark confirmation.
+52. **1-Click Copy Concept Key Takeaways**: Copy icon next to the sparkle key fact in concept cards.
+53. **Descriptive Timeline Step Hover Cards**: Hovering any step dot on the playback timeline shows the step title and number.
+54. **Isolated External Documentation Navigation**: Clicking "Docs" on lifecycle step cards opens official documentation in a new tab without shifting the animation timeline.
+55. **Reactive Concept Search Card Expansion**: Concept cards automatically expand and collapse when matching specific search terms.
+56. **Enhanced Keycap Badge Styling**: Distinct glassmorphic keycap badges in the keyboard shortcuts cheat sheet.
+57. **Smooth Step Transition Animations**: Instant node color pulse and edge packet flows on timeline clicks.
+58. **Visual Format Button Hover State**: Refined hover and active states for editor actions.
+59. **Active Step Counter in Timeline Toolbar**: Timeline indicator displays formatted "Step X of Y" with current step name.
+60. **High-Contrast Category Badges on Step Details**: Component spotlight tags in step cards clearly highlight Control Plane vs Worker Node components.

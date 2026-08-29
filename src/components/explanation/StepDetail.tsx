@@ -85,6 +85,7 @@ export const StepDetail: React.FC<StepDetailProps> = ({
               rel="noopener noreferrer"
               className={styles.docsLink}
               title="Official Kubernetes documentation"
+              onClick={(e) => e.stopPropagation()}
             >
               <span>Docs</span>
               <ExternalLink size={10} />

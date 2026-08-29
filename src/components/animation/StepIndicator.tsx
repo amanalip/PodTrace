@@ -34,9 +34,10 @@ export const StepIndicator: React.FC = () => {
               key={s.stepNumber}
               type="button"
               className={segmentClass}
-              onClick={() => setCurrentStepIndex(idx)}
+              onClick={() => setCurrentStepIndex(Math.max(0, Math.min(steps.length - 1, idx)))}
               title={`Jump to Step ${idx + 1}: ${s.title}`}
               aria-label={`Jump to Step ${idx + 1}: ${s.title}`}
+              data-testid={`step-pill-${idx}`}
             />
           );
         })}

@@ -16,6 +16,7 @@ import { FormatButton } from './FormatButton.tsx';
 import { SamplePicker } from './SamplePicker.tsx';
 import { ValidationPanel } from './ValidationPanel.tsx';
 import { k8sCompletionSource } from './k8s-autocomplete.ts';
+import { Copy, Check } from 'lucide-react';
 import styles from './YAMLEditor.module.css';
 
 const k8sLinter = linter((view) => {
@@ -244,6 +245,15 @@ export const YAMLEditor: React.FC = () => {
     }
   }, [handleDocUpdate]);
 
+  const [copiedYaml, setCopiedYaml] = React.useState(false);
+
+  const handleCopyYaml = () => {
+    const content = viewRef.current ? viewRef.current.state.doc.toString() : (yamlContent || '');
+    navigator.clipboard.writeText(content);
+    setCopiedYaml(true);
+    setTimeout(() => setCopiedYaml(false), 2000);
+  };
+
   return (
     <div className={styles.editorContainer}>
       <div className={styles.toolbar}>
@@ -251,6 +261,17 @@ export const YAMLEditor: React.FC = () => {
         <div className={styles.toolbarActions}>
           <SamplePicker />
           <FormatButton onFormat={handleFormat} />
+          <button
+            type="button"
+            className={styles.toolButton}
+            onClick={handleCopyYaml}
+            title="Copy YAML manifest"
+            aria-label="Copy YAML manifest"
+            data-testid="copy-yaml-btn"
+          >
+            {copiedYaml ? <Check size={13} color="#22c55e" /> : <Copy size={13} />}
+            <span>{copiedYaml ? 'Copied' : 'Copy'}</span>
+          </button>
         </div>
       </div>
       <div className={styles.codeArea} ref={editorRef} data-testid="yaml-editor-container" />

@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ConceptCard } from './ConceptCard.tsx';
 import { ConceptCardData } from '../../model/types.ts';
@@ -27,5 +27,23 @@ describe('ConceptCard', () => {
     expect(screen.getByText(/Testing ensures regressions/i)).toBeInTheDocument();
     const link = screen.getByRole('link', { name: /kubernetes documentation/i });
     expect(link).toHaveAttribute('href', 'https://kubernetes.io/docs/');
+  });
+
+  it('syncs initiallyOpen prop when updated and allows copying key fact', () => {
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: vi.fn().mockResolvedValue(undefined),
+      },
+    });
+
+    const { rerender } = render(<ConceptCard concept={sampleConcept} initiallyOpen={false} />);
+    expect(screen.queryByText(/A test component verifies/i)).not.toBeInTheDocument();
+
+    rerender(<ConceptCard concept={sampleConcept} initiallyOpen={true} />);
+    expect(screen.getByText(/A test component verifies/i)).toBeInTheDocument();
+
+    const copyBtn = screen.getByTestId(`copy-keyfact-${sampleConcept.id}`);
+    fireEvent.click(copyBtn);
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(sampleConcept.keyFact);
   });
 });
