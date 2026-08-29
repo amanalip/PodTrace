@@ -54,7 +54,12 @@ export const WhatIfPanel: React.FC = () => {
   };
 
   return (
-    <div className={styles.panel} data-testid="what-if-panel">
+    <div
+      className={styles.panel}
+      role="region"
+      aria-label="What If Cluster Simulator"
+      data-testid="what-if-panel"
+    >
       <div className={styles.header}>
         <div className={styles.title}>
           <AlertTriangle size={14} color="#f59e0b" />
@@ -65,6 +70,9 @@ export const WhatIfPanel: React.FC = () => {
             type="button"
             onClick={() => setIsMinimized(!isMinimized)}
             aria-label={isMinimized ? 'Expand What If panel' : 'Minimize What If panel'}
+            aria-expanded={!isMinimized}
+            aria-controls="what-if-panel-body"
+            title={isMinimized ? 'Expand simulator' : 'Minimize simulator'}
             style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0 }}
             data-testid="what-if-minimize-btn"
           >
@@ -74,6 +82,7 @@ export const WhatIfPanel: React.FC = () => {
             type="button"
             onClick={handleClose}
             aria-label="Close What If"
+            title="Close What If simulator"
             style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0 }}
           >
             <X size={14} />
@@ -82,7 +91,7 @@ export const WhatIfPanel: React.FC = () => {
       </div>
 
       {!isMinimized && (
-        <div className={styles.body}>
+        <div id="what-if-panel-body" className={styles.body}>
         <div>
           <label htmlFor="what-if-select" style={{ display: 'block', marginBottom: 4, color: '#94a3b8', fontSize: 11 }}>
             Select Failure Scenario:

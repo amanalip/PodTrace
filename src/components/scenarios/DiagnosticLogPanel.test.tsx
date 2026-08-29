@@ -17,7 +17,7 @@ describe('DiagnosticLogPanel', () => {
     expect(screen.getByText(/No active scenario loaded/i)).toBeInTheDocument();
   });
 
-  it('renders events and filters by query', () => {
+  it('renders events and filters by query with ARIA tablist', () => {
     const scenario = SCENARIO_CATALOG[0];
     useAppStore.setState({
       activeScenario: scenario,
@@ -26,7 +26,11 @@ describe('DiagnosticLogPanel', () => {
 
     render(<DiagnosticLogPanel />);
 
-    expect(screen.getByRole('button', { name: /events \(/i })).toBeInTheDocument();
+    expect(screen.getByRole('tablist', { name: /diagnostic views/i })).toBeInTheDocument();
+    expect(screen.getByRole('tabpanel')).toBeInTheDocument();
+
+    const eventsTab = screen.getByRole('tab', { name: /events \(/i });
+    expect(eventsTab).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByTestId('diag-filter-input')).toBeInTheDocument();
 
     const input = screen.getByTestId('diag-filter-input');

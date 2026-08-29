@@ -15,6 +15,8 @@ describe('QuizModal', () => {
 
     expect(screen.getByTestId('quiz-modal')).toBeInTheDocument();
     expect(screen.getByText(/Question 1 of/i)).toBeInTheDocument();
+    expect(screen.getByRole('radiogroup')).toBeInTheDocument();
+    expect(screen.getAllByRole('radio').length).toBe(4);
 
     // Answer all questions
     for (let i = 0; i < QUIZ_QUESTIONS.length; i++) {
@@ -32,8 +34,11 @@ describe('QuizModal', () => {
 
     // Toggle Review
     const reviewBtn = screen.getByTestId('quiz-toggle-review-btn');
+    expect(reviewBtn).toHaveAttribute('aria-expanded', 'false');
+    expect(reviewBtn).toHaveAttribute('aria-controls', 'quiz-review-section');
     fireEvent.click(reviewBtn);
 
+    expect(reviewBtn).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByTestId('quiz-review-section')).toBeInTheDocument();
 
     // Click Done button

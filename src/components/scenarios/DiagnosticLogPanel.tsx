@@ -40,7 +40,7 @@ export const DiagnosticLogPanel: React.FC = () => {
 
   if (!activeScenario || !failureDetails) {
     return (
-      <div className={styles.container}>
+      <div className={styles.container} role="status">
         <div style={{ padding: '24px', textAlign: 'center', color: '#64748b' }}>
           No active scenario loaded. Select a scenario from the sidebar to inspect diagnostic logs.
         </div>
@@ -82,9 +82,12 @@ export const DiagnosticLogPanel: React.FC = () => {
 
   return (
     <div className={styles.container} data-testid="diagnostic-log-panel">
-      <div className={styles.tabs}>
+      <div className={styles.tabs} role="tablist" aria-label="Diagnostic views">
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'events'}
+          aria-controls="diagnostic-tab-content"
           className={`${styles.tabBtn} ${activeTab === 'events' ? styles.tabBtn_active : ''}`}
           onClick={() => setActiveTab('events')}
         >
@@ -94,6 +97,9 @@ export const DiagnosticLogPanel: React.FC = () => {
 
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'logs'}
+          aria-controls="diagnostic-tab-content"
           className={`${styles.tabBtn} ${activeTab === 'logs' ? styles.tabBtn_active : ''}`}
           onClick={() => setActiveTab('logs')}
         >
@@ -103,6 +109,9 @@ export const DiagnosticLogPanel: React.FC = () => {
 
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'conditions'}
+          aria-controls="diagnostic-tab-content"
           className={`${styles.tabBtn} ${activeTab === 'conditions' ? styles.tabBtn_active : ''}`}
           onClick={() => setActiveTab('conditions')}
         >
@@ -149,6 +158,8 @@ export const DiagnosticLogPanel: React.FC = () => {
             className={styles.copyBtn}
             onClick={handleCopyEvents}
             title="Copy diagnostic events to clipboard"
+            aria-label="Copy diagnostic events"
+            aria-live="polite"
             data-testid="copy-all-events-btn"
           >
             {copiedEvents ? <Check size={12} /> : <Copy size={12} />}
@@ -162,6 +173,8 @@ export const DiagnosticLogPanel: React.FC = () => {
             className={styles.copyBtn}
             onClick={handleCopyLogs}
             title="Copy container logs to clipboard"
+            aria-label="Copy all container logs"
+            aria-live="polite"
             data-testid="copy-all-logs-btn"
           >
             {copiedAll ? <Check size={12} /> : <Copy size={12} />}
@@ -170,7 +183,7 @@ export const DiagnosticLogPanel: React.FC = () => {
         )}
       </div>
 
-      <div className={styles.content}>
+      <div id="diagnostic-tab-content" role="tabpanel" className={styles.content}>
         {activeTab === 'events' && (
           <div className={styles.tableWrapper}>
             {filteredEvents.length === 0 ? (

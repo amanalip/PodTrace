@@ -530,9 +530,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: In `Header.tsx`, the decorative logo icon wrapper was not explicitly marked `aria-hidden="true"`.
     - **Fix**: Added `aria-hidden="true"` to decorative brand icon.
 
+132. **Bug 132: DiagramLegend Card Missing Region Landmark & ARIA Controls**
+    - **Root Cause**: In `DiagramLegend.tsx`, the card lacked `role="region"` and `id="diagram-legend-card"`, and toggle button lacked `aria-controls="diagram-legend-card"`.
+    - **Fix**: Added ARIA controls association, landmark role, and test ID `data-testid="diagram-legend-toggle-btn"`.
+
+133. **Bug 133: DiagramLegend Decorative Elements Missing ARIA Hidden**
+    - **Root Cause**: In `DiagramLegend.tsx`, decorative color dots and edge preview lines were unhidden from screen readers.
+    - **Fix**: Added `aria-hidden="true"` to all legend color dots and edge previews.
+
+134. **Bug 134: WhatIfPanel Missing Landmark Region**
+    - **Root Cause**: In `WhatIfPanel.tsx`, the simulator panel lacked `role="region"` and `aria-label="What If Cluster Simulator"`.
+    - **Fix**: Added accessible landmark region and `aria-label`.
+
+135. **Bug 135: WhatIfPanel Minimize Accordion Controls**
+    - **Root Cause**: In `WhatIfPanel.tsx`, the minimize button lacked `aria-expanded={!isMinimized}` and `aria-controls="what-if-panel-body"`.
+    - **Fix**: Added `aria-expanded` and `aria-controls` referencing body container `id="what-if-panel-body"`.
+
+136. **Bug 136: QuizModal Options Missing RadioGroup Semantics**
+    - **Root Cause**: In `QuizModal.tsx`, option buttons were unassociated without `role="radiogroup"` or `role="radio"` and `aria-checked`.
+    - **Fix**: Added ARIA radiogroup container and radio roles with `aria-checked` to quiz options.
+
+137. **Bug 137: QuizModal Review Accordion ARIA Standards**
+    - **Root Cause**: In `QuizModal.tsx`, review answers button lacked `aria-expanded` and `aria-controls="quiz-review-section"`.
+    - **Fix**: Added `aria-expanded={showReview}` and `aria-controls="quiz-review-section"`, and `id="quiz-review-section"`.
+
+138. **Bug 138: DiagnosticLogPanel Tabs Missing ARIA Tablist Roles**
+    - **Root Cause**: In `DiagnosticLogPanel.tsx`, the tab bar lacked `role="tablist"`, `role="tab"`, `aria-selected`, and `aria-controls`.
+    - **Fix**: Added complete ARIA tablist, tab, and tabpanel attributes.
+
+139. **Bug 139: DiagnosticLogPanel Empty State Missing Role Status**
+    - **Root Cause**: In `DiagnosticLogPanel.tsx`, when no scenario is loaded, the empty container lacked `role="status"`.
+    - **Fix**: Added `role="status"` to diagnostic empty state.
+
+140. **Bug 140: DiagnosticLogPanel Copy Actions Missing ARIA Live**
+    - **Root Cause**: In `DiagnosticLogPanel.tsx`, copy events and copy logs buttons lacked `aria-live="polite"` and explicit aria-labels.
+    - **Fix**: Added `aria-live="polite"` and `aria-label` to copy buttons.
+
+141. **Bug 141: WhatIfPanel Close Button Tooltip Missing**
+    - **Root Cause**: In `WhatIfPanel.tsx`, the close `X` button lacked `title="Close What If simulator"`.
+    - **Fix**: Added tooltip title to close button.
+
 ---
 
-## 2. Code Quality and Testing Improvements (130 Improvements)
+## 2. Code Quality and Testing Improvements (140 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -664,10 +704,20 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 128. **Header Landmark & Action Tooltips Test Suite**: Added `Header.test.tsx` testing header landmark `aria-label` and brand icon `aria-hidden`.
 129. **YAMLEditor Copy Manifest ARIA Live Test Suite**: Expanded `YAMLEditor.test.tsx` testing copy manifest button live region and feedback state.
 130. **Comprehensive 130-Improvement Architecture**: Robust Kubernetes interactive learning and troubleshooting platform.
+131. **DiagramLegend ARIA Association Pipeline**: Connected toggle button and legend card via `aria-controls` in `DiagramLegend.tsx`.
+132. **WhatIfPanel Landmark & Accordion Architecture**: Standardized `role="region"` and `aria-expanded` in `WhatIfPanel.tsx`.
+133. **QuizModal Radiogroup Semantic Standards**: Implemented ARIA radiogroup, radio, and `aria-checked` attributes in `QuizModal.tsx`.
+134. **QuizModal Review Disclosure Engine**: Linked review toggle button with `aria-controls` in `QuizModal.tsx`.
+135. **DiagnosticLogPanel Tablist Semantics**: Implemented ARIA tablist, tab, and tabpanel standards in `DiagnosticLogPanel.tsx`.
+136. **DiagnosticLogPanel Copy Feedback Live Region**: Added `aria-live="polite"` to log and event copy actions in `DiagnosticLogPanel.tsx`.
+137. **DiagramLegend ARIA Test Suite**: Expanded `DiagramLegend.test.tsx` testing `aria-controls`, `data-testid="diagram-legend-toggle-btn"`, and legend card landmark.
+138. **WhatIfPanel Landmark & Minimize Test Suite**: Expanded `WhatIfPanel.test.tsx` testing `role="region"`, `aria-expanded`, and minimize accordion.
+139. **QuizModal Radiogroup & Review Test Suite**: Expanded `QuizModal.test.tsx` testing `role="radiogroup"`, `role="radio"`, and review accordion attributes.
+140. **DiagnosticLogPanel Tablist & Live Test Suite**: Expanded `DiagnosticLogPanel.test.tsx` testing ARIA tablist roles, tabpanel association, and copy live regions.
 
 ---
 
-## 3. UX/UI Feature Enhancements (130 Improvements)
+## 3. UX/UI Feature Enhancements (140 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
@@ -799,3 +849,13 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 128. **Refined Sample Picker Group Headers**: Category optgroups with bold section headings in YAML editor.
 129. **Crisp Code Area Focus Rings**: High-contrast cyan focus highlights on CodeMirror active lines.
 130. **Complete Full-Spectrum 130-Feature Milestone**: Production-grade Kubernetes lifecycle animation, manifest editing, and scenario simulator.
+131. **Accessible Canvas Legend Overlay**: Screen readers announce legend as distinct status guide with accessible toggle.
+132. **Radiogroup Accessibility on Quiz Questions**: Screen readers navigate quiz options as proper radio options with checked announcements.
+133. **Accessible Diagnostic Tabbed Interface**: Smooth switching between Events, Logs, and Conditions with ARIA tabpanel standards.
+134. **Polite Copy Confirmation on Diagnostic Exports**: Screen reader announcements when copying event streams or container logs.
+135. **Accessible What-If Simulator Region**: Clear region landmark and minimize accordion state on What-If panel.
+136. **Smooth Quiz Review Disclosure Transition**: Expand and collapse detailed quiz answers with smooth height transitions.
+137. **Refined Legend Edge Preview Styling**: Crisp solid, animated, and dashed edge previews in canvas legend card.
+138. **Clear Diagnostic Search Feedback**: Search bar displays clean result counts and 1-click filter reset.
+139. **High-Contrast Option State Feedback**: Vibrant green and crimson checkmark/cross badges on answered quiz options.
+140. **Complete Full-Spectrum 140-Feature Milestone**: Comprehensive Kubernetes lifecycle animation, manifest editing, scenario solving, and architectural quiz platform.

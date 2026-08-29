@@ -56,14 +56,20 @@ describe('WhatIfPanel', () => {
     render(<WhatIfPanel />);
     fireEvent.click(screen.getByTestId('what-if-launcher'));
 
+    expect(screen.getByRole('region', { name: /what if cluster simulator/i })).toBeInTheDocument();
+
     const select = screen.getByTestId('what-if-select');
     fireEvent.change(select, { target: { value: 'apiserver-down' } });
 
     expect(screen.getByText(/cluster consequences/i)).toBeInTheDocument();
 
     const minBtn = screen.getByTestId('what-if-minimize-btn');
+    expect(minBtn).toHaveAttribute('aria-expanded', 'true');
+    expect(minBtn).toHaveAttribute('aria-controls', 'what-if-panel-body');
+
     fireEvent.click(minBtn);
 
+    expect(minBtn).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByText(/cluster consequences/i)).not.toBeInTheDocument();
     expect(useAppStore.getState().activeWhatIfId).toBe('apiserver-down');
 

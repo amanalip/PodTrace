@@ -109,6 +109,8 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
                   type="button"
                   className={styles.nextBtn}
                   onClick={() => setShowReview(!showReview)}
+                  aria-expanded={showReview}
+                  aria-controls="quiz-review-section"
                   data-testid="quiz-toggle-review-btn"
                 >
                   <span>{showReview ? 'Hide Review' : 'Review Answers'}</span>
@@ -135,7 +137,11 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
               </div>
 
               {showReview && (
-                <div style={{ marginTop: 16, textAlign: 'left', width: '100%' }} data-testid="quiz-review-section">
+                <div
+                  id="quiz-review-section"
+                  style={{ marginTop: 16, textAlign: 'left', width: '100%' }}
+                  data-testid="quiz-review-section"
+                >
                   {QUIZ_QUESTIONS.map((q, qIdx) => {
                     const userAns = answers[qIdx];
                     const isCorrect = userAns === q.correctIndex;
@@ -209,7 +215,11 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
 
               <div className={styles.questionText}>{currentQ.question}</div>
 
-              <div className={styles.optionsList}>
+              <div
+                className={styles.optionsList}
+                role="radiogroup"
+                aria-label={`Options for question ${currentIndex + 1}: ${currentQ.question}`}
+              >
                 {currentQ.options.map((opt, idx) => {
                   let optionClass = styles.optionBtn;
                   if (selectedAnswer !== null) {
@@ -224,6 +234,8 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
                     <button
                       key={idx}
                       type="button"
+                      role="radio"
+                      aria-checked={selectedAnswer === idx}
                       className={optionClass}
                       onClick={() => handleSelectOption(idx)}
                       disabled={selectedAnswer !== null}
