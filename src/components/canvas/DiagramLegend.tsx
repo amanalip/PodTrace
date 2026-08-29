@@ -1,10 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { HelpCircle, X } from 'lucide-react';
 import { useAppStore } from '../../store/index.ts';
 import styles from './DiagramLegend.module.css';
 
 export const DiagramLegend: React.FC = () => {
   const { isLegendOpen, setIsLegendOpen } = useAppStore();
+
+  useEffect(() => {
+    if (!isLegendOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsLegendOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isLegendOpen, setIsLegendOpen]);
 
   return (
     <div className={styles.legendContainer} data-testid="diagram-legend">
@@ -13,6 +24,7 @@ export const DiagramLegend: React.FC = () => {
         className={styles.legendToggle}
         onClick={() => setIsLegendOpen(!isLegendOpen)}
         aria-label={isLegendOpen ? 'Close diagram legend' : 'Open diagram legend'}
+        aria-expanded={isLegendOpen}
         title="Toggle canvas legend"
       >
         {isLegendOpen ? <X size={14} /> : <HelpCircle size={14} />}

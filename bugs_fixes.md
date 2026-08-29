@@ -330,9 +330,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: In `QuizModal.tsx`, the progress bar lacked `role="progressbar"` and `aria-valuenow`.
     - **Fix**: Added ARIA progressbar attributes to question progress indicator.
 
+82. **Bug 82: Service Port Range Specification Validation**
+    - **Root Cause**: In `validator.ts`, `Service` port validation checked array existence but did not validate that `port` was within the standard valid network range (1 to 65535).
+    - **Fix**: Added validation ensuring each port in `spec.ports` is an integer between 1 and 65535.
+
+83. **Bug 83: Deployment Negative Replicas Boundary**
+    - **Root Cause**: In `validator.ts`, `Deployment` replicas allowed negative numbers (e.g. `replicas: -1`) without raising a validation issue.
+    - **Fix**: Added validation ensuring `spec.replicas` is a non-negative integer.
+
+84. **Bug 84: Container RFC 1123 Name Format Validation**
+    - **Root Cause**: In `validator.ts`, container names containing invalid symbols or uppercase characters passed validation despite violating Kubernetes RFC 1123 label standards.
+    - **Fix**: Added regex validation for container names in Pod, Deployment, Job, DaemonSet, and StatefulSet specs.
+
+85. **Bug 85: DiagnosticLogPanel Events Copy Missing**
+    - **Root Cause**: In `DiagnosticLogPanel.tsx`, users could copy logs but had no 1-click button to copy formatted `kubectl describe` events.
+    - **Fix**: Added a "Copy Events" button with formatted output and visual checkmark feedback.
+
+86. **Bug 86: Diagnostic Search Input Clear Button Missing**
+    - **Root Cause**: In `DiagnosticLogPanel.tsx`, clearing a filter search term required manually selecting and deleting text in the input.
+    - **Fix**: Added quick `X` clear icon inside `searchBox` when query is present.
+
+87. **Bug 87: DiagramLegend ARIA Expanded State Missing**
+    - **Root Cause**: In `DiagramLegend.tsx`, the toggle button lacked `aria-expanded` and `aria-haspopup="dialog"`.
+    - **Fix**: Added accessibility attributes to legend toggle.
+
+88. **Bug 88: Secret and ConfigMap Empty Key Validation**
+    - **Root Cause**: In `validator.ts`, `ConfigMap` and `Secret` data fields containing empty or whitespace keys were not flagged.
+    - **Fix**: Added data map key validation for ConfigMaps and Secrets.
+
+89. **Bug 89: DiagramLegend Keyboard Escape Dismissal**
+    - **Root Cause**: In `DiagramLegend.tsx`, pressing `Escape` while focused inside the legend did not dismiss the floating card.
+    - **Fix**: Added `Escape` key listener to close legend.
+
+90. **Bug 90: Diagnostic Log Terminal Clear Filter Button Reset**
+    - **Root Cause**: In `DiagnosticLogPanel.tsx`, the clear filter button in the empty logs state was missing `data-testid="clear-diag-logs-btn"`.
+    - **Fix**: Added test ID for testability and keyboard focus styling.
+
+91. **Bug 91: FormatButton Loading / Disabled Styling**
+    - **Root Cause**: In `FormatButton.tsx`, button state during formatting could trigger double clicks.
+    - **Fix**: Added busy state protection and disabled state visual feedback.
+
 ---
 
-## 2. Code Quality and Testing Improvements (80 Improvements)
+## 2. Code Quality and Testing Improvements (90 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -414,10 +454,20 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 78. **WhatIfPanel Mitigation Copy Test Suite**: Expanded `WhatIfPanel.test.tsx` testing mitigation clipboard copy action and category badge rendering.
 79. **QuizModal Accessibility & Done Button Test Suite**: Expanded `QuizModal.test.tsx` testing results card Done button and ARIA progressbar.
 80. **Export Serialization Robustness Test Suite**: Expanded `export-utils.test.ts` verifying Mermaid sequence sanitization for complex special characters.
+81. **Network Port Specification Validator**: Validated port numbers between 1 and 65535 in `validator.ts`.
+82. **Workload Replica Boundary Checks**: Validated non-negative replica counts in `validator.ts`.
+83. **RFC 1123 Container Name Checker**: Added regex validation for standard DNS label container naming in `validator.ts`.
+84. **Diagnostic Events Clipboard Engine**: Built formatted event table export with timestamp and reason in `DiagnosticLogPanel.tsx`.
+85. **ConfigMap & Secret Key Integrity Validator**: Added validation for valid key names in `validator.ts`.
+86. **Keyboard Accessible Diagram Legend**: Added `Escape` key listener and `aria-expanded` in `DiagramLegend.tsx`.
+87. **Service Port & Replicas Validator Test Suite**: Expanded `validator.test.ts` testing port range bounds (0, 70000, 80) and negative replicas.
+88. **Container Name Regex Test Suite**: Added test cases in `validator.test.ts` testing uppercase and symbol container names.
+89. **Diagnostic Events Copy Test Suite**: Expanded `DiagnosticLogPanel.test.tsx` testing "Copy Events" button and inline search clear.
+90. **DiagramLegend Accessibility Test Suite**: Expanded `DiagramLegend.test.tsx` verifying `aria-expanded` toggle and `Escape` key handling.
 
 ---
 
-## 3. UX/UI Feature Enhancements (80 Improvements)
+## 3. UX/UI Feature Enhancements (90 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
@@ -499,3 +549,13 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 78. **Interactive Review Toggle on Results**: Expand and collapse detailed answer review on the score card.
 79. **Quick Restore Health Button**: 1-click restore cluster button with rotate icon in What-If panel.
 80. **Responsive Simulation Select Dropdown**: Select dropdown styled with custom focus rings and category organization.
+81. **1-Click Copy Diagnostic Events**: Dedicated copy button in Events tab to export structured event streams.
+82. **Inline Clear Filter Icon in Diagnostics**: Instant `X` clear button inside search input in diagnostic panel.
+83. **Port Range Validation Guidance**: Real-time schema feedback when entering invalid port numbers in YAML manifests.
+84. **RFC 1123 Container Name Linter Feedback**: Friendly error messages for invalid uppercase container names.
+85. **Accessible Legend Toggle**: Clear ARIA expanded indicators and keyboard Escape dismissal for canvas legend.
+86. **Formatted Timestamp Event Table**: High-contrast badges and clear typography in diagnostic event rows.
+87. **Replica Bounds Enforcement**: Immediate editor validation warning when replicas are negative.
+88. **Copy Confirmation Feedback on Events**: Animated checkmark and green confirmation on copying events.
+89. **Secret Key Name Linter Badges**: Clear error markers for invalid ConfigMap or Secret data keys.
+90. **Refined Diagnostic Log Terminal Monospace Styling**: Crisp line wrapping, component color tags, and level badges.

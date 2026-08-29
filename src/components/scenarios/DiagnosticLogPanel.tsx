@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Terminal, ListFilter, Activity, Search, Copy, Check } from 'lucide-react';
+import { Terminal, ListFilter, Activity, Search, Copy, Check, X } from 'lucide-react';
 import { useAppStore } from '../../store/index.ts';
 import styles from './DiagnosticLogPanel.module.css';
 
@@ -8,6 +8,7 @@ export const DiagnosticLogPanel: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'events' | 'logs' | 'conditions'>('events');
   const [filterQuery, setFilterQuery] = useState('');
   const [copiedAll, setCopiedAll] = useState(false);
+  const [copiedEvents, setCopiedEvents] = useState(false);
 
   const failureDetails = activeScenario?.failureDetails;
   const isFailed = scenarioState === 'failed' || scenarioState === 'fixing';
@@ -54,6 +55,15 @@ export const DiagnosticLogPanel: React.FC = () => {
     navigator.clipboard.writeText(text);
     setCopiedAll(true);
     setTimeout(() => setCopiedAll(false), 2000);
+  };
+
+  const handleCopyEvents = () => {
+    const text = failureDetails.events
+      .map((e) => `[${e.type}] [${e.reason}] [${e.from}] (Age: ${e.age}) ${e.message}`)
+      .join('\n');
+    navigator.clipboard.writeText(text);
+    setCopiedEvents(true);
+    setTimeout(() => setCopiedEvents(false), 2000);
   };
 
   const isSchedulingFailed = isFailed && (
@@ -112,7 +122,39 @@ export const DiagnosticLogPanel: React.FC = () => {
             onChange={(e) => setFilterQuery(e.target.value)}
             data-testid="diag-filter-input"
           />
+          {filterQuery && (
+            <button
+              type="button"
+              onClick={() => setFilterQuery('')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#94a3b8',
+                cursor: 'pointer',
+                padding: '0 4px',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+              aria-label="Clear diagnostic filter"
+              data-testid="clear-diag-search-icon"
+            >
+              <X size={12} />
+            </button>
+          )}
         </div>
+
+        {activeTab === 'events' && failureDetails.events.length > 0 && (
+          <button
+            type="button"
+            className={styles.copyBtn}
+            onClick={handleCopyEvents}
+            title="Copy diagnostic events to clipboard"
+            data-testid="copy-all-events-btn"
+          >
+            {copiedEvents ? <Check size={12} /> : <Copy size={12} />}
+            <span>{copiedEvents ? 'Copied' : 'Copy Events'}</span>
+          </button>
+        )}
 
         {activeTab === 'logs' && failureDetails.logs.length > 0 && (
           <button

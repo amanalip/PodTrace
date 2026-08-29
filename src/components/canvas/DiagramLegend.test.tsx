@@ -27,7 +27,17 @@ describe('DiagramLegend', () => {
     expect(screen.getByText('Zone Boundaries')).toBeInTheDocument();
 
     const closeBtn = screen.getByRole('button', { name: /close diagram legend/i });
+    expect(closeBtn).toHaveAttribute('aria-expanded', 'true');
     fireEvent.click(closeBtn);
+    expect(useAppStore.getState().isLegendOpen).toBe(false);
+  });
+
+  it('closes legend when Escape key is pressed', () => {
+    useAppStore.setState({ isLegendOpen: true });
+    render(<DiagramLegend />);
+
+    expect(screen.getByText('Node Status')).toBeInTheDocument();
+    fireEvent.keyDown(window, { key: 'Escape' });
     expect(useAppStore.getState().isLegendOpen).toBe(false);
   });
 });

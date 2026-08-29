@@ -112,6 +112,12 @@ export function validateResource(doc: unknown, lineOffset = 0): ValidationError[
               field: `spec.containers[${idx}].name`,
               message: `Container #${idx + 1} is missing a name`,
             });
+          } else if (typeof container.name === 'string' && !/^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/.test(container.name)) {
+            errors.push({
+              line: lineOffset + 1,
+              field: `spec.containers[${idx}].name`,
+              message: `Container name "${container.name}" is invalid: must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character`,
+            });
           }
         });
       }
@@ -128,6 +134,13 @@ export function validateResource(doc: unknown, lineOffset = 0): ValidationError[
           message: `${kind} requires a spec block`,
         });
       } else {
+        if (spec.replicas !== undefined && (typeof spec.replicas !== 'number' || spec.replicas < 0 || !Number.isInteger(spec.replicas))) {
+          errors.push({
+            line: lineOffset + 1,
+            field: 'spec.replicas',
+            message: 'Replicas must be a non-negative integer',
+          });
+        }
         const template = spec.template as Record<string, unknown> | undefined;
         const podSpec = template?.spec as Record<string, unknown> | undefined;
         if (!podSpec || !Array.isArray(podSpec.containers) || podSpec.containers.length === 0) {
@@ -161,6 +174,39 @@ export function validateResource(doc: unknown, lineOffset = 0): ValidationError[
           line: lineOffset + 1,
           field: 'spec.ports',
           message: 'Service requires spec.ports to be defined with at least one port',
+        });
+      } else {
+        spec.ports.forEach((p, idx) => {
+          if (typeof p === 'object' && p !== null) {
+            const portObj = p as Record<string, unknown>;
+            if (portObj.port !== undefined) {
+              const portNum = Number(portObj.port);
+              if (isNaN(portNum) || !Number.isInteger(portNum) || portNum < 1 || portNum > 65535) {
+                errors.push({
+                  line: lineOffset + 1,
+                  field: `spec.ports[${idx}].port`,
+                  message: `Service port must be an integer between 1 and 65535, received "${portObj.port}"`,
+                });
+              }
+            }
+          }
+        });
+      }
+      break;
+    }
+
+    case 'ConfigMap':
+    case 'Secret': {
+      const data = res.data as Record<string, unknown> | undefined;
+      if (data && typeof data === 'object') {
+        Object.keys(data).forEach((key) => {
+          if (!key.trim() || !/^[a-zA-Z0-9_.-]+$/.test(key)) {
+            errors.push({
+              line: lineOffset + 1,
+              field: `data.${key}`,
+              message: `Invalid key name "${key}" in ${kind} data: keys must consist of alphanumeric characters, '-', '_', or '.'`,
+            });
+          }
         });
       }
       break;

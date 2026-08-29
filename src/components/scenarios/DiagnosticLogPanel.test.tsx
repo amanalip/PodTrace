@@ -26,7 +26,7 @@ describe('DiagnosticLogPanel', () => {
 
     render(<DiagnosticLogPanel />);
 
-    expect(screen.getByText(/Events/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /events \(/i })).toBeInTheDocument();
     expect(screen.getByTestId('diag-filter-input')).toBeInTheDocument();
 
     const input = screen.getByTestId('diag-filter-input');
@@ -93,6 +93,33 @@ describe('DiagnosticLogPanel', () => {
     expect(clearBtn).toBeInTheDocument();
 
     fireEvent.click(clearBtn);
+    expect(input).toHaveValue('');
+  });
+
+  it('allows copying all diagnostic events and clears with search icon', () => {
+    const scenario = SCENARIO_CATALOG[0];
+    useAppStore.setState({
+      activeScenario: scenario,
+      scenarioState: 'failed',
+    });
+
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: vi.fn().mockResolvedValue(undefined),
+      },
+    });
+
+    render(<DiagnosticLogPanel />);
+
+    const copyEventsBtn = screen.getByTestId('copy-all-events-btn');
+    fireEvent.click(copyEventsBtn);
+    expect(navigator.clipboard.writeText).toHaveBeenCalled();
+
+    const input = screen.getByTestId('diag-filter-input');
+    fireEvent.change(input, { target: { value: 'test-filter' } });
+
+    const clearIcon = screen.getByTestId('clear-diag-search-icon');
+    fireEvent.click(clearIcon);
     expect(input).toHaveValue('');
   });
 });

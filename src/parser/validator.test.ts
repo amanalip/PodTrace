@@ -58,4 +58,40 @@ describe('validator', () => {
     const errors = validateResource(doc);
     expect(errors.some((e) => e.message.includes('Service requires spec.ports'))).toBe(true);
   });
+
+  it('detects Service port outside 1-65535 range', () => {
+    const doc = {
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: { name: 'svc' },
+      spec: { ports: [{ port: 70000 }] },
+    };
+    const errors = validateResource(doc);
+    expect(errors.some((e) => e.message.includes('integer between 1 and 65535'))).toBe(true);
+  });
+
+  it('detects Deployment with negative replicas', () => {
+    const doc = {
+      apiVersion: 'apps/v1',
+      kind: 'Deployment',
+      metadata: { name: 'deploy' },
+      spec: {
+        replicas: -2,
+        template: { spec: { containers: [{ name: 'app' }] } },
+      },
+    };
+    const errors = validateResource(doc);
+    expect(errors.some((e) => e.message.includes('non-negative integer'))).toBe(true);
+  });
+
+  it('detects container name with uppercase or invalid symbols', () => {
+    const doc = {
+      apiVersion: 'v1',
+      kind: 'Pod',
+      metadata: { name: 'mypod' },
+      spec: { containers: [{ name: 'MyContainer_App' }] },
+    };
+    const errors = validateResource(doc);
+    expect(errors.some((e) => e.message.includes('Container name "MyContainer_App" is invalid'))).toBe(true);
+  });
 });
