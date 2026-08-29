@@ -64,4 +64,23 @@ describe('ComponentInspector', () => {
 
     expect(useAppStore.getState().selectedNodeId).toBeNull();
   });
+
+  it('renders fallback inspection metadata for custom or unmapped nodes', () => {
+    useAppStore.setState({
+      selectedNodeId: 'node-custom-foo',
+      nodes: [
+        {
+          id: 'node-custom-foo',
+          type: 'customResourceNode',
+          position: { x: 0, y: 0 },
+          data: { label: 'my-custom-operator' },
+        },
+      ],
+    });
+
+    render(<ComponentInspector />);
+    expect(screen.getByTestId('component-inspector')).toBeInTheDocument();
+    expect(screen.getByText('my-custom-operator')).toBeInTheDocument();
+    expect(screen.getByText(/Cluster Architecture Component/i)).toBeInTheDocument();
+  });
 });

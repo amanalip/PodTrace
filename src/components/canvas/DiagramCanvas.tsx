@@ -79,7 +79,12 @@ export const DiagramCanvas: React.FC = () => {
   const currentEdges = storeEdges.length > 0 ? storeEdges : STATIC_INITIAL_EDGES;
 
   return (
-    <div className={styles.canvasWrapper} data-testid="diagram-canvas-container">
+    <div
+      className={styles.canvasWrapper}
+      role="region"
+      aria-label="Kubernetes Architecture Flow Diagram"
+      data-testid="diagram-canvas-container"
+    >
       <ReactFlow
         nodes={currentNodes}
         edges={currentEdges}

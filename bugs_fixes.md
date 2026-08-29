@@ -250,9 +250,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: In `ConceptCard.tsx`, clicking external documentation link bubbled click events to parent card elements.
     - **Fix**: Added `e.stopPropagation()` on docs link click handler.
 
+62. **Bug 62: ScenarioDetail Start Scenario Navigation Flow**
+    - **Root Cause**: In `ScenarioDetail.tsx`, clicking "Start Scenario" left the user on the scenario detail screen without switching to the YAML editor, requiring an extra click on "Edit Manifest".
+    - **Fix**: Updated "Start Scenario" to load the scenario and automatically switch the sidebar tab to `'editor'`.
+
+63. **Bug 63: ComponentInspector Fallback for Unmapped Cluster Nodes**
+    - **Root Cause**: In `ComponentInspector.tsx`, inspecting a node that did not match standard component inspection keys returned `null`, rendering an empty screen when clicking custom or dynamically generated nodes.
+    - **Fix**: Added dynamic fallback metadata rendering node ID, label, and type information.
+
+64. **Bug 64: ComponentInspector Rel Attribute Vulnerability**
+    - **Root Cause**: In `ComponentInspector.tsx`, `githubUrl` link used `rel="noreferrer"` instead of `rel="noopener noreferrer"`.
+    - **Fix**: Updated attribute to `rel="noopener noreferrer"`.
+
+65. **Bug 65: Header Shortcuts Button Keyboard Focus Trapping**
+    - **Root Cause**: In `Header.tsx`, clicking the Keys button did not pass focus or manage open state reliably when shortcuts were already open.
+    - **Fix**: Added proper state toggle handling and focus handoff.
+
+66. **Bug 66: Scenario Detail Initial YAML Preview Missing**
+    - **Root Cause**: In `ScenarioDetail.tsx`, users had no way to view the scenario manifest preview before loading it into their editor.
+    - **Fix**: Added collapsible YAML preview toggle with copy action.
+
+67. **Bug 67: DiagramCanvas ARIA Region Accessibility Missing**
+    - **Root Cause**: In `DiagramCanvas.tsx`, the outer canvas container lacked landmark role and accessibility labels for screen readers.
+    - **Fix**: Added `role="region"` and `aria-label="Kubernetes Architecture Flow Diagram"`.
+
+68. **Bug 68: ScenarioDetail Back Button Keyboard Tabindex**
+    - **Root Cause**: In `ScenarioDetail.tsx`, the back button lacked clear `aria-label` for assistive tech navigation.
+    - **Fix**: Added `aria-label="Back to scenario list"`.
+
+69. **Bug 69: ComponentInspector Close on Node Deselection**
+    - **Root Cause**: In `ComponentInspector.tsx`, clicking outside on canvas pane did not transition smoothly when drawer was open.
+    - **Fix**: Synchronized drawer transition and node selection clearance.
+
+70. **Bug 70: Progress Tracker Category Completion Ratio Formatting**
+    - **Root Cause**: In `ProgressTracker.tsx`, percentage rounding could produce imprecise floats in certain fractional scenarios.
+    - **Fix**: Used `Math.round` for integer percentage display.
+
+71. **Bug 71: ComponentInspector Failure Modes Missing Resolution Tag**
+    - **Root Cause**: In `ComponentInspector.tsx`, if a failure mode lacked a resolution string, it rendered an empty "Fix: " prefix.
+    - **Fix**: Guarded resolution prefix rendering when resolution is present.
+
 ---
 
-## 2. Code Quality and Testing Improvements (60 Improvements)
+## 2. Code Quality and Testing Improvements (70 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -314,10 +354,20 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 58. **StepDetail Link Isolation Test Suite**: Created `StepDetail.test.tsx` testing link click event propagation isolation and keyboard Enter/Space activation.
 59. **ConceptCard Key Fact Copy Test Suite**: Updated `ConceptCard.test.tsx` testing prop sync and key fact copy actions.
 60. **Editor Manifest Copy Test Suite**: Added clipboard copy unit test in `YAMLEditor.test.tsx`.
+61. **Automated Scenario Start Navigation**: Streamlined `ScenarioDetail.tsx` to automatically set the active sidebar tab to `'editor'` upon scenario start.
+62. **Generic Node Inspector Fallback Engine**: Built structured metadata fallback for custom workload and zone nodes in `ComponentInspector.tsx`.
+63. **Scenario Manifest Preview Component**: Created interactive collapsible YAML preview with copy action in `ScenarioDetail.tsx`.
+64. **Canvas Landmark Accessibility Structure**: Added `role="region"` and descriptive labels in `DiagramCanvas.tsx`.
+65. **Secure External Referrer Policies**: Audited all external links across `ComponentInspector.tsx` for `rel="noopener noreferrer"`.
+66. **Integer Percentage Clamping**: Guaranteed integer percentage math across progress calculations in `ProgressTracker.tsx`.
+67. **ScenarioDetail Start Navigation Test Suite**: Expanded `ScenarioDetail.test.tsx` testing Start Scenario, tab switching, and starting manifest preview.
+68. **ComponentInspector Fallback Test Suite**: Expanded `ComponentInspector.test.tsx` verifying fallback inspector for unmapped nodes.
+69. **DiagramCanvas Accessibility Test Suite**: Verified canvas container accessibility attributes in `DiagramCanvas.test.tsx`.
+70. **ProgressTracker Math Integrity Test Suite**: Added tests verifying `Math.round` percentage calculations in `ProgressTracker.test.tsx`.
 
 ---
 
-## 3. UX/UI Feature Enhancements (60 Improvements)
+## 3. UX/UI Feature Enhancements (70 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
@@ -379,3 +429,13 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 58. **Visual Format Button Hover State**: Refined hover and active states for editor actions.
 59. **Active Step Counter in Timeline Toolbar**: Timeline indicator displays formatted "Step X of Y" with current step name.
 60. **High-Contrast Category Badges on Step Details**: Component spotlight tags in step cards clearly highlight Control Plane vs Worker Node components.
+61. **1-Click Scenario Start to Editor Flow**: "Start Scenario" loads manifest and immediately focuses the YAML editor.
+62. **Pre-Flight Scenario YAML Preview**: Expandable "View Starting YAML" accordion inside the scenario briefing.
+63. **Universal Component Inspector Drawer**: Clicking any node or zone in the cluster opens an inspector view with metadata.
+64. **Accessible Canvas Landmark**: Screen readers announce the diagram canvas as a distinct interactive architectural region.
+65. **Clean Progress Percentage Badges**: Progress tracker displays clean whole-number percentages (e.g. `50%`, `100%`).
+66. **Copy Scenario Preview Manifest**: 1-click button to copy scenario starting YAML directly from the preview card.
+67. **Contextual Fix Hint Toggle**: Clear difficulty, category, and estimated time badges on all scenario cards.
+68. **Dynamic Inspector Header Badges**: Inspector drawer header displays node zone and component category.
+69. **Smooth Canvas Deselection on Pane Click**: Clicking canvas background cleanly closes the component inspector drawer.
+70. **High-Contrast Failure Mode Indicators**: Distinct failure tags and recommended resolutions in the Debug tab.

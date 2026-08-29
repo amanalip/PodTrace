@@ -39,4 +39,10 @@ describe('DiagramCanvas', () => {
     expect(screen.getByText('Control Plane')).toBeInTheDocument();
     expect(screen.getByText('Worker Node 1')).toBeInTheDocument();
   });
+
+  it('has accessible region role and aria label', () => {
+    render(<DiagramCanvas />);
+    const region = screen.getByRole('region', { name: /kubernetes architecture flow diagram/i });
+    expect(region).toBeInTheDocument();
+  });
 });

@@ -25,4 +25,14 @@ describe('ProgressTracker', () => {
     expect(screen.getByText(/3\/15 \(20%\)/i)).toBeInTheDocument();
     expect(screen.getByTestId('progress-bar-fill')).toHaveStyle({ width: '20%' });
   });
+
+  it('correctly rounds percentage integers for arbitrary completed counts', () => {
+    useAppStore.setState({
+      completedScenarioIds: ['crashloopbackoff'],
+    });
+
+    render(<ProgressTracker />);
+    expect(screen.getByText(/1\/15 \(7%\)/i)).toBeInTheDocument();
+    expect(screen.getByTestId('progress-bar-fill')).toHaveStyle({ width: '7%' });
+  });
 });

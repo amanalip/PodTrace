@@ -15,11 +15,25 @@ export const ComponentInspector: React.FC = () => {
   if (!selectedNode) return null;
 
   // Resolve component inspection metadata
+  const nodeLabel = ((selectedNode.data as Record<string, unknown> | undefined)?.label as string) || selectedNode.id;
   const info =
     getComponentInspectionData(selectedNode.type || '') ||
-    getComponentInspectionData(selectedNode.id);
-
-  if (!info) return null;
+    getComponentInspectionData(selectedNode.id) || {
+      id: selectedNode.id,
+      name: nodeLabel,
+      role: 'Cluster Architecture Component',
+      zone: selectedNode.type?.includes('Zone') ? 'Logical Boundary' : 'Cluster Topology',
+      binary: selectedNode.type || 'Kubernetes Resource',
+      responsibilities: [
+        `Configured element with node ID "${selectedNode.id}".`,
+        'Maintains cluster topological state and lifecycle synchronization.',
+      ],
+      configFlags: [],
+      metrics: [],
+      failureModes: [],
+      debugCommands: [`kubectl get ${selectedNode.id}`, `kubectl describe ${selectedNode.id}`],
+      githubUrl: '',
+    };
 
   const details = (selectedNode.data as Record<string, unknown> | undefined)?.details as
     | { containers?: Array<{ name: string; image?: string }> }
@@ -167,7 +181,7 @@ export const ComponentInspector: React.FC = () => {
                   {info.failureModes.map((fm, idx) => (
                     <div key={idx} className={styles.flagCard}>
                       <span style={{ color: '#ef4444', fontWeight: 600 }}>{fm.issue}</span>
-                      <span className={styles.flagDesc}>Fix: {fm.resolution}</span>
+                      {fm.resolution && <span className={styles.flagDesc}>Fix: {fm.resolution}</span>}
                     </div>
                   ))}
                 </div>
@@ -206,7 +220,7 @@ export const ComponentInspector: React.FC = () => {
           <a
             href={info.githubUrl}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className={styles.githubLink}
           >
             <span>Source Code on GitHub</span>
