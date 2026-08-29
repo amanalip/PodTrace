@@ -62,4 +62,16 @@ describe('ScenarioList', () => {
 
     expect(searchInput).toHaveValue('');
   });
+
+  it('activates scenario card via keyboard Enter key and checks aria-pressed on categories', () => {
+    render(<ScenarioList />);
+
+    const allPill = screen.getByRole('button', { name: /^all/i });
+    expect(allPill).toHaveAttribute('aria-pressed', 'true');
+
+    const card = screen.getByTestId('scenario-card-crashloopbackoff');
+    fireEvent.keyDown(card, { key: 'Enter' });
+
+    expect(screen.getByTestId('scenario-detail')).toBeInTheDocument();
+  });
 });

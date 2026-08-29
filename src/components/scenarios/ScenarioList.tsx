@@ -55,6 +55,7 @@ export const ScenarioList: React.FC = () => {
           type="text"
           className={styles.searchInput}
           placeholder="Search scenarios..."
+          aria-label="Search scenarios"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -93,6 +94,7 @@ export const ScenarioList: React.FC = () => {
               className={`${styles.categoryPill} ${
                 selectedCategory === cat.value ? styles.categoryPill_active : ''
               }`}
+              aria-pressed={selectedCategory === cat.value}
               onClick={() => {
                 setSelectedCategory(cat.value);
                 setSelectedScenario(null);
@@ -157,8 +159,17 @@ export const ScenarioList: React.FC = () => {
             return (
               <div
                 key={scenario.id}
+                role="button"
+                tabIndex={0}
+                aria-label={`View scenario: ${scenario.title}`}
                 className={`${styles.scenarioCard} ${isActive ? styles.scenarioCard_active : ''}`}
                 onClick={() => setSelectedScenario(scenario)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedScenario(scenario);
+                  }
+                }}
                 data-testid={`scenario-card-${scenario.id}`}
               >
                 <div className={styles.cardHeader}>

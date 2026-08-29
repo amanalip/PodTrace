@@ -65,6 +65,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
       <div
         className={styles.modal}
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Export and Share Diagram"
         data-testid="export-modal"
       >
         <div className={styles.header}>

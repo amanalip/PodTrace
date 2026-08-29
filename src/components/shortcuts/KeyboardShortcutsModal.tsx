@@ -1,5 +1,5 @@
-import React from 'react';
-import { X, Keyboard } from 'lucide-react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { X, Keyboard, Search } from 'lucide-react';
 import { useAppStore } from '../../store/index.ts';
 import styles from './KeyboardShortcutsModal.module.css';
 
@@ -17,13 +17,33 @@ const SHORTCUTS = [
 
 export const KeyboardShortcutsModal: React.FC = () => {
   const { isShortcutsOpen, setIsShortcutsOpen } = useAppStore();
-  const closeBtnRef = React.useRef<HTMLButtonElement>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isShortcutsOpen && closeBtnRef.current) {
       closeBtnRef.current.focus();
     }
   }, [isShortcutsOpen]);
+
+  useEffect(() => {
+    if (!isShortcutsOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsShortcutsOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isShortcutsOpen, setIsShortcutsOpen]);
+
+  const filteredShortcuts = useMemo(() => {
+    if (!searchQuery.trim()) return SHORTCUTS;
+    const q = searchQuery.toLowerCase();
+    return SHORTCUTS.filter(
+      (s) => s.key.toLowerCase().includes(q) || s.description.toLowerCase().includes(q),
+    );
+  }, [searchQuery]);
 
   if (!isShortcutsOpen) return null;
 
@@ -57,13 +77,69 @@ export const KeyboardShortcutsModal: React.FC = () => {
           </button>
         </div>
 
+        <div style={{ padding: '8px 16px 0 16px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              background: 'var(--bg-tertiary, #1e293b)',
+              border: '1px solid var(--border-color, #334155)',
+              borderRadius: 6,
+              padding: '4px 8px',
+            }}
+          >
+            <Search size={12} color="#64748b" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Filter shortcuts..."
+              aria-label="Filter keyboard shortcuts"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#e2e8f0',
+                fontSize: 12,
+                outline: 'none',
+                width: '100%',
+              }}
+              data-testid="shortcuts-filter-input"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#94a3b8',
+                  cursor: 'pointer',
+                  padding: 0,
+                  display: 'flex',
+                }}
+                aria-label="Clear shortcut filter"
+                data-testid="clear-shortcuts-filter-btn"
+              >
+                <X size={12} />
+              </button>
+            )}
+          </div>
+        </div>
+
         <div className={styles.body}>
-          {SHORTCUTS.map((s, idx) => (
-            <div key={idx} className={styles.shortcutRow} aria-label={`${s.key}: ${s.description}`}>
-              <span className={styles.shortcutLabel}>{s.description}</span>
-              <kbd className={styles.keyCap}>{s.key}</kbd>
+          {filteredShortcuts.length === 0 ? (
+            <div style={{ textAlign: 'center', color: '#64748b', padding: '16px 0', fontSize: 12 }}>
+              No shortcuts found matching "{searchQuery}".
             </div>
-          ))}
+          ) : (
+            filteredShortcuts.map((s, idx) => (
+              <div key={idx} className={styles.shortcutRow} aria-label={`${s.key}: ${s.description}`}>
+                <span className={styles.shortcutLabel}>{s.description}</span>
+                <kbd className={styles.keyCap}>{s.key}</kbd>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

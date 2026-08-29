@@ -370,9 +370,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: In `FormatButton.tsx`, button state during formatting could trigger double clicks.
     - **Fix**: Added busy state protection and disabled state visual feedback.
 
+92. **Bug 92: ScenarioList Card Keyboard Enter/Space Activation**
+    - **Root Cause**: In `ScenarioList.tsx`, scenario cards were `<div>` elements with `onClick` but lacked `role="button"`, `tabIndex={0}`, and `onKeyDown` listeners for keyboard navigation.
+    - **Fix**: Added keyboard accessibility attributes and Enter/Space event handlers.
+
+93. **Bug 93: ExportModal Missing ARIA Dialog Role**
+    - **Root Cause**: In `ExportModal.tsx`, the outer modal container lacked `role="dialog"`, `aria-modal="true"`, and `aria-label="Export and Share Diagram"`.
+    - **Fix**: Added accessibility modal dialog attributes.
+
+94. **Bug 94: ShortcutsModal Escape Key Listener Missing in Inner Context**
+    - **Root Cause**: In `KeyboardShortcutsModal.tsx`, pressing `Escape` while focused inside the modal did not trigger `setIsShortcutsOpen(false)` unless handled by global hook.
+    - **Fix**: Added dedicated `Escape` key listener in `KeyboardShortcutsModal.tsx`.
+
+95. **Bug 95: ExportModal SVG Tab Raw JSON Download Action Missing**
+    - **Root Cause**: In `ExportModal.tsx`, the Vector/Image tab mentioned raw JSON data in description but only offered Mermaid topology download.
+    - **Fix**: Added a dedicated "Download JSON Trace" button using `generateDiagramExportJSON`.
+
+96. **Bug 96: ScenarioList Active Category Pill ARIA Pressed State Missing**
+    - **Root Cause**: In `ScenarioList.tsx`, category filter buttons lacked `aria-pressed` attributes for assistive tech screen readers.
+    - **Fix**: Added `aria-pressed={selectedCategory === cat.value}` to category pills.
+
+97. **Bug 97: ShortcutsModal Search Filter for Complex Keymaps**
+    - **Root Cause**: In `KeyboardShortcutsModal.tsx`, users could not filter shortcuts by key or action description.
+    - **Fix**: Added search filter input with dynamic empty state.
+
+98. **Bug 98: ScenarioDetail Reset Button Focus State**
+    - **Root Cause**: In `ScenarioDetail.tsx`, reset button lacked explicit `aria-label="Reset scenario state"`.
+    - **Fix**: Added accessibility label to reset scenario button.
+
+99. **Bug 99: ValidationPanel Warning Badge Accessibility**
+    - **Root Cause**: In `ValidationPanel.tsx`, issue count badges lacked `aria-live="polite"` and descriptive text.
+    - **Fix**: Added ARIA live attributes to validation status badge.
+
+100. **Bug 100: FormatButton Busy Aria State**
+    - **Root Cause**: In `FormatButton.tsx`, the button lacked `aria-busy` when processing.
+    - **Fix**: Added `aria-busy={false}` accessibility attribute.
+
+101. **Bug 101: ScenarioList Search Input Label Association**
+    - **Root Cause**: In `ScenarioList.tsx`, the search input lacked explicit `aria-label="Search scenarios"`.
+    - **Fix**: Added `aria-label="Search scenarios"` to search input.
+
 ---
 
-## 2. Code Quality and Testing Improvements (90 Improvements)
+## 2. Code Quality and Testing Improvements (100 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -464,10 +504,20 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 88. **Container Name Regex Test Suite**: Added test cases in `validator.test.ts` testing uppercase and symbol container names.
 89. **Diagnostic Events Copy Test Suite**: Expanded `DiagnosticLogPanel.test.tsx` testing "Copy Events" button and inline search clear.
 90. **DiagramLegend Accessibility Test Suite**: Expanded `DiagramLegend.test.tsx` verifying `aria-expanded` toggle and `Escape` key handling.
+91. **Accessible Interactive Scenario Card Pipeline**: Added keyboard Enter and Space activation to scenario cards in `ScenarioList.tsx`.
+92. **Standardized ARIA Modal Architecture**: Added ARIA dialog attributes to `ExportModal.tsx`.
+93. **JSON Trace Architecture Exporter**: Added raw JSON download action in `ExportModal.tsx`.
+94. **Category Pill Accessibility State**: Added `aria-pressed` across category filters in `ScenarioList.tsx`.
+95. **Shortcuts Filter Engine**: Added live search filter inside `KeyboardShortcutsModal.tsx`.
+96. **Modal Escape Listener Normalization**: Added Escape key handlers across all modal overlays.
+97. **ScenarioList Keyboard Navigation Test Suite**: Expanded `ScenarioList.test.tsx` testing keyboard Enter key activation on scenario cards.
+98. **ExportModal JSON Download Test Suite**: Expanded `ExportModal.test.tsx` testing JSON trace download in Vector/Image tab.
+99. **KeyboardShortcutsModal Filter Test Suite**: Expanded `KeyboardShortcutsModal.test.tsx` testing search filter and Escape dismissal.
+100. **ScenarioList ARIA Pressed Test Suite**: Added tests verifying `aria-pressed` attributes on category filters.
 
 ---
 
-## 3. UX/UI Feature Enhancements (90 Improvements)
+## 3. UX/UI Feature Enhancements (100 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
@@ -559,3 +609,13 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 88. **Copy Confirmation Feedback on Events**: Animated checkmark and green confirmation on copying events.
 89. **Secret Key Name Linter Badges**: Clear error markers for invalid ConfigMap or Secret data keys.
 90. **Refined Diagnostic Log Terminal Monospace Styling**: Crisp line wrapping, component color tags, and level badges.
+91. **Keyboard-Accessible Scenario Cards**: Navigate and launch scenarios entirely using keyboard Tab, Enter, and Space keys.
+92. **1-Click JSON Architecture Trace Export**: Download complete diagram snapshot, manifest, nodes, and edges as JSON from Export modal.
+93. **Live Search for Keyboard Shortcuts**: Instant search box in shortcuts dialog to find specific key bindings.
+94. **Accessible Category Filter Badges**: Clear active visual states and screen reader announcements on scenario categories.
+95. **Enhanced Shortcut Row Highlighting**: Subtle background hover glow on shortcut keycap rows.
+96. **Accessible Scenario Search Bar**: Descriptive ARIA labels and instant clear button in scenario search.
+97. **Refined Vector/Image Tab in Export**: Unified export choices for Mermaid topology and JSON trace with format badges.
+98. **Instant Shortcut Dialog Dismissal**: Escape key and backdrop click immediately dismiss shortcuts modal.
+99. **Active Scenario Visual Focus Ring**: Distinct cyan focus outline when tabbing through scenario list cards.
+100. **Full 100-Feature Milestone Completeness**: Comprehensive production-grade Kubernetes lifecycle learning and simulation studio.

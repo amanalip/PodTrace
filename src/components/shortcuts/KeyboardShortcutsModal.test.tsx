@@ -35,4 +35,22 @@ describe('KeyboardShortcutsModal', () => {
     fireEvent.click(overlay);
     expect(useAppStore.getState().isShortcutsOpen).toBe(false);
   });
+
+  it('filters shortcuts by query and closes on Escape key', () => {
+    useAppStore.setState({ isShortcutsOpen: true });
+    render(<KeyboardShortcutsModal />);
+
+    const filterInput = screen.getByTestId('shortcuts-filter-input');
+    fireEvent.change(filterInput, { target: { value: 'Speed' } });
+
+    expect(screen.getByText(/Decrease \/ Increase playback speed/i)).toBeInTheDocument();
+    expect(screen.queryByText('Play / Pause lifecycle animation')).not.toBeInTheDocument();
+
+    const clearBtn = screen.getByTestId('clear-shortcuts-filter-btn');
+    fireEvent.click(clearBtn);
+    expect(screen.getByText('Play / Pause lifecycle animation')).toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(useAppStore.getState().isShortcutsOpen).toBe(false);
+  });
 });
