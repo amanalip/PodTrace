@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { ExplanationPanel } from './ExplanationPanel.tsx';
 import { useAppStore } from '../../store/index.ts';
 import { createPodLifecycleSteps } from '../../lifecycle/pod-lifecycle.ts';
@@ -53,5 +53,20 @@ describe('ExplanationPanel', () => {
     const docsLinks = screen.getAllByRole('link', { name: /docs/i });
     expect(docsLinks.length).toBeGreaterThan(0);
     expect(docsLinks[0]).toHaveAttribute('href', expect.stringContaining('kubernetes.io'));
+  });
+
+  it('jumps to step index when clicking a step card', () => {
+    const steps = createPodLifecycleSteps('web-pod');
+    useAppStore.setState({
+      steps,
+      currentStepIndex: 0,
+    });
+
+    render(<ExplanationPanel />);
+
+    const step5Card = screen.getByTestId('step-detail-5');
+    fireEvent.click(step5Card);
+
+    expect(useAppStore.getState().currentStepIndex).toBe(4);
   });
 });

@@ -5,7 +5,7 @@ import { StepDetail } from './StepDetail.tsx';
 import styles from './ExplanationPanel.module.css';
 
 export const ExplanationPanel: React.FC = () => {
-  const { steps, currentStepIndex } = useAppStore();
+  const { steps, currentStepIndex, setCurrentStepIndex } = useAppStore();
   const activeStepRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,6 +46,7 @@ export const ExplanationPanel: React.FC = () => {
             step={step}
             status={status}
             stepRef={status === 'current' ? activeStepRef : undefined}
+            onClick={() => setCurrentStepIndex(idx)}
           />
         );
       })}

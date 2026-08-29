@@ -4,7 +4,13 @@ import { useAppStore } from '../../store/index.ts';
 import styles from './FailureOverlay.module.css';
 
 export const FailureOverlay: React.FC = () => {
-  const { activeScenario, scenarioState, scenarioFeedback, resolveScenario } = useAppStore();
+  const {
+    activeScenario,
+    scenarioState,
+    scenarioFeedback,
+    resolveScenario,
+    setScenarioState,
+  } = useAppStore();
   const [showHint, setShowHint] = useState(false);
 
   if (!activeScenario || scenarioState === 'idle') {
@@ -24,6 +30,23 @@ export const FailureOverlay: React.FC = () => {
             <CheckCircle2 size={16} />
             <span>Challenge Resolved</span>
           </div>
+          {scenarioState === 'completed' && (
+            <button
+              type="button"
+              onClick={() => setScenarioState('idle')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#94a3b8',
+                cursor: 'pointer',
+                fontSize: 12,
+              }}
+              aria-label="Dismiss completion banner"
+              data-testid="dismiss-overlay-x"
+            >
+              Dismiss
+            </button>
+          )}
         </div>
 
         <div className={styles.title}>{activeScenario.title}</div>
@@ -31,7 +54,7 @@ export const FailureOverlay: React.FC = () => {
           {scenarioFeedback || activeScenario.successMessage}
         </p>
 
-        {scenarioState !== 'completed' && (
+        {scenarioState !== 'completed' ? (
           <button
             type="button"
             className={styles.completeBtn}
@@ -40,6 +63,15 @@ export const FailureOverlay: React.FC = () => {
           >
             <CheckCircle2 size={14} />
             <span>Complete Challenge</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            className={styles.completeBtn}
+            onClick={() => setScenarioState('idle')}
+            data-testid="dismiss-success-overlay-btn"
+          >
+            <span>Close Banner & View Diagram</span>
           </button>
         )}
       </div>

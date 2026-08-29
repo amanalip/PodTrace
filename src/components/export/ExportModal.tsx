@@ -12,12 +12,23 @@ import styles from './ExportModal.module.css';
 interface ExportModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialTab?: 'link' | 'mermaid' | 'svg';
 }
 
-export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose }) => {
+export const ExportModal: React.FC<ExportModalProps> = ({
+  isOpen,
+  onClose,
+  initialTab = 'link',
+}) => {
   const { yaml, currentStepIndex, theme, steps, nodes, edges } = useAppStore();
-  const [activeTab, setActiveTab] = useState<'link' | 'mermaid' | 'svg'>('link');
+  const [activeTab, setActiveTab] = useState<'link' | 'mermaid' | 'svg'>(initialTab);
   const [copied, setCopied] = useState(false);
+
+  React.useEffect(() => {
+    if (isOpen && initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [isOpen, initialTab]);
 
   if (!isOpen) return null;
 

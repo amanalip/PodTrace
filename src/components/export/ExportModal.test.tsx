@@ -52,4 +52,9 @@ describe('ExportModal', () => {
     expect(screen.getByTestId('download-topology-btn')).toBeInTheDocument();
     expect(screen.getByTestId('download-lifecycle-btn')).toBeInTheDocument();
   });
+
+  it('honors initialTab prop when specified as svg', () => {
+    render(<ExportModal isOpen={true} onClose={vi.fn()} initialTab="svg" />);
+    expect(screen.getByTestId('download-topology-btn')).toBeInTheDocument();
+  });
 });

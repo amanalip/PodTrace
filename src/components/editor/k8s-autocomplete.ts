@@ -96,9 +96,12 @@ export function getCompletionsForContext(
   let parentContext = '';
   for (let i = previousLines.length - 1; i >= 0; i--) {
     const prev = previousLines[i];
+    const prevTrimmed = prev.trim();
+    if (!prevTrimmed || prevTrimmed.startsWith('#')) {
+      continue;
+    }
     const prevIndent = prev.search(/\S/);
     if (prevIndent !== -1 && prevIndent < indent) {
-      const prevTrimmed = prev.trim();
       if (prevTrimmed.startsWith('metadata:')) {
         parentContext = 'metadata';
         break;
@@ -147,9 +150,17 @@ export function k8sCompletionSource(context: CompletionContext): CompletionResul
 
   const options = getCompletionsForContext(lineText, actualIndent, previousLines);
 
+  const colonIndex = lineText.indexOf(':');
+  let fromPos = word ? word.from : context.pos;
+
+  if (colonIndex !== -1 && context.pos > line.from + colonIndex) {
+    const valueMatch = context.matchBefore(/[\w\-.:/]*/);
+    fromPos = valueMatch ? valueMatch.from : context.pos;
+  }
+
   return {
-    from: word ? word.from : context.pos,
+    from: fromPos,
     options,
-    validFor: /^[\w\-:]*$/,
+    validFor: /^[\w\-.:/]*$/,
   };
 }

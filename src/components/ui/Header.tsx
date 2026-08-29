@@ -9,7 +9,18 @@ import styles from './Header.module.css';
 export const Header: React.FC = () => {
   const { theme, toggleTheme, setIsShortcutsOpen } = useAppStore();
   const [isExportOpen, setIsExportOpen] = useState(false);
+  const [exportTab, setExportTab] = useState<'link' | 'mermaid' | 'svg'>('link');
   const [isQuizOpen, setIsQuizOpen] = useState(false);
+
+  const handleOpenShare = () => {
+    setExportTab('link');
+    setIsExportOpen(true);
+  };
+
+  const handleOpenExport = () => {
+    setExportTab('svg');
+    setIsExportOpen(true);
+  };
 
   return (
     <>
@@ -57,9 +68,10 @@ export const Header: React.FC = () => {
 
           <button
             className={styles.actionButton}
-            onClick={() => setIsExportOpen(true)}
+            onClick={handleOpenShare}
             aria-label="Share diagram"
             title="Share diagram"
+            data-testid="header-share-btn"
           >
             <Share2 size={14} />
             <span>Share</span>
@@ -67,9 +79,10 @@ export const Header: React.FC = () => {
 
           <button
             className={styles.actionButton}
-            onClick={() => setIsExportOpen(true)}
+            onClick={handleOpenExport}
             aria-label="Export diagram"
             title="Export diagram"
+            data-testid="header-export-btn"
           >
             <Download size={14} />
             <span>Export</span>
@@ -77,7 +90,11 @@ export const Header: React.FC = () => {
         </div>
       </header>
 
-      <ExportModal isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} />
+      <ExportModal
+        isOpen={isExportOpen}
+        onClose={() => setIsExportOpen(false)}
+        initialTab={exportTab}
+      />
       <QuizModal isOpen={isQuizOpen} onClose={() => setIsQuizOpen(false)} />
       <KeyboardShortcutsModal />
     </>

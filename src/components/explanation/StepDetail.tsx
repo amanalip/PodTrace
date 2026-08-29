@@ -7,12 +7,14 @@ export interface StepDetailProps {
   step: LifecycleStep;
   status: 'past' | 'current' | 'future';
   stepRef?: React.RefObject<HTMLDivElement | null>;
+  onClick?: () => void;
 }
 
 export const StepDetail: React.FC<StepDetailProps> = ({
   step,
   status,
   stepRef,
+  onClick,
 }) => {
   const cardClass =
     status === 'current'
@@ -21,10 +23,24 @@ export const StepDetail: React.FC<StepDetailProps> = ({
         ? styles.stepCard_past
         : styles.stepCard_future;
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.key === 'Enter' || e.key === ' ') && onClick) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <div
       ref={stepRef}
+      role="button"
+      tabIndex={0}
+      aria-current={status === 'current' ? 'step' : undefined}
+      aria-label={`Step ${step.stepNumber}: ${step.title}`}
       className={`${styles.stepCard} ${cardClass}`}
+      onClick={onClick}
+      onKeyDown={handleKeyDown}
+      style={{ cursor: onClick ? 'pointer' : 'default' }}
       data-testid={`step-detail-${step.stepNumber}`}
     >
       <div className={styles.cardHeader}>

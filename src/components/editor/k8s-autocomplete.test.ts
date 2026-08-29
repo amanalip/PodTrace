@@ -55,4 +55,24 @@ describe('k8s-autocomplete', () => {
     expect(completions.some((c) => c.label === 'replicas')).toBe(true);
     expect(completions.some((c) => c.label === 'containers')).toBe(true);
   });
+
+  it('ignores comments when scanning backward for parent blocks', () => {
+    const previousLines = [
+      'apiVersion: v1',
+      'kind: Pod',
+      'metadata:',
+      '  # This is a comment',
+      '  name: my-app',
+      '  # Another comment',
+    ];
+    const completions = getCompletionsForContext('  ', 2, previousLines);
+    expect(completions).toEqual(METADATA_KEYS);
+    expect(completions.some((c) => c.label === 'namespace')).toBe(true);
+  });
+
+  it('returns API versions when typing apiVersion:', () => {
+    const completions = getCompletionsForContext('apiVersion: ', 0, []);
+    expect(completions.some((c) => c.label === 'v1')).toBe(true);
+    expect(completions.some((c) => c.label === 'apps/v1')).toBe(true);
+  });
 });

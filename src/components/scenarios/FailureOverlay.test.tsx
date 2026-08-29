@@ -56,4 +56,24 @@ describe('FailureOverlay', () => {
       'Fix command arguments in the container specification.',
     );
   });
+
+  it('renders resolution state and allows completing and dismissing challenge', () => {
+    useAppStore.setState({
+      activeScenario: mockScenario,
+      activeScenarioId: mockScenario.id,
+      scenarioState: 'resolved',
+    });
+
+    render(<FailureOverlay />);
+    expect(screen.getByTestId('scenario-success-overlay')).toBeInTheDocument();
+
+    const completeBtn = screen.getByTestId('complete-scenario-btn');
+    fireEvent.click(completeBtn);
+
+    expect(useAppStore.getState().scenarioState).toBe('completed');
+    expect(screen.getByTestId('dismiss-success-overlay-btn')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('dismiss-success-overlay-btn'));
+    expect(useAppStore.getState().scenarioState).toBe('idle');
+  });
 });

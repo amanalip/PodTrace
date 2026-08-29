@@ -7,6 +7,8 @@ const SHORTCUTS = [
   { key: 'Space', description: 'Play / Pause lifecycle animation' },
   { key: 'ArrowRight', description: 'Step forward to next lifecycle event' },
   { key: 'ArrowLeft', description: 'Step backward to previous lifecycle event' },
+  { key: 'R', description: 'Reset animation to first step' },
+  { key: '[ / ]', description: 'Decrease / Increase playback speed' },
   { key: 'Home', description: 'Jump to first step' },
   { key: 'End', description: 'Jump to final step' },
   { key: 'Escape', description: 'Close active drawer, modal, or What-If simulation' },
@@ -15,6 +17,13 @@ const SHORTCUTS = [
 
 export const KeyboardShortcutsModal: React.FC = () => {
   const { isShortcutsOpen, setIsShortcutsOpen } = useAppStore();
+  const closeBtnRef = React.useRef<HTMLButtonElement>(null);
+
+  React.useEffect(() => {
+    if (isShortcutsOpen && closeBtnRef.current) {
+      closeBtnRef.current.focus();
+    }
+  }, [isShortcutsOpen]);
 
   if (!isShortcutsOpen) return null;
 
@@ -35,6 +44,7 @@ export const KeyboardShortcutsModal: React.FC = () => {
             <div className={styles.title}>Keyboard Shortcuts</div>
           </div>
           <button
+            ref={closeBtnRef}
             type="button"
             className={styles.closeBtn}
             onClick={() => setIsShortcutsOpen(false)}

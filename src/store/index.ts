@@ -118,7 +118,15 @@ export const useAppStore = create<AppStore>((set) => ({
       edges: typeof edges === 'function' ? edges(state.edges) : edges,
     })),
   setSelectedNodeId: (selectedNodeId) => set({ selectedNodeId }),
-  resetDiagram: () => set({ nodes: [], edges: [], selectedNodeId: null }),
+  resetDiagram: () =>
+    set({
+      nodes: [],
+      edges: [],
+      selectedNodeId: null,
+      steps: [],
+      currentStepIndex: 0,
+      isPlaying: false,
+    }),
 
   // Animation Slice
   steps: [],
@@ -154,6 +162,12 @@ export const useAppStore = create<AppStore>((set) => ({
     const { nodes, edges } = mapResourcesToDiagram(parsed.resources);
     const normalSteps = getLifecycleStepsForResources(parsed.resources);
     const stepsWithFailure = injectScenarioFailureIntoSteps(normalSteps, scenario);
+    const stepIdx = Math.max(0, scenario.failureStep - 1);
+    const { nodes: failureNodes, edges: failureEdges } = applyStepToDiagram(
+      stepsWithFailure[stepIdx],
+      nodes,
+      edges,
+    );
 
     set({
       activeScenarioId: scenario.id,
@@ -163,10 +177,10 @@ export const useAppStore = create<AppStore>((set) => ({
       yaml: scenario.yamlTemplate,
       parsedResources: parsed.resources,
       validationErrors: parsed.errors,
-      nodes,
-      edges,
+      nodes: failureNodes,
+      edges: failureEdges,
       steps: stepsWithFailure,
-      currentStepIndex: Math.max(0, scenario.failureStep - 1),
+      currentStepIndex: stepIdx,
       isPlaying: false,
       activeSidebarTab: 'editor',
       rightPanelTab: 'diagnostics',
@@ -226,6 +240,12 @@ export const useAppStore = create<AppStore>((set) => ({
         normalSteps,
         state.activeScenario,
       );
+      const stepIdx = Math.max(0, state.activeScenario.failureStep - 1);
+      const { nodes: failureNodes, edges: failureEdges } = applyStepToDiagram(
+        stepsWithFailure[stepIdx],
+        nodes,
+        edges,
+      );
 
       return {
         scenarioState: 'failed',
@@ -233,10 +253,10 @@ export const useAppStore = create<AppStore>((set) => ({
         yaml: state.activeScenario.yamlTemplate,
         parsedResources: parsed.resources,
         validationErrors: parsed.errors,
-        nodes,
-        edges,
+        nodes: failureNodes,
+        edges: failureEdges,
         steps: stepsWithFailure,
-        currentStepIndex: Math.max(0, state.activeScenario.failureStep - 1),
+        currentStepIndex: stepIdx,
         isPlaying: false,
       };
     }),

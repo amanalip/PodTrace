@@ -54,4 +54,34 @@ describe('useKeyboardShortcuts', () => {
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     expect(useAppStore.getState().selectedNodeId).toBeNull();
   });
+
+  it('resets animation on r key press', () => {
+    useAppStore.setState({ currentStepIndex: 2 });
+    renderHook(() => useKeyboardShortcuts());
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'r' }));
+    expect(useAppStore.getState().currentStepIndex).toBe(0);
+  });
+
+  it('adjusts playback speed on [ and ] key press', () => {
+    useAppStore.setState({ playbackSpeed: 1 });
+    renderHook(() => useKeyboardShortcuts());
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: ']' }));
+    expect(useAppStore.getState().playbackSpeed).toBe(2);
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: '[' }));
+    expect(useAppStore.getState().playbackSpeed).toBe(1);
+  });
+
+  it('ignores arrow keys when alt or ctrl modifiers are held', () => {
+    useAppStore.setState({ currentStepIndex: 1 });
+    renderHook(() => useKeyboardShortcuts());
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', altKey: true }));
+    expect(useAppStore.getState().currentStepIndex).toBe(1);
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', ctrlKey: true }));
+    expect(useAppStore.getState().currentStepIndex).toBe(1);
+  });
 });

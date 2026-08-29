@@ -37,10 +37,12 @@ export function useKeyboardShortcuts(): void {
           setIsPlaying(!useAppStore.getState().isPlaying);
           break;
         case 'ArrowRight':
+          if (e.altKey || e.ctrlKey || e.metaKey) return;
           e.preventDefault();
           stepForward();
           break;
         case 'ArrowLeft':
+          if (e.altKey || e.ctrlKey || e.metaKey) return;
           e.preventDefault();
           stepBackward();
           break;
@@ -54,6 +56,30 @@ export function useKeyboardShortcuts(): void {
             setCurrentStepIndex(steps.length - 1);
           }
           break;
+        case 'r':
+        case 'R':
+          if (e.altKey || e.ctrlKey || e.metaKey) return;
+          e.preventDefault();
+          useAppStore.getState().resetAnimation();
+          break;
+        case '[': {
+          const speeds = [0.5, 1, 2, 3];
+          const curr = useAppStore.getState().playbackSpeed;
+          const currIdx = speeds.indexOf(curr);
+          if (currIdx > 0) {
+            useAppStore.getState().setPlaybackSpeed(speeds[currIdx - 1]);
+          }
+          break;
+        }
+        case ']': {
+          const speeds = [0.5, 1, 2, 3];
+          const curr = useAppStore.getState().playbackSpeed;
+          const currIdx = speeds.indexOf(curr);
+          if (currIdx !== -1 && currIdx < speeds.length - 1) {
+            useAppStore.getState().setPlaybackSpeed(speeds[currIdx + 1]);
+          }
+          break;
+        }
         case '?':
           e.preventDefault();
           setIsShortcutsOpen(!useAppStore.getState().isShortcutsOpen);

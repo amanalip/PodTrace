@@ -90,9 +90,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: `Sidebar.tsx` rendered the full list of concept cards with no filtering mechanism, requiring manual scrolling across all component definitions.
     - **Fix**: Added a live search input filtering concept titles, definitions, and key facts in real time.
 
+22. **Bug 22: Autocomplete Value Replacement Overwrote Key Token**
+    - **Root Cause**: In `k8s-autocomplete.ts`, when completing values after `kind:` or `apiVersion:`, `context.matchBefore(/[\w\-:]*/)` included the colon `:`. Selecting a completion replaced `kind:` itself rather than inserting the value after the colon.
+    - **Fix**: Sliced the completion replacement range to start after the colon when typing values.
+
+23. **Bug 23: Browser History Shortcut Collision on Arrow Navigation**
+    - **Root Cause**: In `useKeyboardShortcuts.ts`, `ArrowLeft` and `ArrowRight` called `e.preventDefault()` unconditionally, breaking browser back/forward navigation shortcuts (`Alt+Left`, `Alt+Right`, `Ctrl+Left`).
+    - **Fix**: Added modifier key checks so browser navigation shortcuts pass through unaffected.
+
+24. **Bug 24: Header Export Button Always Opened Link Tab**
+    - **Root Cause**: In `Header.tsx`, both "Share" and "Export" opened `ExportModal` with static default state `'link'`. `ExportModal` ignored which button triggered the modal.
+    - **Fix**: Added `initialTab` state passing `'svg'` from the Export button and `'link'` from the Share button.
+
+25. **Bug 25: FailureOverlay Remained Fixed on Screen After Scenario Completion**
+    - **Root Cause**: In `FailureOverlay.tsx`, after clicking "Complete Challenge", the victory card remained fixed on screen with no dismiss action, obscuring the diagram canvas.
+    - **Fix**: Added a "Close Banner & View Diagram" action and header dismiss button.
+
+26. **Bug 26: Scenario Load Failed to Apply Failure Visual State Immediately**
+    - **Root Cause**: In `store/index.ts`, `loadScenario` and `resetScenario` set node/edge state to idle mapped baseline rather than computing `applyStepToDiagram` for the failing step, leaving the canvas idle until an extra user interaction.
+    - **Fix**: Computed and applied the failure step's animated node and edge status immediately upon loading.
+
+27. **Bug 27: Explanation Step Cards Lacked Interactive Navigation Handlers**
+    - **Root Cause**: In `StepDetail.tsx` and `ExplanationPanel.tsx`, step cards in the lifecycle trace list were non-interactive divs without click-to-jump handlers.
+    - **Fix**: Refactored `StepDetail` into an interactive, keyboard-accessible card that jumps to the clicked step.
+
+28. **Bug 28: LiveRegion Announcement Missing for Scenario Fix In-Progress States**
+    - **Root Cause**: In `LiveRegion.tsx`, screen reader announcements handled `failed` and `completed` but omitted `fixing` and `resolved` scenario feedback messages.
+    - **Fix**: Extended `LiveRegion` to announce `failed`, `fixing`, `resolved`, and `completed` state transitions.
+
+29. **Bug 29: Autocomplete Context Scanner Parent Scope Misidentification**
+    - **Root Cause**: In `getCompletionsForContext`, comments (`# ...`) and empty lines with indentation corrupted parent block detection for `containers`, `spec`, and `metadata`.
+    - **Fix**: Skipped comments and empty lines when scanning backward for parent indentation blocks.
+
+30. **Bug 30: Diagram Reset Left Step Sequence in Desynced State**
+    - **Root Cause**: In `store/index.ts`, `resetDiagram` cleared `nodes` and `edges` but left `steps` and `currentStepIndex` unreset, causing diagram/step index divergence.
+    - **Fix**: Reset `steps`, `currentStepIndex`, and `isPlaying` when `resetDiagram` is invoked.
+
+31. **Bug 31: Keyboard Shortcuts Focus Loss When Modal Opens**
+    - **Root Cause**: In `KeyboardShortcutsModal.tsx`, when opened via `?` key, initial focus was not set to the close button, breaking keyboard accessibility for screen readers.
+    - **Fix**: Added auto-focus to the close button when `isShortcutsOpen` becomes true.
+
 ---
 
-## 2. Code Quality and Testing Improvements (20 Improvements)
+## 2. Code Quality and Testing Improvements (30 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -114,10 +154,20 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 18. **SamplePicker Unit Test Suite**: Created `SamplePicker.test.tsx` verifying category grouping, manifest loading, and dynamic select updates.
 19. **CanvasToolbar Unit Test Suite**: Created `CanvasToolbar.test.tsx` testing fit view, zoom in, zoom out, and animation reset triggers.
 20. **QuizModal Unit Test Suite**: Created `QuizModal.test.tsx` testing the assessment workflow, scoring calculations, and answer review panel.
+21. **Context-Aware Autocomplete Token Slicer**: Refactored `k8sCompletionSource` in `k8s-autocomplete.ts` to compute exact character replacement ranges for keys and values.
+22. **Modifier Key Guard in Keyboard Shortcuts**: Updated `useKeyboardShortcuts.ts` to guard against modifier combinations (`ctrlKey`, `altKey`, `metaKey`) for clean browser shortcut interoperability.
+23. **Stateful Tab Routing for Export and Share Modal**: Enhanced `ExportModal.tsx` to accept and synchronize `initialTab` (`'link' | 'mermaid' | 'svg'`) across open states.
+24. **Immediate Reactive Failure State Dispatch**: Refactored `loadScenario` and `resetScenario` in `store/index.ts` to compute and dispatch active failure node/edge highlights on mount.
+25. **Accessible Interactive Step Cards**: Refactored `StepDetail.tsx` into a keyboard-accessible interactive card component with `role="button"`, `tabIndex={0}`, and `aria-current`.
+26. **Complete Scenario State Announcement Engine**: Extended `LiveRegion.tsx` to announce `failed`, `fixing`, `resolved`, and `completed` scenario state transitions.
+27. **Expanded Autocomplete Test Suite**: Expanded `k8s-autocomplete.test.ts` to test completion range calculations, value insertion after colons, and comment handling.
+28. **LiveRegion Accessibility Test Suite**: Expanded `LiveRegion.test.tsx` verifying screen reader announcements across all lifecycle steps and scenario states.
+29. **ExportModal Tab Routing Test Suite**: Expanded `ExportModal.test.tsx` testing `initialTab` routing for both Share and Export actions.
+30. **ValidationPanel Unit Test Suite**: Created `ValidationPanel.test.tsx` verifying error listing, line number badges, and collapse/expand toggling.
 
 ---
 
-## 3. UX/UI Feature Enhancements (20 Improvements)
+## 3. UX/UI Feature Enhancements (30 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
@@ -139,3 +189,13 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 18. **Interactive Quiz Answer Review**: Detailed review section displaying user choices, correct answers, and architectural explanations.
 19. **Live Search Filter for Kubernetes Concepts**: Instant keyword search for architectural components and concepts in the Concepts tab.
 20. **Complete JSON Diagram Export**: Option to export and download the complete diagram, manifest, and step trace as formatted JSON.
+21. **Direct Modal Tab Routing**: Clicking "Share" opens the URL link tab directly; clicking "Export" opens the file download tab directly.
+22. **Interactive Explanation Step Jumping**: Click any step card in the right-side lifecycle trace to smoothly jump to that step on the diagram canvas.
+23. **Scenario Completion Dismiss Action**: Added a "Close Banner & View Diagram" action to clear the overlay and let users inspect the final resolved cluster state.
+24. **Instant Visual Failure Lighting**: When a scenario loads, the failing node immediately pulses red with error indicators on the canvas.
+25. **Speed Adjustment Keyboard Shortcuts**: Added `[` and `]` keyboard shortcuts to decrease/increase playback speed (0.5x, 1x, 2x, 3x) and `R` to reset animation.
+26. **Dynamic Time-to-Solve and Category Badges**: Added estimated time badges (`~2-3 mins`, `~3-5 mins`) and difficulty tags on Scenario Detail views.
+27. **Collapsible Validation Panel**: Added expand/collapse toggle and clean line number badges in the YAML Validation Issues panel.
+28. **High-Contrast Active Step Borders**: Distinct glowing cyan border and active clock badge on currently executing lifecycle step cards.
+29. **Animated Reset and Speed Controls**: Visual feedback on playback speed dropdown and reset buttons in the animation controller.
+30. **Complete Keyboard Shortcuts Reference**: Updated keyboard shortcuts reference documenting `[` / `]`, `R`, `?`, `Space`, `Arrows`, and step card clicks.

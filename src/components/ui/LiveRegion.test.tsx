@@ -70,4 +70,15 @@ describe('LiveRegion', () => {
     const region = screen.getByTestId('aria-live-region');
     expect(region).toHaveTextContent(/scenario resolved successfully!/i);
   });
+
+  it('announces scenario feedback during fixing attempt', () => {
+    useAppStore.setState({
+      scenarioState: 'fixing',
+      scenarioFeedback: 'Command still contains exit 1 error.',
+    });
+
+    render(<LiveRegion />);
+    const region = screen.getByTestId('aria-live-region');
+    expect(region).toHaveTextContent(/command still contains exit 1 error/i);
+  });
 });

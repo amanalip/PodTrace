@@ -29,6 +29,13 @@ export const ScenarioDetail: React.FC<ScenarioDetailProps> = ({ scenario, onBack
         ? styles.badgeIntermediate
         : styles.badgeAdvanced;
 
+  const estTime =
+    scenario.difficulty === 'Beginner'
+      ? '~2-3 mins'
+      : scenario.difficulty === 'Intermediate'
+        ? '~3-5 mins'
+        : '~5-8 mins';
+
   return (
     <div className={styles.card} data-testid="scenario-detail">
       <button type="button" className={styles.backBtn} onClick={onBack}>
@@ -46,6 +53,7 @@ export const ScenarioDetail: React.FC<ScenarioDetailProps> = ({ scenario, onBack
       <div className={styles.metaRow}>
         <span className={styles.badgeCategory}>{scenario.category}</span>
         <span className={difficultyClass}>{scenario.difficulty}</span>
+        <span className={styles.badgeCategory}>{estTime}</span>
       </div>
 
       <div className={styles.description}>{scenario.description}</div>
