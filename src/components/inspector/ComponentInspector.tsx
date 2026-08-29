@@ -9,6 +9,17 @@ export const ComponentInspector: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'flags' | 'metrics' | 'debug'>('overview');
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
+  React.useEffect(() => {
+    if (!selectedNodeId) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedNodeId(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedNodeId, setSelectedNodeId]);
+
   if (!selectedNodeId) return null;
 
   const selectedNode = nodes.find((n) => n.id === selectedNodeId);
@@ -46,7 +57,12 @@ export const ComponentInspector: React.FC = () => {
   };
 
   return (
-    <div className={styles.drawer} data-testid="component-inspector">
+    <div
+      className={styles.drawer}
+      role="region"
+      aria-label={`Component Inspector: ${info.name}`}
+      data-testid="component-inspector"
+    >
       <div className={styles.header}>
         <div className={styles.titleArea}>
           <div className={styles.name}>{info.name}</div>
@@ -62,9 +78,12 @@ export const ComponentInspector: React.FC = () => {
         </button>
       </div>
 
-      <div className={styles.tabs}>
+      <div className={styles.tabs} role="tablist">
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'overview'}
+          aria-controls="inspector-panel-content"
           className={`${styles.tabBtn} ${activeTab === 'overview' ? styles.tabBtn_active : ''}`}
           onClick={() => setActiveTab('overview')}
         >
@@ -73,6 +92,9 @@ export const ComponentInspector: React.FC = () => {
         </button>
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'flags'}
+          aria-controls="inspector-panel-content"
           className={`${styles.tabBtn} ${activeTab === 'flags' ? styles.tabBtn_active : ''}`}
           onClick={() => setActiveTab('flags')}
         >
@@ -81,6 +103,9 @@ export const ComponentInspector: React.FC = () => {
         </button>
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'metrics'}
+          aria-controls="inspector-panel-content"
           className={`${styles.tabBtn} ${activeTab === 'metrics' ? styles.tabBtn_active : ''}`}
           onClick={() => setActiveTab('metrics')}
         >
@@ -89,6 +114,9 @@ export const ComponentInspector: React.FC = () => {
         </button>
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'debug'}
+          aria-controls="inspector-panel-content"
           className={`${styles.tabBtn} ${activeTab === 'debug' ? styles.tabBtn_active : ''}`}
           onClick={() => setActiveTab('debug')}
         >
@@ -97,7 +125,7 @@ export const ComponentInspector: React.FC = () => {
         </button>
       </div>
 
-      <div className={styles.content}>
+      <div id="inspector-panel-content" role="tabpanel" className={styles.content}>
         {activeTab === 'overview' && (
           <>
             <div>

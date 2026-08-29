@@ -33,35 +33,36 @@ describe('ComponentInspector', () => {
     expect(screen.getByText(/key responsibilities/i)).toBeInTheDocument();
   });
 
-  it('switches between Overview, Flags, Metrics, and Debug tabs', () => {
+  it('switches between Overview, Flags, Metrics, and Debug tabs with ARIA tablist', () => {
     useAppStore.setState({ selectedNodeId: 'node-apiserver' });
 
     render(<ComponentInspector />);
+    expect(screen.getByRole('tablist')).toBeInTheDocument();
 
     // Flags tab
-    const flagsTab = screen.getByRole('button', { name: /flags/i });
+    const flagsTab = screen.getByRole('tab', { name: /flags/i });
+    expect(flagsTab).toHaveAttribute('aria-selected', 'false');
     fireEvent.click(flagsTab);
+    expect(flagsTab).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByText('--etcd-servers')).toBeInTheDocument();
 
     // Metrics tab
-    const metricsTab = screen.getByRole('button', { name: /metrics/i });
+    const metricsTab = screen.getByRole('tab', { name: /metrics/i });
     fireEvent.click(metricsTab);
     expect(screen.getByText('apiserver_request_total')).toBeInTheDocument();
 
     // Debug tab
-    const debugTab = screen.getByRole('button', { name: /debug/i });
+    const debugTab = screen.getByRole('tab', { name: /debug/i });
     fireEvent.click(debugTab);
     expect(screen.getByText(/common failure modes/i)).toBeInTheDocument();
     expect(screen.getByText('kubectl get --raw /healthz')).toBeInTheDocument();
   });
 
-  it('closes inspector when close button is clicked', () => {
+  it('closes inspector when close button is clicked or Escape key is pressed', () => {
     useAppStore.setState({ selectedNodeId: 'node-apiserver' });
 
     render(<ComponentInspector />);
-    const closeBtn = screen.getByRole('button', { name: /close inspector/i });
-    fireEvent.click(closeBtn);
-
+    fireEvent.keyDown(window, { key: 'Escape' });
     expect(useAppStore.getState().selectedNodeId).toBeNull();
   });
 

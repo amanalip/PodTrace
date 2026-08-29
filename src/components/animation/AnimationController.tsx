@@ -83,8 +83,8 @@ export const AnimationController: React.FC = () => {
           type="button"
           className={styles.controlButton}
           onClick={handleReset}
-          title="Reset animation to start"
-          aria-label="Reset animation"
+          title="Reset animation to start (R)"
+          aria-label="Reset animation (R)"
         >
           <RotateCcw size={15} />
         </button>
@@ -94,8 +94,8 @@ export const AnimationController: React.FC = () => {
           className={styles.controlButton}
           onClick={stepBackward}
           disabled={isFirstStep}
-          title="Step backward"
-          aria-label="Previous step"
+          title="Step backward (Left Arrow)"
+          aria-label="Previous step (Left Arrow)"
         >
           <SkipBack size={15} />
         </button>
@@ -109,8 +109,8 @@ export const AnimationController: React.FC = () => {
             }
             setIsPlaying(!isPlaying);
           }}
-          title={isPlaying ? 'Pause animation' : 'Play animation'}
-          aria-label={isPlaying ? 'Pause animation' : 'Play animation'}
+          title={isPlaying ? 'Pause animation (Space)' : 'Play animation (Space)'}
+          aria-label={isPlaying ? 'Pause animation (Space)' : 'Play animation (Space)'}
         >
           {isPlaying ? <Pause size={16} /> : <Play size={16} />}
         </button>
@@ -120,8 +120,8 @@ export const AnimationController: React.FC = () => {
           className={styles.controlButton}
           onClick={stepForward}
           disabled={isLastStep}
-          title="Step forward"
-          aria-label="Next step"
+          title="Step forward (Right Arrow)"
+          aria-label="Next step (Right Arrow)"
         >
           <SkipForward size={15} />
         </button>

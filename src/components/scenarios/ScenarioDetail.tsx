@@ -57,6 +57,7 @@ export const ScenarioDetail: React.FC<ScenarioDetailProps> = ({ scenario, onBack
         className={styles.backBtn}
         onClick={onBack}
         aria-label="Back to scenario list"
+        data-testid="back-to-scenarios-btn"
       >
         <ArrowLeft size={14} />
         <span>Back to scenarios</span>

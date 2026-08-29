@@ -15,7 +15,7 @@ describe('ScenarioDetail', () => {
     expect(screen.getByText(scenario.category)).toBeInTheDocument();
     expect(screen.getByText(/failure context:/i)).toBeInTheDocument();
 
-    const backBtn = screen.getByRole('button', { name: /back to scenario/i });
+    const backBtn = screen.getByTestId('back-to-scenarios-btn');
     fireEvent.click(backBtn);
     expect(onBack).toHaveBeenCalled();
   });

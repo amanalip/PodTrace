@@ -69,4 +69,18 @@ describe('AnimationController', () => {
     expect(useAppStore.getState().currentStepIndex).toBe(0);
     expect(useAppStore.getState().isPlaying).toBe(false);
   });
+
+  it('navigates step pills using ArrowLeft and ArrowRight keys', () => {
+    render(<AnimationController />);
+
+    const pill0 = screen.getByTestId('step-pill-0');
+    expect(pill0).toHaveAttribute('aria-current', 'step');
+
+    fireEvent.keyDown(pill0, { key: 'ArrowRight' });
+    expect(useAppStore.getState().currentStepIndex).toBe(1);
+
+    const pill1 = screen.getByTestId('step-pill-1');
+    fireEvent.keyDown(pill1, { key: 'ArrowLeft' });
+    expect(useAppStore.getState().currentStepIndex).toBe(0);
+  });
 });

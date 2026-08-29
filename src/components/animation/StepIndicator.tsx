@@ -20,7 +20,7 @@ export const StepIndicator: React.FC = () => {
         {currentStep && <span className={styles.stepTitle}>{currentStep.title}</span>}
       </div>
 
-      <div className={styles.progressBar} role="progressbar" aria-valuenow={currentStepIndex + 1} aria-valuemin={1} aria-valuemax={steps.length}>
+      <div className={styles.progressBar} role="group" aria-label="Lifecycle step navigation">
         {steps.map((s, idx) => {
           let segmentClass = styles.stepSegment;
           if (idx < currentStepIndex) {
@@ -35,6 +35,16 @@ export const StepIndicator: React.FC = () => {
               type="button"
               className={segmentClass}
               onClick={() => setCurrentStepIndex(Math.max(0, Math.min(steps.length - 1, idx)))}
+              onKeyDown={(e) => {
+                if (e.key === 'ArrowLeft') {
+                  e.preventDefault();
+                  setCurrentStepIndex(Math.max(0, idx - 1));
+                } else if (e.key === 'ArrowRight') {
+                  e.preventDefault();
+                  setCurrentStepIndex(Math.min(steps.length - 1, idx + 1));
+                }
+              }}
+              aria-current={idx === currentStepIndex ? 'step' : undefined}
               title={`Jump to Step ${idx + 1}: ${s.title}`}
               aria-label={`Jump to Step ${idx + 1}: ${s.title}`}
               data-testid={`step-pill-${idx}`}

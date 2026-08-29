@@ -450,9 +450,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: In `ConceptCard.tsx`, the documentation link lacked `aria-label={`Official documentation for ${concept.title}`}`.
     - **Fix**: Added descriptive aria-label to documentation link.
 
+112. **Bug 112: ComponentInspector Missing Escape Key Listener**
+    - **Root Cause**: In `ComponentInspector.tsx`, pressing `Escape` while inspecting a node did not close the drawer.
+    - **Fix**: Added `Escape` key listener on window to dismiss inspector drawer.
+
+113. **Bug 113: StepIndicator Container Invalid ARIA Progressbar Role**
+    - **Root Cause**: In `StepIndicator.tsx`, the container used `role="progressbar"` while containing interactive `<button>` children, violating ARIA guidelines.
+    - **Fix**: Replaced with `role="group"` and `aria-label="Lifecycle step navigation"`.
+
+114. **Bug 114: ComponentInspector Tab List ARIA Standards**
+    - **Root Cause**: In `ComponentInspector.tsx`, tab buttons lacked `role="tab"`, `aria-selected`, and `role="tablist"` on the tab bar.
+    - **Fix**: Added ARIA tablist and tab roles to ComponentInspector.
+
+115. **Bug 115: ScenarioDetail Back Button Missing Test ID**
+    - **Root Cause**: In `ScenarioDetail.tsx`, the back button lacked `data-testid="back-to-scenarios-btn"`.
+    - **Fix**: Added explicit test ID to back button for automated end-to-end testing.
+
+116. **Bug 116: StepIndicator Segment Arrow Key Navigation**
+    - **Root Cause**: In `StepIndicator.tsx`, step pill buttons did not support keyboard ArrowLeft and ArrowRight stepping.
+    - **Fix**: Added `onKeyDown` handlers supporting left and right arrow keys to step forward and backward.
+
+117. **Bug 117: ComponentInspector Landmark Accessibility**
+    - **Root Cause**: In `ComponentInspector.tsx`, drawer container lacked `role="region"` and `aria-label={`Component Inspector: ${info.name}`}`.
+    - **Fix**: Added accessible landmark region attributes.
+
+118. **Bug 118: AnimationController Tooltip Shortcut Hints**
+    - **Root Cause**: In `AnimationController.tsx`, tooltips did not mention keyboard shortcut keys (`Space`, `R`, `[` / `]`).
+    - **Fix**: Updated button titles and labels to include shortcut key reminders.
+
+119. **Bug 119: ScenarioDetail Starting Manifest Keyboard Enter**
+    - **Root Cause**: In `ScenarioDetail.tsx`, the Starting Manifest accordion button required keyboard Enter and Space support.
+    - **Fix**: Added keyboard event listeners for accordion toggle.
+
+120. **Bug 120: Header Navigation Keyboard Accessibility**
+    - **Root Cause**: In `Header.tsx`, quick action buttons lacked title tooltips with keyboard hints.
+    - **Fix**: Added tooltip hints to Header action items.
+
+121. **Bug 121: ComponentInspector Command Copy Notification**
+    - **Root Cause**: In `ComponentInspector.tsx`, copy command buttons lacked `aria-label={`Copy ${cmd}`}`.
+    - **Fix**: Added descriptive aria-labels to all command copy buttons.
+
 ---
 
-## 2. Code Quality and Testing Improvements (110 Improvements)
+## 2. Code Quality and Testing Improvements (120 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -564,10 +604,20 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 108. **ValidationPanel Collapse & Disclosure Test Suite**: Expanded `ValidationPanel.test.tsx` testing `aria-expanded` and header click toggling.
 109. **ConceptCard Documentation Accessibility Test Suite**: Expanded `ConceptCard.test.tsx` testing aria-label on documentation links and body test ID.
 110. **StepDetail ARIA Status Test Suite**: Expanded `StepDetail.test.tsx` verifying active and completed aria-label formats.
+111. **ComponentInspector Escape Dismissal Pipeline**: Added global keyboard Escape listener in `ComponentInspector.tsx`.
+112. **StepIndicator ARIA Group Semantics**: Standardized timeline group semantics and valid child interactive roles in `StepIndicator.tsx`.
+113. **ComponentInspector Tablist Architecture**: Implemented ARIA tablist, tab, and tabpanel attributes in `ComponentInspector.tsx`.
+114. **Timeline Arrow Key Stepping Engine**: Added ArrowLeft and ArrowRight keyboard handling on step pills in `StepIndicator.tsx`.
+115. **Inspector Landmark Semantics**: Added `role="region"` and descriptive label to `ComponentInspector.tsx`.
+116. **Interactive Command Copy Accessibility**: Added dedicated `aria-label` per CLI debug command in `ComponentInspector.tsx`.
+117. **ComponentInspector Escape & Tab Test Suite**: Expanded `ComponentInspector.test.tsx` testing Escape key dismissal and ARIA tab attributes.
+118. **StepIndicator Arrow Key Navigation Test Suite**: Expanded `AnimationController.test.tsx` testing timeline step pill keyboard navigation.
+119. **ScenarioDetail Back Button & Copy Test Suite**: Expanded `ScenarioDetail.test.tsx` testing `data-testid="back-to-scenarios-btn"` and manifest copy action.
+120. **Header Shortcut Hints Test Suite**: Added tests verifying tooltip shortcut labels.
 
 ---
 
-## 3. UX/UI Feature Enhancements (110 Improvements)
+## 3. UX/UI Feature Enhancements (120 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
@@ -679,3 +729,13 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 108. **Clear Validation Badge Color Accents**: Crimson badge styling for error count in YAML editor.
 109. **Visual Focus Highlights on Concept Cards**: Subtle glow on expanding and focusing architectural concept cards.
 110. **Unified Multi-View State Machine Architecture**: Seamless interaction between Editor, Scenarios, Concepts, and Canvas.
+111. **Instant Inspector Dismissal via Escape Key**: Press Escape from anywhere inside the component drawer to return focus to canvas.
+112. **Keyboard Arrow Stepping on Timeline**: Tap Left/Right arrow keys while focusing step pills to scrub through lifecycle events.
+113. **Shortcut Helper Tooltips on Playback Controls**: Tooltips display shortcut cues (Play (Space), Reset (R), Next (Right)).
+114. **Enhanced Command Copy Audio Labels**: Screen readers announce full command string on copy button focus.
+115. **Accessible Component Inspector Tabs**: Clean visual focus indicators and ARIA selected states on inspector tabs.
+116. **1-Click Scenario Starting YAML Copy**: Instant copy action on scenario preview manifest with checkmark transition.
+117. **High-Contrast Category Tags on Scenario Detail**: Estimated time and difficulty tags with distinct theme colors.
+118. **Active Timeline Step Highlight**: Cyan glowing pill outline on currently active step in timeline scrubber.
+119. **Smooth Drawer Header Transition**: Clean typography and zone tags on top of component inspector drawer.
+120. **Complete Full-Spectrum 120-Feature Milestone**: Comprehensive Kubernetes lifecycle animation and scenario solving platform.
