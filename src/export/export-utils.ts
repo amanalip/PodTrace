@@ -64,7 +64,8 @@ export function generateMermaidSequenceDiagram(steps: LifecycleStep[]): string {
   steps.forEach((step) => {
     const from = sanitizeMermaidName(step.sourceNodeId || 'Client');
     const to = sanitizeMermaidName(step.targetNodeId || step.sourceNodeId || 'Cluster');
-    const label = step.edgeLabel || step.title;
+    const rawLabel = step.edgeLabel || step.title;
+    const label = rawLabel.replace(/"/g, "'").replace(/[#;]/g, '');
     lines.push(`  ${from}->>${to}: ${label}`);
   });
 
@@ -78,7 +79,7 @@ export function generateMermaidGraphDiagram(nodes: Node[], edges: Edge[]): strin
     if (node.type?.includes('Zone')) return;
     const id = sanitizeMermaidName(node.id);
     const rawLabel = (node.data?.label as string) || node.id;
-    const label = rawLabel.replace(/"/g, "'");
+    const label = rawLabel.replace(/"/g, "'").replace(/[\][]/g, '');
     lines.push(`  ${id}["${label}"]`);
   });
 
@@ -86,7 +87,7 @@ export function generateMermaidGraphDiagram(nodes: Node[], edges: Edge[]): strin
     const from = sanitizeMermaidName(edge.source);
     const to = sanitizeMermaidName(edge.target);
     const rawLabel = (edge.data?.label as string) || '';
-    const label = rawLabel.replace(/"/g, "'");
+    const label = rawLabel.replace(/"/g, "'").replace(/[\][]/g, '');
     if (label) {
       lines.push(`  ${from} -->|"${label}"| ${to}`);
     } else {
@@ -102,7 +103,8 @@ function sanitizeMermaidName(name: string): string {
 }
 
 export function downloadFile(content: string, filename: string, mimeType: string): void {
-  const blob = new Blob([content], { type: mimeType });
+  const fullMime = mimeType.includes('charset') ? mimeType : `${mimeType};charset=utf-8`;
+  const blob = new Blob([content], { type: fullMime });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

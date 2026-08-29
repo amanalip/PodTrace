@@ -130,9 +130,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: In `KeyboardShortcutsModal.tsx`, when opened via `?` key, initial focus was not set to the close button, breaking keyboard accessibility for screen readers.
     - **Fix**: Added auto-focus to the close button when `isShortcutsOpen` becomes true.
 
+32. **Bug 32: Canvas Toolbar and Diagram Legend Top-Right Coordinate Collision**
+    - **Root Cause**: Both `CanvasToolbar.module.css` and `DiagramLegend.module.css` specified `top: 16px; right: 16px`, causing the floating toolbar to overlap the Legend toggle button.
+    - **Fix**: Adjusted `CanvasToolbar` to `right: 104px` so both controls sit side-by-side with clear spacing.
+
+33. **Bug 33: Diagram Legend Missing Error and Warning Edge Color Keys**
+    - **Root Cause**: In `DiagramLegend.tsx`, Edge Status section only displayed `Inactive flow`, `Active message flow`, and `Completed action`, omitting the error (red dashed) and warning (amber dashed) failure styles added to `FlowEdge`.
+    - **Fix**: Added error and warning sample keys with matching styles in `DiagramLegend.tsx` and `.module.css`.
+
+34. **Bug 34: ScenarioList Empty Filter Search Results State Missing**
+    - **Root Cause**: In `ScenarioList.tsx`, when search query matched zero scenarios, an empty container rendered without feedback or a way to reset filters.
+    - **Fix**: Added an empty state with a "Reset Search & Filters" action button and clear search button.
+
+35. **Bug 35: What-If Panel Lacked Collapsible State During Active Simulation**
+    - **Root Cause**: In `WhatIfPanel.tsx`, the only way to minimize the card was to click `X`, which invoked `clearWhatIf()`, destroying the active simulation on the canvas.
+    - **Fix**: Added a minimize and expand toggle button so users can collapse the card while keeping the simulation active on the canvas.
+
+36. **Bug 36: ProgressTracker Division by Zero Guard on Empty Catalog**
+    - **Root Cause**: In `ProgressTracker.tsx`, `Math.round((completed / total) * 100)` produced `NaN%` if the catalog length was 0.
+    - **Fix**: Added fallback `total > 0 ? Math.min(100, Math.max(0, Math.round((completed / total) * 100))) : 0`.
+
+37. **Bug 37: Multi-Doc YAML Splitter Handling of Delimiter Comments**
+    - **Root Cause**: In `multi-doc.ts`, YAML documents with comments or whitespace after separator markers (such as `--- # Comment`) failed the exact regex check and were merged into single documents.
+    - **Fix**: Updated separator matching regex to handle trailing comments and document end markers (`...`).
+
+38. **Bug 38: ComponentInspector Tab Navigation Empty Notice Missing**
+    - **Root Cause**: In `ComponentInspector.tsx`, inspecting generic cluster components with zero custom debug commands displayed an empty list without helpful guidance.
+    - **Fix**: Added standard fallback guidance text when diagnostic commands list is empty.
+
+39. **Bug 39: Mermaid Diagram Export Special Characters in Node Labels**
+    - **Root Cause**: In `export-utils.ts`, `generateMermaidGraphDiagram` did not strip bracket characters `[` `]` from raw node labels, risking syntax errors in Mermaid parsers.
+    - **Fix**: Sanitized square brackets and quotes across Mermaid graph generators.
+
+40. **Bug 40: Multi-Document Empty Doc Boundary Ingestion**
+    - **Root Cause**: In `multi-doc.ts`, consecutive `---` delimiters generated empty chunk strings that produced parsing warnings.
+    - **Fix**: Trimmed and validated non-empty content before pushing chunks.
+
+41. **Bug 41: ExportModal UTF-8 Character Encoding in File Downloads**
+    - **Root Cause**: In `export-utils.ts`, `downloadFile` created blobs with raw MIME types without explicitly declaring `charset=utf-8`, risking character corruption on unicode content.
+    - **Fix**: Declared `charset=utf-8` in download blob options.
+
 ---
 
-## 2. Code Quality and Testing Improvements (30 Improvements)
+## 2. Code Quality and Testing Improvements (40 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -164,10 +204,20 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 28. **LiveRegion Accessibility Test Suite**: Expanded `LiveRegion.test.tsx` verifying screen reader announcements across all lifecycle steps and scenario states.
 29. **ExportModal Tab Routing Test Suite**: Expanded `ExportModal.test.tsx` testing `initialTab` routing for both Share and Export actions.
 30. **ValidationPanel Unit Test Suite**: Created `ValidationPanel.test.tsx` verifying error listing, line number badges, and collapse/expand toggling.
+31. **Robust Multi-Doc Parser Filtering**: Hardened `multi-doc.ts` to ignore leading, trailing, and consecutive document boundary markers (`---` and `...`).
+32. **Mermaid Syntax Escaping Pipeline**: Added comprehensive label sanitization in `export-utils.ts` for safe sequence and flowchart rendering.
+33. **Responsive Canvas Control Layout**: Clean coordinate separation between canvas controls, toolbar, minimap, and legend.
+34. **Collapsible What-If Controller Architecture**: Stateful minimize and restore hooks in `WhatIfPanel.tsx`.
+35. **Scenario Search Empty State Engine**: Dynamic empty state handling with filter reset actions in `ScenarioList.tsx`.
+36. **Complete Edge Style Registry in Legend**: Full sync between `FlowEdge` CSS classes and `DiagramLegend` visualization elements.
+37. **Multi-Doc Splitter Test Suite**: Expanded tests in `yaml-parser.test.ts` testing leading, trailing, and consecutive delimiters.
+38. **ScenarioList Empty State Test Suite**: Added unit tests in `ScenarioList.test.tsx` verifying empty search results and filter reset triggers.
+39. **WhatIfPanel Minimization Test Suite**: Updated `WhatIfPanel.test.tsx` testing the minimize/expand toggle and scenario selection.
+40. **DiagramLegend Full Styles Test Suite**: Updated `DiagramLegend.test.tsx` verifying all node statuses, edge statuses (including error and warning), and zone boundaries.
 
 ---
 
-## 3. UX/UI Feature Enhancements (30 Improvements)
+## 3. UX/UI Feature Enhancements (40 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
@@ -199,3 +249,13 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 28. **High-Contrast Active Step Borders**: Distinct glowing cyan border and active clock badge on currently executing lifecycle step cards.
 29. **Animated Reset and Speed Controls**: Visual feedback on playback speed dropdown and reset buttons in the animation controller.
 30. **Complete Keyboard Shortcuts Reference**: Updated keyboard shortcuts reference documenting `[` / `]`, `R`, `?`, `Space`, `Arrows`, and step card clicks.
+31. **Coordinated Canvas Controls Header**: Canvas toolbar and legend positioned side-by-side without overlap for clean top-right canvas visibility.
+32. **Complete Visual Edge Legend**: Legend now displays active (sky blue), completed (green), error (red dashed), and warning (amber dashed) edge flows.
+33. **Interactive Search Empty State**: Clear empty search illustration and 1-click "Reset Search & Filters" button in `ScenarioList`.
+34. **Minimizable What-If Simulator Card**: Minimize button on What-If panel so users can inspect the full failing cluster while retaining the active simulation.
+35. **1-Click Clear Search in Scenario Browser**: Quick clear `X` icon inside the search input to wipe search terms instantly.
+36. **Component Inspector Generic Fallback**: Clear guidance in inspector drawer when inspecting standard cluster nodes.
+37. **Zero-Division Safe Progress Bar**: Dynamic progress bar with clean percentage clamping and rounded corners.
+38. **Safe UTF-8 File Downloads**: Exported YAML, Mermaid, and JSON files save with explicit UTF-8 charset declarations.
+39. **Smooth Collapsible Transition in What-If**: Smooth slide and fade transitions when toggling What-If panel height.
+40. **High-Contrast Failure Edge Legends**: Clear red and amber preview lines in the legend card.

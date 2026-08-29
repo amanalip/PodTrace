@@ -62,6 +62,14 @@ export const DiagramLegend: React.FC = () => {
                 <div className={`${styles.edgeSample} ${styles.edge_complete}`} />
                 <span>Completed action</span>
               </div>
+              <div className={styles.itemRow}>
+                <div className={`${styles.edgeSample} ${styles.edge_error}`} />
+                <span>Error / Failed flow</span>
+              </div>
+              <div className={styles.itemRow}>
+                <div className={`${styles.edgeSample} ${styles.edge_warning}`} />
+                <span>Warning / Pending flow</span>
+              </div>
             </div>
           </div>
 

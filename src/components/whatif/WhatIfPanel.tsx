@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { HelpCircle, AlertTriangle, RotateCcw, X } from 'lucide-react';
+import { HelpCircle, AlertTriangle, RotateCcw, X, ChevronUp, ChevronDown } from 'lucide-react';
 import { WHAT_IF_SCENARIOS, getWhatIfScenario } from '../../whatif/whatif-data.ts';
 import { useAppStore } from '../../store/index.ts';
 import styles from './WhatIfPanel.module.css';
@@ -7,6 +7,7 @@ import styles from './WhatIfPanel.module.css';
 export const WhatIfPanel: React.FC = () => {
   const { activeWhatIfId, activeWhatIf, applyWhatIf, clearWhatIf } = useAppStore();
   const [isOpen, setIsOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   if (!isOpen && !activeWhatIfId) {
     return (
@@ -45,17 +46,29 @@ export const WhatIfPanel: React.FC = () => {
           <AlertTriangle size={14} color="#f59e0b" />
           <span>What If? Cluster Simulator</span>
         </div>
-        <button
-          type="button"
-          onClick={handleClose}
-          aria-label="Close What If"
-          style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0 }}
-        >
-          <X size={14} />
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <button
+            type="button"
+            onClick={() => setIsMinimized(!isMinimized)}
+            aria-label={isMinimized ? 'Expand What If panel' : 'Minimize What If panel'}
+            style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0 }}
+            data-testid="what-if-minimize-btn"
+          >
+            {isMinimized ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+          </button>
+          <button
+            type="button"
+            onClick={handleClose}
+            aria-label="Close What If"
+            style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0 }}
+          >
+            <X size={14} />
+          </button>
+        </div>
       </div>
 
-      <div className={styles.body}>
+      {!isMinimized && (
+        <div className={styles.body}>
         <div>
           <label htmlFor="what-if-select" style={{ display: 'block', marginBottom: 4, color: '#94a3b8', fontSize: 11 }}>
             Select Failure Scenario:
@@ -106,6 +119,7 @@ export const WhatIfPanel: React.FC = () => {
           </>
         )}
       </div>
+      )}
     </div>
   );
 };

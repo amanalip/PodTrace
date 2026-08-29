@@ -22,6 +22,8 @@ describe('DiagramLegend', () => {
     expect(useAppStore.getState().isLegendOpen).toBe(true);
     expect(screen.getByText('Node Status')).toBeInTheDocument();
     expect(screen.getByText('Edge Status')).toBeInTheDocument();
+    expect(screen.getByText('Error / Failed flow')).toBeInTheDocument();
+    expect(screen.getByText('Warning / Pending flow')).toBeInTheDocument();
     expect(screen.getByText('Zone Boundaries')).toBeInTheDocument();
 
     const closeBtn = screen.getByRole('button', { name: /close diagram legend/i });

@@ -51,4 +51,23 @@ describe('WhatIfPanel', () => {
     expect(clearedState.activeWhatIfId).toBeNull();
     expect(clearedState.nodes[0].data?.status).toBe('idle');
   });
+
+  it('toggles minimize and expand without losing active scenario', () => {
+    render(<WhatIfPanel />);
+    fireEvent.click(screen.getByTestId('what-if-launcher'));
+
+    const select = screen.getByTestId('what-if-select');
+    fireEvent.change(select, { target: { value: 'apiserver-down' } });
+
+    expect(screen.getByText(/cluster consequences/i)).toBeInTheDocument();
+
+    const minBtn = screen.getByTestId('what-if-minimize-btn');
+    fireEvent.click(minBtn);
+
+    expect(screen.queryByText(/cluster consequences/i)).not.toBeInTheDocument();
+    expect(useAppStore.getState().activeWhatIfId).toBe('apiserver-down');
+
+    fireEvent.click(minBtn);
+    expect(screen.getByText(/cluster consequences/i)).toBeInTheDocument();
+  });
 });

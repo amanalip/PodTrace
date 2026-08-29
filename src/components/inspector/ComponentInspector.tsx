@@ -176,22 +176,28 @@ export const ComponentInspector: React.FC = () => {
 
             <div>
               <div className={styles.sectionTitle}>Diagnostic Commands</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                {info.debugCommands.map((cmd, idx) => (
-                  <div key={idx} className={styles.cmdRow}>
-                    <div className={styles.cmdBox}>{cmd}</div>
-                    <button
-                      type="button"
-                      className={styles.copyCmdBtn}
-                      onClick={() => handleCopyCommand(cmd, idx)}
-                      title="Copy command to clipboard"
-                      aria-label={`Copy ${cmd}`}
-                    >
-                      {copiedIndex === idx ? <Check size={12} /> : <Copy size={12} />}
-                    </button>
-                  </div>
-                ))}
-              </div>
+              {info.debugCommands.length === 0 ? (
+                <div style={{ color: '#64748b', fontSize: 11 }}>
+                  Standard kubectl get and describe commands apply to this component.
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {info.debugCommands.map((cmd, idx) => (
+                    <div key={idx} className={styles.cmdRow}>
+                      <div className={styles.cmdBox}>{cmd}</div>
+                      <button
+                        type="button"
+                        className={styles.copyCmdBtn}
+                        onClick={() => handleCopyCommand(cmd, idx)}
+                        title="Copy command to clipboard"
+                        aria-label={`Copy ${cmd}`}
+                      >
+                        {copiedIndex === idx ? <Check size={12} /> : <Copy size={12} />}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </>
         )}

@@ -12,7 +12,7 @@ export function splitMultiDocYaml(rawYaml: string): DocChunk[] {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    const isSeparator = /^---\s*$/.test(line);
+    const isSeparator = /^(---\s*(#.*)?|\.\.\.\s*(#.*)?)$/.test(line.trim());
 
     if (isSeparator) {
       if (currentChunkLines.length > 0) {

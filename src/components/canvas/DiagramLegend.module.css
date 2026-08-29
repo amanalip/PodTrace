@@ -91,3 +91,11 @@
 .edge_complete {
   background-color: #22c55e;
 }
+
+.edge_error {
+  border-top: 2px dashed #ef4444;
+}
+
+.edge_warning {
+  border-top: 2px dashed #f59e0b;
+}

@@ -7,7 +7,7 @@ export const ProgressTracker: React.FC = () => {
   const { completedScenarioIds } = useAppStore();
   const total = SCENARIO_CATALOG.length;
   const completed = completedScenarioIds.length;
-  const percentage = Math.round((completed / total) * 100);
+  const percentage = total > 0 ? Math.min(100, Math.max(0, Math.round((completed / total) * 100))) : 0;
 
   return (
     <div className={styles.container} data-testid="progress-tracker">

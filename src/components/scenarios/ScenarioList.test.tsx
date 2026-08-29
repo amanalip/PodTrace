@@ -34,4 +34,32 @@ describe('ScenarioList', () => {
     expect(screen.getByTestId('scenario-detail')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /start scenario/i })).toBeInTheDocument();
   });
+
+  it('renders empty state when search matches nothing and resets filters on click', () => {
+    render(<ScenarioList />);
+
+    const searchInput = screen.getByPlaceholderText(/search scenarios/i);
+    fireEvent.change(searchInput, { target: { value: 'nonexistent-query-123' } });
+
+    expect(screen.getByTestId('no-scenarios-found')).toBeInTheDocument();
+    expect(screen.getByText(/no scenarios found/i)).toBeInTheDocument();
+
+    const resetBtn = screen.getByTestId('reset-filters-btn');
+    fireEvent.click(resetBtn);
+
+    expect(screen.queryByTestId('no-scenarios-found')).not.toBeInTheDocument();
+    expect(screen.getByText('CrashLoopBackOff on Startup')).toBeInTheDocument();
+  });
+
+  it('clears search input when clear X button is clicked', () => {
+    render(<ScenarioList />);
+
+    const searchInput = screen.getByPlaceholderText(/search scenarios/i);
+    fireEvent.change(searchInput, { target: { value: 'Crash' } });
+
+    const clearBtn = screen.getByTestId('clear-search-btn');
+    fireEvent.click(clearBtn);
+
+    expect(searchInput).toHaveValue('');
+  });
 });
