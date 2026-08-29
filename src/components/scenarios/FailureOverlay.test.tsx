@@ -46,12 +46,16 @@ describe('FailureOverlay', () => {
     });
 
     render(<FailureOverlay />);
+    expect(screen.getByRole('region', { name: /scenario failure details/i })).toBeInTheDocument();
     expect(screen.getByText('CrashLoopBackOff')).toBeInTheDocument();
     expect(screen.getByText('CrashLoopBackOff on Startup')).toBeInTheDocument();
 
-    const hintBtn = screen.getByRole('button', { name: /show fix hint/i });
+    const hintBtn = screen.getByTestId('toggle-hint-btn');
+    expect(hintBtn).toHaveAttribute('aria-expanded', 'false');
+    expect(hintBtn).toHaveAttribute('aria-controls', 'failure-hint-box');
     fireEvent.click(hintBtn);
 
+    expect(hintBtn).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByTestId('failure-hint')).toHaveTextContent(
       'Fix command arguments in the container specification.',
     );

@@ -267,6 +267,7 @@ export const YAMLEditor: React.FC = () => {
             onClick={handleCopyYaml}
             title="Copy YAML manifest"
             aria-label="Copy YAML manifest"
+            aria-live="polite"
             data-testid="copy-yaml-btn"
           >
             {copiedYaml ? <Check size={13} color="#22c55e" /> : <Copy size={13} />}

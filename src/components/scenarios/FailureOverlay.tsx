@@ -23,6 +23,8 @@ export const FailureOverlay: React.FC = () => {
     return (
       <div
         className={`${styles.overlay} ${styles.overlay_success}`}
+        role="region"
+        aria-label="Scenario Resolution Banner"
         data-testid="scenario-success-overlay"
       >
         <div className={styles.header}>
@@ -41,6 +43,7 @@ export const FailureOverlay: React.FC = () => {
                 cursor: 'pointer',
                 fontSize: 12,
               }}
+              title="Dismiss completion banner"
               aria-label="Dismiss completion banner"
               data-testid="dismiss-overlay-x"
             >
@@ -81,7 +84,12 @@ export const FailureOverlay: React.FC = () => {
   const { failureDetails } = activeScenario;
 
   return (
-    <div className={styles.overlay} data-testid="failure-overlay">
+    <div
+      className={styles.overlay}
+      role="region"
+      aria-label="Scenario Failure Details"
+      data-testid="failure-overlay"
+    >
       <div className={styles.header}>
         <div className={styles.badge}>
           <span className={styles.pulseDot} />
@@ -106,13 +114,16 @@ export const FailureOverlay: React.FC = () => {
         type="button"
         className={styles.hintToggle}
         onClick={() => setShowHint(!showHint)}
+        aria-expanded={showHint}
+        aria-controls="failure-hint-box"
+        data-testid="toggle-hint-btn"
       >
         {showHint ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
         <span>{showHint ? 'Hide Fix Hint' : 'Show Fix Hint'}</span>
       </button>
 
       {showHint && (
-        <div className={styles.hintBox} data-testid="failure-hint">
+        <div id="failure-hint-box" className={styles.hintBox} data-testid="failure-hint">
           <strong>Hint: </strong> {failureDetails.fixHint}
         </div>
       )}

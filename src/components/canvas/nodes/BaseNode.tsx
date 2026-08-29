@@ -29,6 +29,8 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
   return (
     <div
       className={styles.baseNode}
+      role="group"
+      aria-label={`${label} component, status: ${status}`}
       style={accentColor ? { borderTop: `3px solid ${accentColor}` } : undefined}
       data-testid={`node-${label.toLowerCase().replace(/\s+/g, '-')}`}
     >
@@ -40,7 +42,11 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
         />
       )}
 
-      <div className={`${styles.statusDot} ${statusClass}`} title={`Status: ${status}`} />
+      <div
+        className={`${styles.statusDot} ${statusClass}`}
+        title={`Status: ${status}`}
+        aria-hidden="true"
+      />
 
       <div className={styles.nodeHeader}>
         <div className={styles.iconWrapper} style={accentColor ? { color: accentColor } : undefined}>

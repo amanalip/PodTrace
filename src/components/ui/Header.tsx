@@ -24,9 +24,9 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <header className={styles.header}>
+      <header className={styles.header} aria-label="PodTrace Application Header">
         <div className={styles.brand}>
-          <div className={styles.logoIcon}>
+          <div className={styles.logoIcon} aria-hidden="true">
             <Layers size={20} />
           </div>
           <span className={styles.title}>PodTrace</span>

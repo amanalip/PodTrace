@@ -490,9 +490,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: In `ComponentInspector.tsx`, copy command buttons lacked `aria-label={`Copy ${cmd}`}`.
     - **Fix**: Added descriptive aria-labels to all command copy buttons.
 
+122. **Bug 122: FailureOverlay Missing ARIA Region and Landmark**
+    - **Root Cause**: In `FailureOverlay.tsx`, the overlay lacked `role="region"` and `aria-label="Scenario Failure Details"`.
+    - **Fix**: Added accessible landmark region and dynamic aria-label based on scenario state.
+
+123. **Bug 123: FailureOverlay Hint Toggle Missing ARIA Expanded**
+    - **Root Cause**: In `FailureOverlay.tsx`, the hint accordion button lacked `aria-expanded` and `aria-controls`.
+    - **Fix**: Added `aria-expanded={showHint}` and `aria-controls="failure-hint-box"`.
+
+124. **Bug 124: FailureOverlay Hint Box Missing ID Reference**
+    - **Root Cause**: In `FailureOverlay.tsx`, the hint box lacked `id="failure-hint-box"` linked to the toggle button.
+    - **Fix**: Added `id="failure-hint-box"` matching `aria-controls`.
+
+125. **Bug 125: BaseNode Missing Component Accessibility Semantics**
+    - **Root Cause**: In `BaseNode.tsx`, diagram nodes rendered as unlabelled divs without semantic role or status description for screen readers.
+    - **Fix**: Added `role="group"` and `aria-label={`${label} component, status: ${status}`}`.
+
+126. **Bug 126: Header Landmark Missing ARIA Label**
+    - **Root Cause**: In `Header.tsx`, the `<header>` element lacked an explicit `aria-label="PodTrace Application Header"`.
+    - **Fix**: Added `aria-label` to header landmark.
+
+127. **Bug 127: FailureOverlay Toggle Hint Missing Test ID**
+    - **Root Cause**: In `FailureOverlay.tsx`, the hint toggle button lacked `data-testid="toggle-hint-btn"`.
+    - **Fix**: Added explicit test ID to hint toggle button.
+
+128. **Bug 128: BaseNode Status Dot Missing ARIA Hidden**
+    - **Root Cause**: In `BaseNode.tsx`, the decorative status dot was not hidden from assistive tech causing redundant announcement.
+    - **Fix**: Added `aria-hidden="true"` to status dot.
+
+129. **Bug 129: FailureOverlay Header Completion Dismiss Button Title**
+    - **Root Cause**: In `FailureOverlay.tsx`, the dismiss button in the header lacked a tooltip `title="Dismiss completion banner"`.
+    - **Fix**: Added tooltip title attribute.
+
+130. **Bug 130: YAMLEditor Toolbar Copy Feedback Reset**
+    - **Root Cause**: In `YAMLEditor.tsx`, copy button lacked live region announcement for copy success state.
+    - **Fix**: Added `aria-live="polite"` to YAML copy button.
+
+131. **Bug 131: Header Brand Logo Missing ARIA Hidden**
+    - **Root Cause**: In `Header.tsx`, the decorative logo icon wrapper was not explicitly marked `aria-hidden="true"`.
+    - **Fix**: Added `aria-hidden="true"` to decorative brand icon.
+
 ---
 
-## 2. Code Quality and Testing Improvements (120 Improvements)
+## 2. Code Quality and Testing Improvements (130 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -614,10 +654,20 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 118. **StepIndicator Arrow Key Navigation Test Suite**: Expanded `AnimationController.test.tsx` testing timeline step pill keyboard navigation.
 119. **ScenarioDetail Back Button & Copy Test Suite**: Expanded `ScenarioDetail.test.tsx` testing `data-testid="back-to-scenarios-btn"` and manifest copy action.
 120. **Header Shortcut Hints Test Suite**: Added tests verifying tooltip shortcut labels.
+121. **FailureOverlay ARIA Accordion Pipeline**: Linked hint toggle and container via `aria-controls` in `FailureOverlay.tsx`.
+122. **BaseNode Semantic Landmark System**: Standardized `role="group"` and dynamic status labelling across all diagram nodes in `BaseNode.tsx`.
+123. **Header Landmark Semantic Standards**: Added accessible landmark labelling to `Header.tsx`.
+124. **Live Status Announcement in Code Editor**: Added `aria-live="polite"` to manifest copy feedback in `YAMLEditor.tsx`.
+125. **Decorative Icon ARIA Sanitization**: Added `aria-hidden="true"` across decorative status dots and logo icons.
+126. **FailureOverlay Hint Accordion Test Suite**: Expanded `FailureOverlay.test.tsx` testing `aria-expanded`, `aria-controls`, and `data-testid="toggle-hint-btn"`.
+127. **BaseNode ARIA Group & Status Test Suite**: Added tests in `BaseNode.test.tsx` verifying `role="group"` and accessible status label in diagram nodes.
+128. **Header Landmark & Action Tooltips Test Suite**: Added `Header.test.tsx` testing header landmark `aria-label` and brand icon `aria-hidden`.
+129. **YAMLEditor Copy Manifest ARIA Live Test Suite**: Expanded `YAMLEditor.test.tsx` testing copy manifest button live region and feedback state.
+130. **Comprehensive 130-Improvement Architecture**: Robust Kubernetes interactive learning and troubleshooting platform.
 
 ---
 
-## 3. UX/UI Feature Enhancements (120 Improvements)
+## 3. UX/UI Feature Enhancements (130 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
@@ -739,3 +789,13 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 118. **Active Timeline Step Highlight**: Cyan glowing pill outline on currently active step in timeline scrubber.
 119. **Smooth Drawer Header Transition**: Clean typography and zone tags on top of component inspector drawer.
 120. **Complete Full-Spectrum 120-Feature Milestone**: Comprehensive Kubernetes lifecycle animation and scenario solving platform.
+121. **Accessible Diagram Component Regions**: Screen readers speak component name, role, and real-time lifecycle status on diagram focus.
+122. **Smooth Hint Accordion Transition in Scenario Failure**: Smooth reveal of contextual troubleshooting hints.
+123. **Polite Copy Confirmation Announcements**: Screen reader audible confirmations when copying manifests or commands.
+124. **High-Contrast Header Landmark Layout**: Clean top bar with distinct branding, theme toggle, and shortcut triggers.
+125. **Dynamic Node Border Glow by Component Status**: Node cards glow with amber or red borders during cluster degradation.
+126. **1-Click Scenario Hint Toggle**: Clear "Show Fix Hint" and "Hide Fix Hint" action with chevron indicators.
+127. **Victory Banner Dismiss Action**: Quick dismiss action to return unobstructed view to cluster canvas after solving a challenge.
+128. **Refined Sample Picker Group Headers**: Category optgroups with bold section headings in YAML editor.
+129. **Crisp Code Area Focus Rings**: High-contrast cyan focus highlights on CodeMirror active lines.
+130. **Complete Full-Spectrum 130-Feature Milestone**: Production-grade Kubernetes lifecycle animation, manifest editing, and scenario simulator.

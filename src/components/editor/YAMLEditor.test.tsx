@@ -59,6 +59,7 @@ describe('YAMLEditor', () => {
     render(<YAMLEditor />);
 
     const copyBtn = screen.getByTestId('copy-yaml-btn');
+    expect(copyBtn).toHaveAttribute('aria-live', 'polite');
     fireEvent.click(copyBtn);
 
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
