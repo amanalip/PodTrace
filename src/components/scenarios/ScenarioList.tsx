@@ -61,18 +61,28 @@ export const ScenarioList: React.FC = () => {
       </div>
 
       <div className={styles.categories}>
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat.value}
-            type="button"
-            className={`${styles.categoryPill} ${
-              selectedCategory === cat.value ? styles.categoryPill_active : ''
-            }`}
-            onClick={() => setSelectedCategory(cat.value)}
-          >
-            {cat.label}
-          </button>
-        ))}
+        {CATEGORIES.map((cat) => {
+          const count =
+            cat.value === 'all'
+              ? SCENARIO_CATALOG.length
+              : SCENARIO_CATALOG.filter((s) => s.category === cat.value).length;
+
+          return (
+            <button
+              key={cat.value}
+              type="button"
+              className={`${styles.categoryPill} ${
+                selectedCategory === cat.value ? styles.categoryPill_active : ''
+              }`}
+              onClick={() => {
+                setSelectedCategory(cat.value);
+                setSelectedScenario(null);
+              }}
+            >
+              {cat.label} ({count})
+            </button>
+          );
+        })}
       </div>
 
       <div className={styles.scenarioCards}>
@@ -96,9 +106,25 @@ export const ScenarioList: React.FC = () => {
             >
               <div className={styles.cardHeader}>
                 <span className={styles.cardTitle}>{scenario.title}</span>
-                {isCompleted && (
-                  <CheckCircle2 size={16} color="#22c55e" data-testid={`check-${scenario.id}`} />
-                )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  {isActive && (
+                    <span
+                      style={{
+                        fontSize: '10px',
+                        background: 'rgba(56, 189, 248, 0.15)',
+                        color: '#38bdf8',
+                        padding: '1px 6px',
+                        borderRadius: '4px',
+                        fontWeight: 600,
+                      }}
+                    >
+                      Active
+                    </span>
+                  )}
+                  {isCompleted && (
+                    <CheckCircle2 size={16} color="#22c55e" data-testid={`check-${scenario.id}`} />
+                  )}
+                </div>
               </div>
 
               <div className={styles.metaTags}>

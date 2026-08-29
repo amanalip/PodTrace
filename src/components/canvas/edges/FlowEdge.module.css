@@ -22,3 +22,17 @@
   border-color: var(--status-success);
   color: var(--status-success);
 }
+
+.edgeLabel_error {
+  border-color: var(--status-error);
+  color: var(--status-error);
+  font-weight: 600;
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.edgeLabel_warning {
+  border-color: var(--status-warning);
+  color: var(--status-warning);
+  font-weight: 600;
+  background-color: rgba(245, 158, 11, 0.1);
+}

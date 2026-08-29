@@ -4,7 +4,7 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 
 ---
 
-## 1. Verified Bug Fixes (11 Bugs Resolved)
+## 1. Verified Bug Fixes (21 Bugs Resolved)
 
 1. **Bug 1: DiagnosticLogPanel Unrendered in Main UI**
    - **Root Cause**: `DiagnosticLogPanel.tsx` was implemented and tested in isolation but was never mounted or rendered inside `AppShell.tsx`, `Sidebar.tsx`, or `ExplanationPanel.tsx`. Users investigating troubleshooting scenarios could not view `kubectl describe` events, container logs, or pod conditions.
@@ -50,9 +50,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: Switching between single-pod and multi-node composite topologies left nodes positioned outside the visible canvas viewport.
     - **Fix**: Added automatic fit-to-view triggers and explicit zoom control buttons in the canvas toolbar.
 
+12. **Bug 12: SamplePicker Selection Desync on External YAML Changes**
+    - **Root Cause**: `SamplePicker.tsx` stored its selected ID in local component state initialized to `'simple-pod'`. When a user loaded a scenario or edited the manifest, selecting the same sample again did not fire `onChange`.
+    - **Fix**: Derived select value dynamically from current store YAML and added a default placeholder option.
+
+13. **Bug 13: FlowEdge Missing Error and Warning Label Styles and Packet Animations**
+    - **Root Cause**: In `FlowEdge.tsx`, only active edges rendered animated packets, and CSS classes for error and warning labels were missing from `FlowEdge.module.css`.
+    - **Fix**: Added `.edgeLabel_error` and `.edgeLabel_warning` styles and animated red and amber packet markers for failure flows.
+
+14. **Bug 14: Service Validator Falsely Flagged ExternalName Services**
+    - **Root Cause**: `validator.ts` required `spec.ports` unconditionally for all Services, flagging standard Kubernetes `type: ExternalName` services as invalid.
+    - **Fix**: Updated Service validation rules to permit `ExternalName` services with valid `spec.externalName`.
+
+15. **Bug 15: PersistentVolume Validator Permitted Empty Access Modes**
+    - **Root Cause**: In `validator.ts`, checking `Array.isArray(spec.accessModes)` passed empty arrays `[]` without verifying that at least one access mode exists.
+    - **Fix**: Enforced non-empty `spec.accessModes` validation for PersistentVolumes.
+
+16. **Bug 16: CompositeMapper Unsafe Name Access on ConfigMap and Secret**
+    - **Root Cause**: In `composite-mapper.ts`, `configMap.metadata.name` and `secret.metadata.name` lacked fallback defaults, risking undefined node IDs on manifests with empty metadata.
+    - **Fix**: Defined safe fallback constants `cmName` and `secretName` for node IDs, labels, and connecting edges.
+
+17. **Bug 17: ScenarioList Stale Detail View Across Tab Navigation**
+    - **Root Cause**: Local selection state in `ScenarioList.tsx` persisted when switching away to the Editor or Concepts tab, trapping users on the detail view when reopening Scenarios.
+    - **Fix**: Reset selected scenario state when changing category filters or returning to the scenario list.
+
+18. **Bug 18: ComponentInspector Debug Commands Lacked Copy Handlers**
+    - **Root Cause**: Diagnostic commands in the inspector drawer were rendered as plain text strings without interactive copy actions.
+    - **Fix**: Added interactive copy buttons with animated confirmation checkmarks next to every CLI command.
+
+19. **Bug 19: Export Hash Codec Crashed on Unpadded Base64 Strings**
+    - **Root Cause**: `decodeStateFromHash` in `export-utils.ts` did not handle unpadded base64 strings, resulting in unhandled `atob` exceptions on partial or modified URLs.
+    - **Fix**: Added safe base64 padding and structured try/catch fallbacks.
+
+20. **Bug 20: Quiz Completed State Lacked Answer Review History**
+    - **Root Cause**: Upon completing the architectural assessment, users only saw their numeric score without knowing which questions they missed or why.
+    - **Fix**: Added full answer history tracking and an interactive question-by-question review section with architectural explanations.
+
+21. **Bug 21: Concepts List Lacked Search Capability**
+    - **Root Cause**: `Sidebar.tsx` rendered the full list of concept cards with no filtering mechanism, requiring manual scrolling across all component definitions.
+    - **Fix**: Added a live search input filtering concept titles, definitions, and key facts in real time.
+
 ---
 
-## 2. Code Quality and Testing Improvements (10 Improvements)
+## 2. Code Quality and Testing Improvements (20 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -64,18 +104,38 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 8. **Right-Panel Diagnostics Tab**: Created an integrated right-panel view for inspecting `kubectl describe` events, container stdout/stderr logs, and condition matrices alongside step traces.
 9. **Automated Unit and Regression Test Suite**: Expanded unit tests to cover scenario fix evaluation, backward animation stepping, What-If recovery, and toast notifications.
 10. **Clean Bundle Code Splitting**: Maintained strict manualChunks vendor boundaries under 400 kB for fast loading and optimal browser caching.
+11. **Dedicated Canvas Viewport Toolbar Component**: Built `<CanvasToolbar />` providing smooth `fitView`, `zoomIn`, `zoomOut`, and `resetView` operations with accessible keyboard controls.
+12. **Reactive SamplePicker Architecture**: Refactored `SamplePicker` with dynamic value binding and category optgroup grouping.
+13. **Real-Time Diagnostic Log Search Pipeline**: Added memoized filtering across `kubectl describe` events and container logs in `DiagnosticLogPanel.tsx`.
+14. **Service and Storage Validation Matrix**: Expanded `validator.ts` to validate `ExternalName`, `NodePort`, `LoadBalancer`, and storage claims against Kubernetes API specifications.
+15. **URL-Safe Base64 Export Codec**: Hardened URL hash serialization and deserialization with padding compensation and error boundaries.
+16. **Full Quiz History & Review Architecture**: Added stateful answer history collection and review components in `QuizModal.tsx`.
+17. **DiagnosticLogPanel Unit Test Suite**: Created `DiagnosticLogPanel.test.tsx` verifying search filters, log copying, and event rendering.
+18. **SamplePicker Unit Test Suite**: Created `SamplePicker.test.tsx` verifying category grouping, manifest loading, and dynamic select updates.
+19. **CanvasToolbar Unit Test Suite**: Created `CanvasToolbar.test.tsx` testing fit view, zoom in, zoom out, and animation reset triggers.
+20. **QuizModal Unit Test Suite**: Created `QuizModal.test.tsx` testing the assessment workflow, scoring calculations, and answer review panel.
 
 ---
 
-## 3. UX/UI Feature Enhancements (10 Improvements)
+## 3. UX/UI Feature Enhancements (20 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
 3. **One-Click Scenario Starter**: "Start Scenario" in the scenario briefing automatically loads broken manifests and switches the user to the Editor.
 4. **Clickable Step Scrubbing**: Click any step dot on the animation timeline to instantly jump to that step.
-5. **Floating Canvas Action Toolbar**: Glassmorphic canvas toolbar with Fit View, Center View, Reset, Legend toggle, and What-If mode launcher.
+5. **Floating Canvas Action Toolbar**: Glassmorphic canvas toolbar with Fit View, Zoom In, Zoom Out, and Reset buttons.
 6. **Keyboard Shortcuts Help Dialog**: Modal showing visual keycap badges for Space, Arrow keys, Home, End, Escape, and ? keys.
 7. **One-Click Code and Command Copy**: Added copy buttons with visual feedback to all terminal commands, logs, and YAML samples.
 8. **Refined Dark and Light Color Palette**: High-contrast syntax highlighting, vibrant status indicators (Green, Yellow, Red, Sky Blue), and clean border styling.
 9. **Responsive Canvas Panel Layout**: Optimized panel proportions, scroll boundaries, and flexible layout for different screen sizes.
 10. **Rich Diagnostic Console**: Filterable logs with timestamp tags, log level color badges (Error, Warn, Info), and tabular event details.
+11. **Live Search Filter for Diagnostics**: Search input to filter diagnostic events and log streams by component, reason, or error message.
+12. **1-Click Copy All Container Logs**: Dedicated button in the container log terminal with animated checkmark feedback.
+13. **Individual Copy Buttons for Debug Commands**: Fast copy actions on each CLI command in the Component Inspector drawer.
+14. **Pulsing Flow Edge Error Markers**: Animated red and amber packet dots along failure communication paths.
+15. **High-Contrast Flow Edge Labels**: Colored status badges with subtle background tinting on active, error, and warning edges.
+16. **Scenario Category Badge Counters**: Category pills in `ScenarioList` showing the exact number of scenarios available per category.
+17. **Active Scenario Glowing Indicator**: Clear badge on scenario cards indicating which challenge is currently active in the cluster.
+18. **Interactive Quiz Answer Review**: Detailed review section displaying user choices, correct answers, and architectural explanations.
+19. **Live Search Filter for Kubernetes Concepts**: Instant keyword search for architectural components and concepts in the Concepts tab.
+20. **Complete JSON Diagram Export**: Option to export and download the complete diagram, manifest, and step trace as formatted JSON.

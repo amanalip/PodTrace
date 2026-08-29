@@ -23,6 +23,8 @@ export function mapCompositeResources(resources: K8sResource[]): {
   const depName = deployment?.metadata?.name || 'app-deployment';
   const svcName = service?.metadata?.name || `${depName}-service`;
   const ingName = ingress?.metadata?.name || `${depName}-ingress`;
+  const cmName = configMap?.metadata?.name || 'config';
+  const secretName = secret?.metadata?.name || 'secret';
   const replicas = deployment?.spec?.replicas ?? 2;
 
   const zoneNodes = createZoneNodes(2, namespace);
@@ -112,11 +114,11 @@ export function mapCompositeResources(resources: K8sResource[]): {
     ...(configMap
       ? [
           {
-            id: `node-config-${configMap.metadata.name}`,
+            id: `node-config-${cmName}`,
             type: 'podNode' as const,
             position: { x: 380, y: 490 },
             data: {
-              label: `ConfigMap: ${configMap.metadata.name}`,
+              label: `ConfigMap: ${cmName}`,
               status: 'idle' as const,
               subtitle: 'Mounted Configuration',
             },
@@ -127,11 +129,11 @@ export function mapCompositeResources(resources: K8sResource[]): {
     ...(secret
       ? [
           {
-            id: `node-secret-${secret.metadata.name}`,
+            id: `node-secret-${secretName}`,
             type: 'podNode' as const,
             position: { x: 380, y: 610 },
             data: {
-              label: `Secret: ${secret.metadata.name}`,
+              label: `Secret: ${secretName}`,
               status: 'idle' as const,
               subtitle: 'In-Memory Credentials',
             },
@@ -265,7 +267,7 @@ export function mapCompositeResources(resources: K8sResource[]): {
   if (configMap) {
     edges.push({
       id: 'edge-config-pod-mount',
-      source: `node-config-${configMap.metadata.name}`,
+      source: `node-config-${cmName}`,
       target: `node-pod-${depName}-1`,
       type: 'flowEdge',
       data: { label: 'Volume mount / envFrom', status: 'inactive' },

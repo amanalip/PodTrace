@@ -66,7 +66,20 @@ export const FlowEdge: React.FC<EdgeProps> = ({
       ? styles.edgeLabel_active
       : status === 'complete'
         ? styles.edgeLabel_complete
-        : '';
+        : status === 'error'
+          ? styles.edgeLabel_error
+          : status === 'warning'
+            ? styles.edgeLabel_warning
+            : '';
+
+  const packetColor =
+    status === 'active'
+      ? '#38bdf8'
+      : status === 'error'
+        ? '#ef4444'
+        : status === 'warning'
+          ? '#f59e0b'
+          : null;
 
   return (
     <>
@@ -83,8 +96,8 @@ export const FlowEdge: React.FC<EdgeProps> = ({
         }}
       />
 
-      {status === 'active' && (
-        <circle r="4" fill="#38bdf8">
+      {packetColor && (
+        <circle r="4" fill={packetColor}>
           <animateMotion dur="1.5s" repeatCount="indefinite" path={edgePath} />
         </circle>
       )}

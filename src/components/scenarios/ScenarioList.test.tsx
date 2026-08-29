@@ -11,7 +11,7 @@ describe('ScenarioList', () => {
     expect(screen.getByText('Pending: Insufficient CPU')).toBeInTheDocument();
 
     // Click on "Scheduling" category
-    const schedulingPill = screen.getByRole('button', { name: 'Scheduling' });
+    const schedulingPill = screen.getByRole('button', { name: /Scheduling/i });
     fireEvent.click(schedulingPill);
 
     expect(screen.getByText('Pending: Insufficient CPU')).toBeInTheDocument();

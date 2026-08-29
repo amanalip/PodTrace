@@ -11,8 +11,10 @@ interface QuizModalProps {
 export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [answers, setAnswers] = useState<Array<number | null>>([]);
   const [score, setScore] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [showReview, setShowReview] = useState(false);
 
   if (!isOpen) return null;
 
@@ -22,6 +24,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
   const handleSelectOption = (idx: number) => {
     if (selectedAnswer !== null) return;
     setSelectedAnswer(idx);
+    setAnswers((prev) => [...prev, idx]);
     if (idx === currentQ.correctIndex) {
       setScore((prev) => prev + 1);
     }
@@ -39,8 +42,10 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
   const handleReset = () => {
     setCurrentIndex(0);
     setSelectedAnswer(null);
+    setAnswers([]);
     setScore(0);
     setIsCompleted(false);
+    setShowReview(false);
   };
 
   const getRankBadge = () => {
@@ -84,16 +89,64 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
               <p style={{ color: '#cbd5e1', fontSize: 13 }}>
                 You scored {Math.round((score / total) * 100)}% on the Kubernetes architecture and lifecycle assessment.
               </p>
-              <button
-                type="button"
-                className={styles.nextBtn}
-                onClick={handleReset}
-                data-testid="quiz-retry-btn"
-                style={{ marginTop: 12 }}
-              >
-                <RotateCcw size={14} />
-                <span>Retry Quiz</span>
-              </button>
+
+              <div style={{ display: 'flex', gap: '8px', marginTop: 12 }}>
+                <button
+                  type="button"
+                  className={styles.nextBtn}
+                  onClick={() => setShowReview(!showReview)}
+                  data-testid="quiz-toggle-review-btn"
+                >
+                  <span>{showReview ? 'Hide Review' : 'Review Answers'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  className={styles.nextBtn}
+                  onClick={handleReset}
+                  data-testid="quiz-retry-btn"
+                >
+                  <RotateCcw size={14} />
+                  <span>Retry Quiz</span>
+                </button>
+              </div>
+
+              {showReview && (
+                <div style={{ marginTop: 16, textAlign: 'left', width: '100%' }} data-testid="quiz-review-section">
+                  {QUIZ_QUESTIONS.map((q, qIdx) => {
+                    const userAns = answers[qIdx];
+                    const isCorrect = userAns === q.correctIndex;
+
+                    return (
+                      <div
+                        key={q.id}
+                        style={{
+                          marginBottom: 12,
+                          padding: 10,
+                          background: 'rgba(255, 255, 255, 0.03)',
+                          borderRadius: 6,
+                          borderLeft: `3px solid ${isCorrect ? '#22c55e' : '#ef4444'}`,
+                        }}
+                      >
+                        <div style={{ fontWeight: 600, fontSize: 12, marginBottom: 4 }}>
+                          {qIdx + 1}. {q.question}
+                        </div>
+                        <div style={{ fontSize: 11, color: isCorrect ? '#22c55e' : '#ef4444' }}>
+                          Your answer: {userAns !== null && userAns !== undefined ? q.options[userAns] : 'Not answered'}
+                        </div>
+                        {!isCorrect && (
+                          <div style={{ fontSize: 11, color: '#22c55e', marginTop: 2 }}>
+                            Correct answer: {q.options[q.correctIndex]}
+                          </div>
+                        )}
+                        <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4 }}>
+                          {q.explanation}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           ) : (
             <>

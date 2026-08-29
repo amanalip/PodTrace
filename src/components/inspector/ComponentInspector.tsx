@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ExternalLink, Terminal, Activity, Settings, Info } from 'lucide-react';
+import { X, ExternalLink, Terminal, Activity, Settings, Info, Copy, Check } from 'lucide-react';
 import { useAppStore } from '../../store/index.ts';
 import { getComponentInspectionData } from '../../inspector/component-inspector-data.ts';
 import styles from './ComponentInspector.module.css';
@@ -7,6 +7,7 @@ import styles from './ComponentInspector.module.css';
 export const ComponentInspector: React.FC = () => {
   const { selectedNodeId, setSelectedNodeId, nodes } = useAppStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'flags' | 'metrics' | 'debug'>('overview');
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   if (!selectedNodeId) return null;
 
@@ -23,6 +24,12 @@ export const ComponentInspector: React.FC = () => {
   const details = (selectedNode.data as Record<string, unknown> | undefined)?.details as
     | { containers?: Array<{ name: string; image?: string }> }
     | undefined;
+
+  const handleCopyCommand = (cmd: string, idx: number) => {
+    navigator.clipboard.writeText(cmd);
+    setCopiedIndex(idx);
+    setTimeout(() => setCopiedIndex(null), 1500);
+  };
 
   return (
     <div className={styles.drawer} data-testid="component-inspector">
@@ -171,8 +178,17 @@ export const ComponentInspector: React.FC = () => {
               <div className={styles.sectionTitle}>Diagnostic Commands</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {info.debugCommands.map((cmd, idx) => (
-                  <div key={idx} className={styles.cmdBox}>
-                    {cmd}
+                  <div key={idx} className={styles.cmdRow}>
+                    <div className={styles.cmdBox}>{cmd}</div>
+                    <button
+                      type="button"
+                      className={styles.copyCmdBtn}
+                      onClick={() => handleCopyCommand(cmd, idx)}
+                      title="Copy command to clipboard"
+                      aria-label={`Copy ${cmd}`}
+                    >
+                      {copiedIndex === idx ? <Check size={12} /> : <Copy size={12} />}
+                    </button>
                   </div>
                 ))}
               </div>

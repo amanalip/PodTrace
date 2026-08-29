@@ -165,11 +165,11 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose }) => 
 
           {activeTab === 'svg' && (
             <div className={styles.fieldGroup}>
-              <span className={styles.label}>Export Raw Architecture Diagram</span>
+              <span className={styles.label}>Export Raw Architecture & Lifecycle Data</span>
               <p className={styles.infoText}>
-                Download structural layout and topology descriptions for inclusion in documentation or incident reports.
+                Download structural layout, topology descriptions, and JSON trace data for documentation or incident analysis.
               </p>
-              <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+              <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
                 <button
                   type="button"
                   className={styles.btnAction}
@@ -188,6 +188,31 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose }) => 
                 >
                   <Download size={14} />
                   <span>Download Lifecycle (.mmd)</span>
+                </button>
+                <button
+                  type="button"
+                  className={styles.btnAction}
+                  style={{ background: '#1e293b' }}
+                  onClick={() => {
+                    const json = JSON.stringify(
+                      {
+                        exportedAt: new Date().toISOString(),
+                        app: 'PodTrace',
+                        stepIndex: currentStepIndex,
+                        manifest: yaml,
+                        steps,
+                        nodes,
+                        edges,
+                      },
+                      null,
+                      2,
+                    );
+                    downloadFile(json, 'podtrace-diagram.json', 'application/json');
+                  }}
+                  data-testid="download-json-btn"
+                >
+                  <Download size={14} />
+                  <span>Download Trace (.json)</span>
                 </button>
               </div>
             </div>

@@ -142,7 +142,21 @@ export function validateResource(doc: unknown, lineOffset = 0): ValidationError[
     }
 
     case 'Service': {
-      if (!spec || !Array.isArray(spec.ports) || spec.ports.length === 0) {
+      if (!spec) {
+        errors.push({
+          line: lineOffset + 1,
+          field: 'spec',
+          message: 'Service requires a spec block',
+        });
+      } else if (spec.type === 'ExternalName') {
+        if (!spec.externalName || typeof spec.externalName !== 'string') {
+          errors.push({
+            line: lineOffset + 1,
+            field: 'spec.externalName',
+            message: 'ExternalName Service requires spec.externalName',
+          });
+        }
+      } else if (!Array.isArray(spec.ports) || spec.ports.length === 0) {
         errors.push({
           line: lineOffset + 1,
           field: 'spec.ports',
@@ -242,11 +256,16 @@ export function validateResource(doc: unknown, lineOffset = 0): ValidationError[
     }
 
     case 'PersistentVolume': {
-      if (!spec || !spec.capacity || !Array.isArray(spec.accessModes)) {
+      if (
+        !spec ||
+        !spec.capacity ||
+        !Array.isArray(spec.accessModes) ||
+        spec.accessModes.length === 0
+      ) {
         errors.push({
           line: lineOffset + 1,
           field: 'spec',
-          message: 'PV requires spec.capacity and spec.accessModes',
+          message: 'PV requires spec.capacity and non-empty spec.accessModes',
         });
       }
       break;

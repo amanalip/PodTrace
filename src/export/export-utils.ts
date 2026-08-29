@@ -16,7 +16,14 @@ export function decodeStateFromHash(
 ): { yaml?: string; step?: number; theme?: string } | null {
   try {
     if (!hash || !hash.startsWith('#data=')) return null;
-    const encoded = hash.replace('#data=', '');
+    let encoded = hash.replace('#data=', '').trim();
+    if (!encoded) return null;
+
+    // Pad base64 string if necessary
+    while (encoded.length % 4 !== 0) {
+      encoded += '=';
+    }
+
     const decoded = decodeURIComponent(atob(encoded));
     const parsed = JSON.parse(decoded);
     return {
@@ -27,6 +34,28 @@ export function decodeStateFromHash(
   } catch {
     return null;
   }
+}
+
+export function generateDiagramExportJSON(
+  yaml: string,
+  stepIndex: number,
+  steps: LifecycleStep[],
+  nodes: Node[],
+  edges: Edge[],
+): string {
+  return JSON.stringify(
+    {
+      exportedAt: new Date().toISOString(),
+      app: 'PodTrace',
+      stepIndex,
+      manifest: yaml,
+      steps,
+      nodes,
+      edges,
+    },
+    null,
+    2,
+  );
 }
 
 export function generateMermaidSequenceDiagram(steps: LifecycleStep[]): string {

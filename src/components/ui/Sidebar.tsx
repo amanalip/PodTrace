@@ -9,6 +9,18 @@ import styles from './Sidebar.module.css';
 
 export const Sidebar: React.FC = () => {
   const { activeSidebarTab, setActiveSidebarTab } = useAppStore();
+  const [conceptSearch, setConceptSearch] = React.useState('');
+
+  const filteredConcepts = React.useMemo(() => {
+    if (!conceptSearch.trim()) return CONCEPT_CARDS;
+    const q = conceptSearch.toLowerCase();
+    return CONCEPT_CARDS.filter(
+      (c) =>
+        c.title.toLowerCase().includes(q) ||
+        c.definition.toLowerCase().includes(q) ||
+        c.keyFact.toLowerCase().includes(q),
+    );
+  }, [conceptSearch]);
 
   return (
     <div className={styles.sidebarContainer} data-testid="sidebar-container">
@@ -58,7 +70,26 @@ export const Sidebar: React.FC = () => {
 
         {activeSidebarTab === 'concepts' && (
           <div className={styles.conceptsList} data-testid="concepts-list">
-            {CONCEPT_CARDS.map((concept) => (
+            <div style={{ padding: '4px 0 12px 0' }}>
+              <input
+                type="text"
+                placeholder="Search Kubernetes concepts..."
+                value={conceptSearch}
+                onChange={(e) => setConceptSearch(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '6px 10px',
+                  background: 'var(--bg-tertiary, #0f172a)',
+                  border: '1px solid var(--border-color, #334155)',
+                  borderRadius: 6,
+                  color: 'var(--text-primary, #f8fafc)',
+                  fontSize: 12,
+                  outline: 'none',
+                }}
+                data-testid="concept-search-input"
+              />
+            </div>
+            {filteredConcepts.map((concept) => (
               <ConceptCard key={concept.id} concept={concept} />
             ))}
           </div>

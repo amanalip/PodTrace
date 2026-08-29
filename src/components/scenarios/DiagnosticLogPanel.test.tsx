@@ -1,46 +1,10 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DiagnosticLogPanel } from './DiagnosticLogPanel.tsx';
 import { useAppStore } from '../../store/index.ts';
-import { Scenario } from '../../scenarios/scenario-types.ts';
+import { SCENARIO_CATALOG } from '../../scenarios/scenario-data.ts';
 
 describe('DiagnosticLogPanel', () => {
-  const mockScenario: Scenario = {
-    id: 'sc-diag',
-    title: 'ImagePullBackOff Scenario',
-    category: 'pod-lifecycle',
-    difficulty: 'Beginner',
-    description: 'Image missing',
-    yamlTemplate: '...',
-    failureStep: 8,
-    failureDetails: {
-      errorType: 'ErrImagePull',
-      failingStep: 8,
-      failingNodeId: 'node-kubelet',
-      events: [
-        {
-          type: 'Warning',
-          reason: 'Failed',
-          message: 'Failed to pull image "nginx:invalid"',
-          from: 'kubelet',
-          age: '12s',
-        },
-      ],
-      logs: [
-        {
-          timestamp: '2026-08-28T12:00:00Z',
-          level: 'error',
-          component: 'kubelet',
-          message: 'rpc error: code = NotFound desc = failed to pull image',
-        },
-      ],
-      fixHint: 'Fix the tag',
-    },
-    successMessage: 'Fixed',
-    explanation: 'Image pull failed',
-    validator: () => ({ isFixed: true }),
-  };
-
   beforeEach(() => {
     useAppStore.setState({
       activeScenario: null,
@@ -48,31 +12,52 @@ describe('DiagnosticLogPanel', () => {
     });
   });
 
-  it('renders placeholder when no scenario is loaded', () => {
+  it('renders placeholder when no active scenario is loaded', () => {
     render(<DiagnosticLogPanel />);
-    expect(screen.getByText(/no active scenario loaded/i)).toBeInTheDocument();
+    expect(screen.getByText(/No active scenario loaded/i)).toBeInTheDocument();
   });
 
-  it('renders events and switches between logs and conditions tabs', () => {
+  it('renders events and filters by query', () => {
+    const scenario = SCENARIO_CATALOG[0];
     useAppStore.setState({
-      activeScenario: mockScenario,
+      activeScenario: scenario,
       scenarioState: 'failed',
     });
 
     render(<DiagnosticLogPanel />);
 
-    // Default tab: Events
-    expect(screen.getByText('Failed to pull image "nginx:invalid"')).toBeInTheDocument();
+    expect(screen.getByText(/Events/i)).toBeInTheDocument();
+    expect(screen.getByTestId('diag-filter-input')).toBeInTheDocument();
 
-    // Switch to Logs tab
-    const logsTabBtn = screen.getByRole('button', { name: /logs/i });
-    fireEvent.click(logsTabBtn);
-    expect(screen.getByText(/rpc error: code = NotFound/i)).toBeInTheDocument();
+    const input = screen.getByTestId('diag-filter-input');
+    fireEvent.change(input, { target: { value: 'nonexistent-pattern-xyz' } });
 
-    // Switch to Conditions tab
-    const conditionsTabBtn = screen.getByRole('button', { name: /conditions/i });
-    fireEvent.click(conditionsTabBtn);
-    expect(screen.getByText('PodScheduled')).toBeInTheDocument();
-    expect(screen.getByText('ContainersReady')).toBeInTheDocument();
+    expect(screen.getByText(/No events matching search filter/i)).toBeInTheDocument();
+  });
+
+  it('renders container logs and allows copying logs', () => {
+    const scenario = SCENARIO_CATALOG[0];
+    useAppStore.setState({
+      activeScenario: scenario,
+      scenarioState: 'failed',
+    });
+
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: vi.fn().mockResolvedValue(undefined),
+      },
+    });
+
+    render(<DiagnosticLogPanel />);
+
+    const logsTab = screen.getByText(/Logs \(/i);
+    fireEvent.click(logsTab);
+
+    expect(screen.getByTestId('log-terminal')).toBeInTheDocument();
+
+    const copyBtn = screen.getByTestId('copy-all-logs-btn');
+    fireEvent.click(copyBtn);
+
+    expect(navigator.clipboard.writeText).toHaveBeenCalled();
   });
 });

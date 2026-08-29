@@ -36,6 +36,7 @@ import {
   STATIC_INITIAL_NODES,
   STATIC_INITIAL_EDGES,
 } from './initial-elements.ts';
+import { CanvasToolbar } from './CanvasToolbar.tsx';
 import { AnimationController } from '../animation/AnimationController.tsx';
 import { DiagramLegend } from './DiagramLegend.tsx';
 import { FailureOverlay } from '../scenarios/FailureOverlay.tsx';
@@ -92,6 +93,7 @@ export const DiagramCanvas: React.FC = () => {
       >
         <Background variant={BackgroundVariant.Dots} gap={16} size={1} color="#334155" />
         <Controls />
+        <CanvasToolbar />
         <MiniMap
           nodeColor={(n) => {
             if (n.type?.includes('Zone')) return 'transparent';

@@ -4,30 +4,36 @@ import { QuizModal } from './QuizModal.tsx';
 import { QUIZ_QUESTIONS } from '../../quiz/quiz-data.ts';
 
 describe('QuizModal', () => {
-  it('renders nothing when closed', () => {
-    const { container } = render(<QuizModal isOpen={false} onClose={vi.fn()} />);
-    expect(container.firstChild).toBeNull();
+  it('does not render when closed', () => {
+    render(<QuizModal isOpen={false} onClose={() => {}} />);
+    expect(screen.queryByTestId('quiz-modal')).not.toBeInTheDocument();
   });
 
-  it('renders question and options when open', () => {
-    render(<QuizModal isOpen={true} onClose={vi.fn()} />);
+  it('renders question and advances through quiz with review', () => {
+    const onClose = vi.fn();
+    render(<QuizModal isOpen={true} onClose={onClose} />);
+
     expect(screen.getByTestId('quiz-modal')).toBeInTheDocument();
-    expect(screen.getByText(QUIZ_QUESTIONS[0].question)).toBeInTheDocument();
-    expect(screen.getByText('Question 1 of 10')).toBeInTheDocument();
-  });
+    expect(screen.getByText(/Question 1 of/i)).toBeInTheDocument();
 
-  it('reveals explanation and enables Next button on option click', () => {
-    render(<QuizModal isOpen={true} onClose={vi.fn()} />);
+    // Answer all questions
+    for (let i = 0; i < QUIZ_QUESTIONS.length; i++) {
+      const q = QUIZ_QUESTIONS[i];
+      const optBtn = screen.getByTestId(`quiz-opt-${q.correctIndex}`);
+      fireEvent.click(optBtn);
 
-    // Click correct answer for Q1 (kube-apiserver)
-    const optBtn = screen.getByRole('button', { name: 'kube-apiserver' });
-    fireEvent.click(optBtn);
+      const nextBtn = screen.getByTestId('quiz-next-btn');
+      fireEvent.click(nextBtn);
+    }
 
-    expect(screen.getByTestId('quiz-explanation')).toBeInTheDocument();
-    expect(screen.getByTestId('quiz-next-btn')).toBeInTheDocument();
+    // Results screen
+    expect(screen.getByTestId('quiz-results')).toBeInTheDocument();
+    expect(screen.getByText(/Kubernetes Master/i)).toBeInTheDocument();
 
-    // Advance to next question
-    fireEvent.click(screen.getByTestId('quiz-next-btn'));
-    expect(screen.getByText('Question 2 of 10')).toBeInTheDocument();
+    // Toggle Review
+    const reviewBtn = screen.getByTestId('quiz-toggle-review-btn');
+    fireEvent.click(reviewBtn);
+
+    expect(screen.getByTestId('quiz-review-section')).toBeInTheDocument();
   });
 });
