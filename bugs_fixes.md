@@ -610,9 +610,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: In `ProgressTracker.tsx`, percentage calculation was safeguarded for zero scenarios.
     - **Fix**: Verified clamped percentage calculation and added unit tests.
 
+152. **Bug 152: CanvasToolbar Missing Role Toolbar & Accessible Name**
+    - **Root Cause**: In `CanvasToolbar.tsx`, the toolbar container lacked `role="toolbar"` and `aria-label="Diagram Canvas Viewport Controls"`.
+    - **Fix**: Added `role="toolbar"` and explicit `aria-label`.
+
+153. **Bug 153: WorkstationZone Missing Accessible Role & Label**
+    - **Root Cause**: In `Zones.tsx`, `WorkstationZone` lacked `role="group"` and `aria-label="Boundary: Local Workstation"`.
+    - **Fix**: Added `role="group"` and `aria-label` across all architectural zone components.
+
+154. **Bug 154: ClusterZone Missing Accessible Role & Label**
+    - **Root Cause**: In `Zones.tsx`, `ClusterZone` lacked `role="group"` and `aria-label="Boundary: Kubernetes Cluster"`.
+    - **Fix**: Added `role="group"` and `aria-label="Boundary: Kubernetes Cluster"`.
+
+155. **Bug 155: ControlPlaneZone Missing Accessible Role & Label**
+    - **Root Cause**: In `Zones.tsx`, `ControlPlaneZone` lacked `role="group"` and `aria-label="Boundary: Control Plane"`.
+    - **Fix**: Added `role="group"` and `aria-label="Boundary: Control Plane"`.
+
+156. **Bug 156: WorkerNodeZone Missing Accessible Role & Label**
+    - **Root Cause**: In `Zones.tsx`, `WorkerNodeZone` lacked `role="group"` and `aria-label="Boundary: Worker Node"`.
+    - **Fix**: Added `role="group"` and `aria-label={`Boundary: ${zoneData?.label || 'Worker Node'}`}`.
+
+157. **Bug 157: NamespaceZone Missing Accessible Role & Label**
+    - **Root Cause**: In `Zones.tsx`, `NamespaceZone` lacked `role="group"` and `aria-label="Boundary: Namespace Scope"`.
+    - **Fix**: Added `role="group"` and `aria-label={`Boundary: ${zoneData?.label || 'Namespace Scope'}`}`.
+
+158. **Bug 158: FlowEdge Label Missing Status Role & Label**
+    - **Root Cause**: In `FlowEdge.tsx`, edge labels lacked `role="status"` and `aria-label={`Flow: ${label}, status: ${status}`}`.
+    - **Fix**: Added `role="status"` and explicit descriptive `aria-label` to edge label renderer.
+
+159. **Bug 159: CanvasToolbar Divider Missing Role Separator**
+    - **Root Cause**: In `CanvasToolbar.tsx`, the visual divider lacked `role="separator"` and `aria-orientation="vertical"`.
+    - **Fix**: Added `role="separator"` and `aria-orientation="vertical"` to divider element.
+
+160. **Bug 160: DiagramCanvas Region Landmark Accessible Description**
+    - **Root Cause**: In `DiagramCanvas.tsx`, ensure accessible region landmark label accurately describes interactive flow canvas.
+    - **Fix**: Validated and updated `aria-label="Kubernetes Architecture Flow Diagram Canvas"`.
+
+161. **Bug 161: FlowEdge Packet Animation Missing Aria Hidden**
+    - **Root Cause**: In `FlowEdge.tsx`, animated SVG packet circles lacked `aria-hidden="true"`.
+    - **Fix**: Added `aria-hidden="true"` to animated SVG flow packets.
+
 ---
 
-## 2. Code Quality and Testing Improvements (150 Improvements)
+## 2. Code Quality and Testing Improvements (160 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -764,10 +804,20 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 148. **AppShell Landmark Accessibility Test Suite**: Created `AppShell.test.tsx` testing layout landmarks and panel labels.
 149. **LiveRegion Step and Failure Speech Test Suite**: Expanded `LiveRegion.test.tsx` testing announcement generation and `aria-atomic`.
 150. **Comprehensive 150-Improvement Platform Milestone**: Full enterprise Kubernetes diagramming, troubleshooting, and assessment platform.
+151. **CanvasToolbar ARIA Toolbar Pipeline**: Standardized `role="toolbar"` and `role="separator"` in `CanvasToolbar.tsx`.
+152. **Architectural Zone Boundary Semantic System**: Standardized `role="group"` and boundary labels in `Zones.tsx`.
+153. **FlowEdge Label ARIA Status Pipeline**: Implemented `role="status"` and descriptive labels in `FlowEdge.tsx`.
+154. **FlowEdge Packet Sanitization**: Added `aria-hidden="true"` to flow packet animation circles in `FlowEdge.tsx`.
+155. **CanvasToolbar ARIA Test Suite**: Expanded `CanvasToolbar.test.tsx` testing `role="toolbar"` and `role="separator"`.
+156. **Zone Boundary Accessibility Test Suite**: Created `Zones.test.tsx` testing boundary roles and accessible labels for all 5 zone types.
+157. **FlowEdge Label & Status Test Suite**: Created `FlowEdge.test.tsx` testing active/error stroke styling and edge label roles.
+158. **DiagramCanvas Landmark Verification Suite**: Expanded `DiagramCanvas.test.tsx` testing canvas container landmark and children.
+159. **FlowEdge Stroke Dynamic Calculation**: Verified edge colors (Sky Blue, Green, Amber, Red, Slate) across all execution states.
+160. **Comprehensive 160-Improvement Platform Milestone**: Complete Kubernetes interactive simulator, editor, and visual inspection suite.
 
 ---
 
-## 3. UX/UI Feature Enhancements (150 Improvements)
+## 3. UX/UI Feature Enhancements (160 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
@@ -919,3 +969,13 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 148. **Real-Time Live Speech for Step Execution**: Spoken announcements update automatically as animation progresses through cluster steps.
 149. **Visual Progress Bar Fill with Smooth Animation**: 200ms ease transition on scenario progress bar fill.
 150. **Complete Full-Spectrum 150-Feature Grand Milestone**: Comprehensive production-grade Kubernetes lifecycle animation, manifest editing, scenario simulator, and architectural quiz platform.
+151. **Accessible Floating Canvas Controls Toolbar**: Screen readers recognize canvas controls as a dedicated toolbar widget.
+152. **Spatial Boundary Identification for Assistive Tech**: Screen reader users can identify when nodes belong to Workstation, Control Plane, or Worker zones.
+153. **Real-Time Flow Edge Status Announcements**: Screen readers speak message flow labels and status during animated steps.
+154. **Smooth Animated Edge Packets**: Glowing light particles travel along active message paths between Kubernetes components.
+155. **Refined Glassmorphic Canvas Toolbar Styling**: Floating glassmorphism toolbar with subtle borders and smooth zoom transitions.
+156. **Distinct Color-Coded Edge Pathways**: Vibrant color distinctions for idle (dashed slate), active (cyan), complete (emerald), and failed (red) flows.
+157. **Interactive Node Selection from Canvas Panes**: Click anywhere on background pane to deselect and close inspector drawer.
+158. **Clear Visual Dividers on Toolbar Groups**: Clean vertical separation between viewport zooming and animation reset triggers.
+159. **Subtle Zone Corner Badge Accents**: Semi-transparent boundary cards with uppercase zone tags.
+160. **Complete Full-Spectrum 160-Feature Grand Milestone**: Comprehensive production-grade Kubernetes lifecycle animation, manifest editing, scenario solving, and architectural quiz platform.

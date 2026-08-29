@@ -5,13 +5,15 @@ import { CanvasToolbar } from './CanvasToolbar.tsx';
 import { useAppStore } from '../../store/index.ts';
 
 describe('CanvasToolbar', () => {
-  it('renders canvas toolbar buttons', () => {
+  it('renders canvas toolbar buttons with ARIA toolbar and separator', () => {
     render(
       <ReactFlowProvider>
         <CanvasToolbar />
       </ReactFlowProvider>,
     );
 
+    expect(screen.getByRole('toolbar', { name: /diagram canvas viewport controls/i })).toBeInTheDocument();
+    expect(screen.getByRole('separator')).toBeInTheDocument();
     expect(screen.getByTestId('canvas-toolbar')).toBeInTheDocument();
     expect(screen.getByTestId('canvas-fit-view')).toBeInTheDocument();
     expect(screen.getByTestId('canvas-zoom-in')).toBeInTheDocument();

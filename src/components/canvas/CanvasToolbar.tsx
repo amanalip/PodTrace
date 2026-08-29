@@ -14,7 +14,12 @@ export const CanvasToolbar: React.FC = () => {
   };
 
   return (
-    <div className={styles.toolbar} data-testid="canvas-toolbar">
+    <div
+      className={styles.toolbar}
+      role="toolbar"
+      aria-label="Diagram Canvas Viewport Controls"
+      data-testid="canvas-toolbar"
+    >
       <button
         type="button"
         className={styles.button}
@@ -48,7 +53,7 @@ export const CanvasToolbar: React.FC = () => {
         <ZoomOut size={14} />
       </button>
 
-      <div className={styles.divider} />
+      <div className={styles.divider} role="separator" aria-orientation="vertical" />
 
       <button
         type="button"

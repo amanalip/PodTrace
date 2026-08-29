@@ -97,7 +97,7 @@ export const FlowEdge: React.FC<EdgeProps> = ({
       />
 
       {packetColor && (
-        <circle r="4" fill={packetColor}>
+        <circle r="4" fill={packetColor} aria-hidden="true">
           <animateMotion dur="1.5s" repeatCount="indefinite" path={edgePath} />
         </circle>
       )}
@@ -110,7 +110,10 @@ export const FlowEdge: React.FC<EdgeProps> = ({
               transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
               pointerEvents: 'all',
             }}
+            role="status"
+            aria-label={`Flow: ${label}, status: ${status}`}
             className={`${styles.edgeLabel} ${labelClass}`}
+            data-testid={`edge-label-${id}`}
           >
             {label}
           </div>
