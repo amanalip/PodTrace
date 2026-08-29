@@ -14,10 +14,15 @@ export const ComponentInspector: React.FC = () => {
   if (!selectedNode) return null;
 
   // Resolve component inspection metadata
-  const nodeType = selectedNode.type || 'podNode';
-  const info = getComponentInspectionData(nodeType);
+  const info =
+    getComponentInspectionData(selectedNode.type || '') ||
+    getComponentInspectionData(selectedNode.id);
 
   if (!info) return null;
+
+  const details = (selectedNode.data as Record<string, unknown> | undefined)?.details as
+    | { containers?: Array<{ name: string; image?: string }> }
+    | undefined;
 
   return (
     <div className={styles.drawer} data-testid="component-inspector">
@@ -82,6 +87,19 @@ export const ComponentInspector: React.FC = () => {
                 ))}
               </ul>
             </div>
+            {details?.containers && details.containers.length > 0 && (
+              <div>
+                <div className={styles.sectionTitle}>Containers in Pod</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {details.containers.map((c, idx) => (
+                    <div key={idx} className={styles.flagCard}>
+                      <span className={styles.flagName}>{c.name}</span>
+                      {c.image && <span className={styles.flagDesc}>Image: {c.image}</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             <div>
               <div className={styles.sectionTitle}>Binary Name</div>
               <div className={styles.cmdBox}>{info.binary}</div>

@@ -11,6 +11,8 @@ export function useKeyboardShortcuts(): void {
     steps,
     setSelectedNodeId,
     clearWhatIf,
+    isShortcutsOpen,
+    setIsShortcutsOpen,
   } = useAppStore();
 
   useEffect(() => {
@@ -19,6 +21,7 @@ export function useKeyboardShortcuts(): void {
       if (
         target?.tagName === 'INPUT' ||
         target?.tagName === 'TEXTAREA' ||
+        target?.tagName === 'SELECT' ||
         target?.isContentEditable ||
         (typeof target?.closest === 'function' && target.closest('.cm-editor'))
       ) {
@@ -27,6 +30,9 @@ export function useKeyboardShortcuts(): void {
 
       switch (e.key) {
         case ' ':
+          if (target?.tagName === 'BUTTON' || target?.tagName === 'A') {
+            return;
+          }
           e.preventDefault();
           setIsPlaying(!useAppStore.getState().isPlaying);
           break;
@@ -48,9 +54,14 @@ export function useKeyboardShortcuts(): void {
             setCurrentStepIndex(steps.length - 1);
           }
           break;
+        case '?':
+          e.preventDefault();
+          setIsShortcutsOpen(!useAppStore.getState().isShortcutsOpen);
+          break;
         case 'Escape':
           setSelectedNodeId(null);
           clearWhatIf();
+          setIsShortcutsOpen(false);
           break;
         default:
           break;
@@ -68,5 +79,7 @@ export function useKeyboardShortcuts(): void {
     steps,
     setSelectedNodeId,
     clearWhatIf,
+    isShortcutsOpen,
+    setIsShortcutsOpen,
   ]);
 }

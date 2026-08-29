@@ -16,6 +16,7 @@ export const ScenarioDetail: React.FC<ScenarioDetailProps> = ({ scenario, onBack
     completedScenarioIds,
     loadScenario,
     resetScenario,
+    setActiveSidebarTab,
   } = useAppStore();
 
   const isCurrentActive = activeScenarioId === scenario.id;
@@ -62,6 +63,17 @@ export const ScenarioDetail: React.FC<ScenarioDetailProps> = ({ scenario, onBack
           <Play size={14} />
           <span>{isCurrentActive ? 'Restart Scenario' : 'Start Scenario'}</span>
         </button>
+
+        {isCurrentActive && (
+          <button
+            type="button"
+            className={styles.btnSecondary}
+            onClick={() => setActiveSidebarTab('editor')}
+            data-testid="go-to-editor-btn"
+          >
+            <span>Edit Manifest</span>
+          </button>
+        )}
 
         {isCurrentActive && scenarioState !== 'idle' && (
           <button

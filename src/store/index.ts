@@ -13,6 +13,7 @@ import { evaluateScenarioFix, injectScenarioFailureIntoSteps } from '../scenario
 import { mapResourcesToDiagram } from '../mapper/resource-mapper.ts';
 import { getLifecycleStepsForResources } from '../lifecycle/steps.ts';
 import { parseK8sYaml } from '../parser/yaml-parser.ts';
+import { applyStepToDiagram } from '../components/animation/AnimationEngine.ts';
 
 export interface EditorSlice {
   yaml: string;
@@ -75,13 +76,17 @@ export interface WhatIfSlice {
 export interface UISlice {
   theme: ThemeMode;
   activeSidebarTab: 'editor' | 'scenarios' | 'concepts';
+  rightPanelTab: 'lifecycle' | 'diagnostics';
   isLegendOpen: boolean;
   isInspectorOpen: boolean;
+  isShortcutsOpen: boolean;
   setTheme: (theme: ThemeMode) => void;
   toggleTheme: () => void;
   setActiveSidebarTab: (tab: 'editor' | 'scenarios' | 'concepts') => void;
+  setRightPanelTab: (tab: 'lifecycle' | 'diagnostics') => void;
   setIsLegendOpen: (isOpen: boolean) => void;
   setIsInspectorOpen: (isOpen: boolean) => void;
+  setIsShortcutsOpen: (isOpen: boolean) => void;
 }
 
 export type AppStore = EditorSlice &
@@ -163,6 +168,8 @@ export const useAppStore = create<AppStore>((set) => ({
       steps: stepsWithFailure,
       currentStepIndex: Math.max(0, scenario.failureStep - 1),
       isPlaying: false,
+      activeSidebarTab: 'editor',
+      rightPanelTab: 'diagnostics',
     });
   },
   setScenarioState: (scenarioState) => set({ scenarioState }),
@@ -276,26 +283,19 @@ export const useAppStore = create<AppStore>((set) => ({
       return {
         activeWhatIfId: scenario.id,
         activeWhatIf: scenario,
+        isPlaying: false,
         nodes: updatedNodes,
         edges: updatedEdges,
       };
     }),
   clearWhatIf: () =>
     set((state) => {
-      const restoredNodes = state.nodes.map((node) => ({
-        ...node,
-        data: {
-          ...(node.data || {}),
-          status: 'idle',
-        },
-      }));
-      const restoredEdges = state.edges.map((edge) => ({
-        ...edge,
-        data: {
-          ...(edge.data || {}),
-          status: 'inactive',
-        },
-      }));
+      const currentStep = state.steps[state.currentStepIndex];
+      const { nodes: restoredNodes, edges: restoredEdges } = applyStepToDiagram(
+        currentStep,
+        state.nodes,
+        state.edges,
+      );
       return {
         activeWhatIfId: null,
         activeWhatIf: null,
@@ -307,12 +307,16 @@ export const useAppStore = create<AppStore>((set) => ({
   // UI Slice
   theme: 'dark',
   activeSidebarTab: 'editor',
+  rightPanelTab: 'lifecycle',
   isLegendOpen: false,
   isInspectorOpen: false,
+  isShortcutsOpen: false,
   setTheme: (theme) => set({ theme }),
   toggleTheme: () =>
     set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
   setActiveSidebarTab: (activeSidebarTab) => set({ activeSidebarTab }),
+  setRightPanelTab: (rightPanelTab) => set({ rightPanelTab }),
   setIsLegendOpen: (isLegendOpen) => set({ isLegendOpen }),
   setIsInspectorOpen: (isInspectorOpen) => set({ isInspectorOpen }),
+  setIsShortcutsOpen: (isShortcutsOpen) => set({ isShortcutsOpen }),
 }));

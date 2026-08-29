@@ -13,7 +13,10 @@ export function mapIngressResource(ingress: IngressResource): {
   const host = firstRule?.host || 'app.example.com';
   const firstPath = firstRule?.http?.paths?.[0];
   const path = firstPath?.path || '/';
-  const targetService = firstPath?.backend?.service?.name || `${ingressName}-service`;
+  const targetService =
+    firstPath?.backend?.service?.name ||
+    ingress.spec?.defaultBackend?.service?.name ||
+    `${ingressName}-service`;
 
   const zoneNodes = createZoneNodes(1, namespace);
 

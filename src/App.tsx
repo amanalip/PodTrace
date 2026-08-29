@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { AppShell } from './components/ui/AppShell.tsx';
 import { Sidebar } from './components/ui/Sidebar.tsx';
 import { DiagramCanvas } from './components/canvas/DiagramCanvas.tsx';
-import { ExplanationPanel } from './components/explanation/ExplanationPanel.tsx';
+import { RightSidebar } from './components/ui/RightSidebar.tsx';
 import { decodeStateFromHash } from './export/export-utils.ts';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts.ts';
 import { LiveRegion } from './components/ui/LiveRegion.tsx';
@@ -29,7 +29,7 @@ export const App: React.FC = () => {
       <AppShell
         editorSlot={<Sidebar />}
         canvasSlot={<DiagramCanvas />}
-        explanationSlot={<ExplanationPanel />}
+        explanationSlot={<RightSidebar />}
       />
     </>
   );

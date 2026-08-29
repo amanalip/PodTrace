@@ -10,7 +10,10 @@ describe('App', () => {
     expect(
       screen.getByText('Trace every step, from apply to running'),
     ).toBeInTheDocument();
-    expect(screen.getByText('YAML Manifest')).toBeInTheDocument();
-    expect(screen.getByText('Lifecycle Explanation')).toBeInTheDocument();
+    expect(screen.getByText('Editor')).toBeInTheDocument();
+    expect(screen.getByText('Lifecycle Trace')).toBeInTheDocument();
+    expect(screen.getByText('Scenarios')).toBeInTheDocument();
+    expect(screen.getByText('Concepts')).toBeInTheDocument();
+    expect(screen.getByText('Diagnostics')).toBeInTheDocument();
   });
 });

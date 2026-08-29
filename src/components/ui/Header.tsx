@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Layers, Sun, Moon, Share2, Download, Award } from 'lucide-react';
+import { Layers, Sun, Moon, Share2, Download, Award, Keyboard } from 'lucide-react';
 import { useAppStore } from '../../store/index.ts';
 import { ExportModal } from '../export/ExportModal.tsx';
 import { QuizModal } from '../quiz/QuizModal.tsx';
+import { KeyboardShortcutsModal } from '../shortcuts/KeyboardShortcutsModal.tsx';
 import styles from './Header.module.css';
 
 export const Header: React.FC = () => {
-  const { theme, toggleTheme } = useAppStore();
+  const { theme, toggleTheme, setIsShortcutsOpen } = useAppStore();
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
 
@@ -30,6 +31,17 @@ export const Header: React.FC = () => {
           >
             {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
             <span>{theme === 'dark' ? 'Light' : 'Dark'}</span>
+          </button>
+
+          <button
+            className={styles.actionButton}
+            onClick={() => setIsShortcutsOpen(true)}
+            aria-label="View keyboard shortcuts"
+            title="Keyboard Shortcuts (?)"
+            data-testid="shortcuts-launcher-btn"
+          >
+            <Keyboard size={14} />
+            <span>Keys</span>
           </button>
 
           <button
@@ -67,6 +79,7 @@ export const Header: React.FC = () => {
 
       <ExportModal isOpen={isExportOpen} onClose={() => setIsExportOpen(false)} />
       <QuizModal isOpen={isQuizOpen} onClose={() => setIsQuizOpen(false)} />
+      <KeyboardShortcutsModal />
     </>
   );
 };

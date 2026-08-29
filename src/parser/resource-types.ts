@@ -126,6 +126,12 @@ export interface IngressResource extends K8sResource {
     ingressClassName?: string;
     tls?: IngressTLS[];
     rules?: IngressRule[];
+    defaultBackend?: {
+      service?: {
+        name: string;
+        port?: { number?: number; name?: string };
+      };
+    };
   };
 }
 

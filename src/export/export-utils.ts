@@ -48,14 +48,16 @@ export function generateMermaidGraphDiagram(nodes: Node[], edges: Edge[]): strin
   nodes.forEach((node) => {
     if (node.type?.includes('Zone')) return;
     const id = sanitizeMermaidName(node.id);
-    const label = (node.data?.label as string) || node.id;
+    const rawLabel = (node.data?.label as string) || node.id;
+    const label = rawLabel.replace(/"/g, "'");
     lines.push(`  ${id}["${label}"]`);
   });
 
   edges.forEach((edge) => {
     const from = sanitizeMermaidName(edge.source);
     const to = sanitizeMermaidName(edge.target);
-    const label = (edge.data?.label as string) || '';
+    const rawLabel = (edge.data?.label as string) || '';
+    const label = rawLabel.replace(/"/g, "'");
     if (label) {
       lines.push(`  ${from} -->|"${label}"| ${to}`);
     } else {

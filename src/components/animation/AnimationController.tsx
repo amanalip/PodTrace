@@ -33,14 +33,23 @@ export const AnimationController: React.FC = () => {
   useEffect(() => {
     if (steps.length === 0) return;
     const currentStep = steps[currentStepIndex];
-    const { nodes: updatedNodes, edges: updatedEdges } = applyStepToDiagram(
-      currentStep,
-      nodes,
-      edges,
-    );
-    setNodes(updatedNodes);
-    setEdges(updatedEdges);
-  }, [currentStepIndex, steps.length]);
+    setNodes((currNodes) => {
+      const { nodes: updatedNodes } = applyStepToDiagram(
+        currentStep,
+        currNodes,
+        useAppStore.getState().edges,
+      );
+      return updatedNodes;
+    });
+    setEdges((currEdges) => {
+      const { edges: updatedEdges } = applyStepToDiagram(
+        currentStep,
+        useAppStore.getState().nodes,
+        currEdges,
+      );
+      return updatedEdges;
+    });
+  }, [currentStepIndex, steps, setNodes, setEdges]);
 
   // Animation autoplay loop
   useEffect(() => {
@@ -58,7 +67,7 @@ export const AnimationController: React.FC = () => {
     }, duration);
 
     return () => clearTimeout(timer);
-  }, [isPlaying, currentStepIndex, playbackSpeed, steps.length, stepForward, setIsPlaying]);
+  }, [isPlaying, currentStepIndex, playbackSpeed, steps, stepForward, setIsPlaying]);
 
   if (!steps || steps.length === 0) {
     return null;

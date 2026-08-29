@@ -50,7 +50,10 @@ export function getLifecycleStepsForResources(resources: K8sResource[]): Lifecyc
       const host = firstRule?.host || 'app.example.com';
       const firstPath = firstRule?.http?.paths?.[0];
       const path = firstPath?.path || '/';
-      const serviceName = firstPath?.backend?.service?.name || `${ingressName}-service`;
+      const serviceName =
+        firstPath?.backend?.service?.name ||
+        ing.spec?.defaultBackend?.service?.name ||
+        `${ingressName}-service`;
       return createIngressLifecycleSteps(ingressName, host, path, serviceName);
     }
     case 'ConfigMap':

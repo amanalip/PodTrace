@@ -78,6 +78,8 @@ export const YAMLEditor: React.FC = () => {
     setNodes,
     setEdges,
     setSteps,
+    activeScenario,
+    checkScenarioFix,
   } = useAppStore();
 
   const handleDocUpdate = useCallback(
@@ -86,7 +88,10 @@ export const YAMLEditor: React.FC = () => {
       const { resources, errors } = parseAndValidateYaml(newContent);
       setParsedResources(resources);
       setValidationErrors(errors);
-      if (errors.length === 0 && resources.length > 0) {
+
+      if (activeScenario) {
+        checkScenarioFix(newContent, resources);
+      } else if (errors.length === 0 && resources.length > 0) {
         const diagram = mapResourcesToDiagram(resources);
         setNodes(diagram.nodes);
         setEdges(diagram.edges);
@@ -94,7 +99,16 @@ export const YAMLEditor: React.FC = () => {
         setSteps(steps);
       }
     },
-    [setYaml, setParsedResources, setValidationErrors, setNodes, setEdges, setSteps],
+    [
+      setYaml,
+      setParsedResources,
+      setValidationErrors,
+      setNodes,
+      setEdges,
+      setSteps,
+      activeScenario,
+      checkScenarioFix,
+    ],
   );
 
   const handleDocUpdateRef = useRef(handleDocUpdate);
@@ -177,7 +191,9 @@ export const YAMLEditor: React.FC = () => {
       const { resources, errors } = parseAndValidateYaml(yamlContent);
       setParsedResources(resources);
       setValidationErrors(errors);
-      if (errors.length === 0 && resources.length > 0) {
+      if (activeScenario) {
+        checkScenarioFix(yamlContent, resources);
+      } else if (errors.length === 0 && resources.length > 0) {
         const diagram = mapResourcesToDiagram(resources);
         setNodes(diagram.nodes);
         setEdges(diagram.edges);
@@ -185,22 +201,35 @@ export const YAMLEditor: React.FC = () => {
         setSteps(steps);
       }
     }
-  }, [yamlContent, setParsedResources, setValidationErrors, setNodes, setEdges, setSteps]);
+  }, [
+    yamlContent,
+    setParsedResources,
+    setValidationErrors,
+    setNodes,
+    setEdges,
+    setSteps,
+    activeScenario,
+    checkScenarioFix,
+  ]);
 
   const handleFormat = useCallback(() => {
     if (!viewRef.current) return;
     const currentDoc = viewRef.current.state.doc.toString();
     try {
-      const parsed = jsyaml.loadAll(currentDoc);
-      const formatted = parsed
-        .map((doc) =>
-          jsyaml.dump(doc, {
-            indent: 2,
-            lineWidth: -1,
-            noRefs: true,
-          }),
-        )
-        .join('---\n');
+      const parsed = jsyaml.loadAll(currentDoc).filter(Boolean);
+      if (parsed.length === 0) return;
+      const formatted =
+        parsed
+          .map((doc) =>
+            jsyaml
+              .dump(doc, {
+                indent: 2,
+                lineWidth: -1,
+                noRefs: true,
+              })
+              .trim(),
+          )
+          .join('\n---\n') + '\n';
 
       viewRef.current.dispatch({
         changes: {

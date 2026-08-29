@@ -282,6 +282,52 @@ export const COMPONENT_INSPECTOR_REGISTRY: Record<string, ComponentInspectionDat
   },
 };
 
-export function getComponentInspectionData(nodeType: string): ComponentInspectionData | null {
-  return COMPONENT_INSPECTOR_REGISTRY[nodeType] || null;
+export function getComponentInspectionData(
+  nodeTypeOrId: string,
+): ComponentInspectionData | null {
+  if (COMPONENT_INSPECTOR_REGISTRY[nodeTypeOrId]) {
+    return COMPONENT_INSPECTOR_REGISTRY[nodeTypeOrId];
+  }
+
+  const lower = nodeTypeOrId.toLowerCase();
+  if (lower.includes('apiserver') || lower.includes('api-server')) {
+    return COMPONENT_INSPECTOR_REGISTRY.apiServerNode;
+  }
+  if (lower.includes('etcd')) {
+    return COMPONENT_INSPECTOR_REGISTRY.etcdNode;
+  }
+  if (lower.includes('scheduler')) {
+    return COMPONENT_INSPECTOR_REGISTRY.schedulerNode;
+  }
+  if (lower.includes('controller') || lower.includes('controllermanager')) {
+    return COMPONENT_INSPECTOR_REGISTRY.controllerManagerNode;
+  }
+  if (lower.includes('kubelet')) {
+    return COMPONENT_INSPECTOR_REGISTRY.kubeletNode;
+  }
+  if (lower.includes('kubeproxy') || lower.includes('proxy')) {
+    return COMPONENT_INSPECTOR_REGISTRY.kubeProxyNode;
+  }
+  if (
+    lower.includes('runtime') ||
+    lower.includes('containerd') ||
+    lower.includes('crio')
+  ) {
+    return COMPONENT_INSPECTOR_REGISTRY.containerRuntimeNode;
+  }
+  if (
+    lower.includes('pod') ||
+    lower.includes('replica') ||
+    lower.includes('workload')
+  ) {
+    return COMPONENT_INSPECTOR_REGISTRY.podNode;
+  }
+  if (lower.includes('kubectl')) {
+    return COMPONENT_INSPECTOR_REGISTRY.kubectlNode;
+  }
+  if (lower.includes('user') || lower.includes('developer')) {
+    return COMPONENT_INSPECTOR_REGISTRY.userNode;
+  }
+
+  return null;
 }

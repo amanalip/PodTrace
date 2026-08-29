@@ -25,16 +25,13 @@ export const AppShell: React.FC<AppShellProps> = ({
       <Header />
       <div className={styles.mainLayout}>
         <aside className={styles.leftPanel} aria-label="YAML Editor and Scenarios">
-          <div className={styles.panelHeader}>
-            <span>YAML Manifest</span>
-          </div>
-          <div className={styles.panelContent}>
-            {editorSlot || (
+          {editorSlot || (
+            <div className={styles.panelContent}>
               <div className={styles.placeholderCard}>
                 YAML editor will render here.
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </aside>
 
         <main className={styles.centerPanel} aria-label="Kubernetes Architecture Diagram">
@@ -47,17 +44,14 @@ export const AppShell: React.FC<AppShellProps> = ({
           )}
         </main>
 
-        <aside className={styles.rightPanel} aria-label="Lifecycle Explanation">
-          <div className={styles.panelHeader}>
-            <span>Lifecycle Explanation</span>
-          </div>
-          <div className={styles.panelContent}>
-            {explanationSlot || (
+        <aside className={styles.rightPanel} aria-label="Lifecycle Explanation and Diagnostics">
+          {explanationSlot || (
+            <div className={styles.panelContent}>
               <div className={styles.placeholderCard}>
-                Step-by-step lifecycle explanations will appear here during animation.
+                Step-by-step lifecycle explanations and diagnostic logs will appear here.
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </aside>
       </div>
     </div>

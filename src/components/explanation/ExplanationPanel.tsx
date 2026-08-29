@@ -9,7 +9,10 @@ export const ExplanationPanel: React.FC = () => {
   const activeStepRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (activeStepRef.current) {
+    if (
+      activeStepRef.current &&
+      typeof activeStepRef.current.scrollIntoView === 'function'
+    ) {
       activeStepRef.current.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',

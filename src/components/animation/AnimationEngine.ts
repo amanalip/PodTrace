@@ -32,31 +32,25 @@ export function applyStepToDiagram(
   const edgeUpdates = step.edgeStatusUpdates || {};
 
   const updatedNodes = nodes.map((node) => {
-    const newStatus = nodeUpdates[node.id];
-    if (newStatus) {
-      return {
-        ...node,
-        data: {
-          ...(node.data as unknown as DiagramNodeData),
-          status: newStatus,
-        },
-      };
-    }
-    return node;
+    const newStatus = nodeUpdates[node.id] || ('idle' as NodeStatus);
+    return {
+      ...node,
+      data: {
+        ...(node.data as unknown as DiagramNodeData),
+        status: newStatus,
+      },
+    };
   });
 
   const updatedEdges = edges.map((edge) => {
-    const newStatus = edgeUpdates[edge.id];
-    if (newStatus) {
-      return {
-        ...edge,
-        data: {
-          ...(edge.data as unknown as FlowEdgeData),
-          status: newStatus,
-        },
-      };
-    }
-    return edge;
+    const newStatus = edgeUpdates[edge.id] || ('inactive' as EdgeStatus);
+    return {
+      ...edge,
+      data: {
+        ...(edge.data as unknown as FlowEdgeData),
+        status: newStatus,
+      },
+    };
   });
 
   return { nodes: updatedNodes, edges: updatedEdges };

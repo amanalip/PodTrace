@@ -51,4 +51,32 @@ describe('AnimationEngine', () => {
     expect(nodes[1].data.status).toBe('idle');
     expect(edges[0].data?.status).toBe('inactive');
   });
+
+  it('resets unmentioned nodes to idle when jumping between distinct steps', () => {
+    const priorNodes: Node[] = [
+      { id: 'node-user', position: { x: 0, y: 0 }, data: { label: 'User', status: 'success' } },
+      { id: 'node-kubectl', position: { x: 100, y: 0 }, data: { label: 'kubectl', status: 'active' } },
+    ];
+    const priorEdges: Edge[] = [
+      { id: 'edge-1', source: 'node-user', target: 'node-kubectl', data: { status: 'active' } },
+    ];
+
+    const nextStep: LifecycleStep = {
+      stepNumber: 2,
+      title: 'Next Step',
+      what: 'What',
+      why: 'Why',
+      componentName: 'apiserver',
+      componentRole: 'Gateway',
+      nodeStatusUpdates: {
+        'node-user': 'success',
+      },
+      edgeStatusUpdates: {},
+    };
+
+    const { nodes, edges } = applyStepToDiagram(nextStep, priorNodes, priorEdges);
+    expect(nodes[0].data.status).toBe('success');
+    expect(nodes[1].data.status).toBe('idle');
+    expect(edges[0].data?.status).toBe('inactive');
+  });
 });

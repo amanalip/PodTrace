@@ -1,14 +1,49 @@
 import React, { useState } from 'react';
-import { AlertTriangle, ChevronDown, ChevronRight } from 'lucide-react';
+import { AlertTriangle, ChevronDown, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { useAppStore } from '../../store/index.ts';
 import styles from './FailureOverlay.module.css';
 
 export const FailureOverlay: React.FC = () => {
-  const { activeScenario, scenarioState, scenarioFeedback } = useAppStore();
+  const { activeScenario, scenarioState, scenarioFeedback, resolveScenario } = useAppStore();
   const [showHint, setShowHint] = useState(false);
 
-  if (!activeScenario || (scenarioState !== 'failed' && scenarioState !== 'fixing')) {
+  if (!activeScenario || scenarioState === 'idle') {
     return null;
+  }
+
+  const isResolved = scenarioState === 'resolved' || scenarioState === 'completed';
+
+  if (isResolved) {
+    return (
+      <div
+        className={`${styles.overlay} ${styles.overlay_success}`}
+        data-testid="scenario-success-overlay"
+      >
+        <div className={styles.header}>
+          <div className={`${styles.badge} ${styles.badge_success}`}>
+            <CheckCircle2 size={16} />
+            <span>Challenge Resolved</span>
+          </div>
+        </div>
+
+        <div className={styles.title}>{activeScenario.title}</div>
+        <p className={styles.description}>
+          {scenarioFeedback || activeScenario.successMessage}
+        </p>
+
+        {scenarioState !== 'completed' && (
+          <button
+            type="button"
+            className={styles.completeBtn}
+            onClick={resolveScenario}
+            data-testid="complete-scenario-btn"
+          >
+            <CheckCircle2 size={14} />
+            <span>Complete Challenge</span>
+          </button>
+        )}
+      </div>
+    );
   }
 
   const { failureDetails } = activeScenario;
