@@ -30,13 +30,16 @@ export const StepDetail: React.FC<StepDetailProps> = ({
     }
   };
 
+    const statusSuffix =
+    status === 'current' ? ' (Active)' : status === 'past' ? ' (Completed)' : '';
+
   return (
     <div
       ref={stepRef}
       role="button"
       tabIndex={0}
       aria-current={status === 'current' ? 'step' : undefined}
-      aria-label={`Step ${step.stepNumber}: ${step.title}`}
+      aria-label={`Step ${step.stepNumber}: ${step.title}${statusSuffix}`}
       className={`${styles.stepCard} ${cardClass}`}
       onClick={onClick}
       onKeyDown={handleKeyDown}

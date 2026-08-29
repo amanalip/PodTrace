@@ -20,6 +20,7 @@ describe('StepDetail', () => {
   it('renders step details with active status badge', () => {
     render(<StepDetail step={mockStep} status="current" />);
 
+    expect(screen.getByRole('button', { name: `Step 1: ${mockStep.title} (Active)` })).toBeInTheDocument();
     expect(screen.getByText('Step 1 (Active)')).toBeInTheDocument();
     expect(screen.getByText(mockStep.title)).toBeInTheDocument();
     expect(screen.getByText(mockStep.what)).toBeInTheDocument();

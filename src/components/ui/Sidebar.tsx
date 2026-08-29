@@ -29,6 +29,7 @@ export const Sidebar: React.FC = () => {
           type="button"
           role="tab"
           aria-selected={activeSidebarTab === 'editor'}
+          aria-controls="editor-panel"
           className={`${styles.tabButton} ${activeSidebarTab === 'editor' ? styles.tabButton_active : ''}`}
           onClick={() => setActiveSidebarTab('editor')}
         >
@@ -40,6 +41,7 @@ export const Sidebar: React.FC = () => {
           type="button"
           role="tab"
           aria-selected={activeSidebarTab === 'scenarios'}
+          aria-controls="scenarios-panel"
           className={`${styles.tabButton} ${activeSidebarTab === 'scenarios' ? styles.tabButton_active : ''}`}
           onClick={() => setActiveSidebarTab('scenarios')}
         >
@@ -51,6 +53,7 @@ export const Sidebar: React.FC = () => {
           type="button"
           role="tab"
           aria-selected={activeSidebarTab === 'concepts'}
+          aria-controls="concepts-panel"
           className={`${styles.tabButton} ${activeSidebarTab === 'concepts' ? styles.tabButton_active : ''}`}
           onClick={() => setActiveSidebarTab('concepts')}
         >
@@ -60,16 +63,20 @@ export const Sidebar: React.FC = () => {
       </div>
 
       <div className={styles.tabContent}>
-        {activeSidebarTab === 'editor' && <YAMLEditor />}
+        {activeSidebarTab === 'editor' && (
+          <div id="editor-panel" role="tabpanel">
+            <YAMLEditor />
+          </div>
+        )}
 
         {activeSidebarTab === 'scenarios' && (
-          <div style={{ padding: 16 }}>
+          <div id="scenarios-panel" role="tabpanel" style={{ padding: 16 }}>
             <ScenarioList />
           </div>
         )}
 
         {activeSidebarTab === 'concepts' && (
-          <div className={styles.conceptsList} data-testid="concepts-list">
+          <div id="concepts-panel" role="tabpanel" className={styles.conceptsList} data-testid="concepts-list">
             <div style={{ padding: '4px 0 12px 0', position: 'relative' }}>
               <input
                 type="text"
@@ -112,9 +119,45 @@ export const Sidebar: React.FC = () => {
                 </button>
               )}
             </div>
-            {filteredConcepts.map((concept) => (
-              <ConceptCard key={concept.id} concept={concept} />
-            ))}
+            {filteredConcepts.length === 0 ? (
+              <div
+                style={{
+                  padding: '32px 16px',
+                  textAlign: 'center',
+                  color: '#94a3b8',
+                  fontSize: '12px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+                data-testid="no-concepts-found"
+              >
+                <p>No concepts found matching "{conceptSearch}".</p>
+                <button
+                  type="button"
+                  style={{
+                    marginTop: 4,
+                    padding: '5px 12px',
+                    borderRadius: 4,
+                    background: 'var(--bg-tertiary, #1e293b)',
+                    border: '1px solid var(--border-color, #334155)',
+                    color: '#38bdf8',
+                    fontSize: 11,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => setConceptSearch('')}
+                  data-testid="reset-concept-search-btn"
+                >
+                  Reset Concept Search
+                </button>
+              </div>
+            ) : (
+              filteredConcepts.map((concept) => (
+                <ConceptCard key={concept.id} concept={concept} />
+              ))
+            )}
           </div>
         )}
       </div>

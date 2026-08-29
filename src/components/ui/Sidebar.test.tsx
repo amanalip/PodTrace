@@ -47,4 +47,24 @@ describe('Sidebar', () => {
 
     expect(input).toHaveValue('');
   });
+
+  it('renders empty state when concept search has no matches and resets on click', () => {
+    render(<Sidebar />);
+
+    const conceptsTab = screen.getByRole('tab', { name: /concepts/i });
+    expect(conceptsTab).toHaveAttribute('aria-controls', 'concepts-panel');
+    fireEvent.click(conceptsTab);
+
+    const input = screen.getByTestId('concept-search-input');
+    fireEvent.change(input, { target: { value: 'nonexistent-concept-xyz' } });
+
+    expect(screen.getByTestId('no-concepts-found')).toBeInTheDocument();
+    expect(screen.getByText(/no concepts found/i)).toBeInTheDocument();
+
+    const resetBtn = screen.getByTestId('reset-concept-search-btn');
+    fireEvent.click(resetBtn);
+
+    expect(screen.queryByTestId('no-concepts-found')).not.toBeInTheDocument();
+    expect(screen.getByText('What is the API Server?')).toBeInTheDocument();
+  });
 });

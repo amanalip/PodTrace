@@ -14,27 +14,32 @@ export const ValidationPanel: React.FC = () => {
   return (
     <div className={styles.errorContainer} data-testid="validation-panel" role="alert">
       <div
+        role="button"
+        tabIndex={0}
+        aria-expanded={!isCollapsed}
+        aria-label={isCollapsed ? 'Expand validation issues' : 'Collapse validation issues'}
         className={styles.errorHeader}
         style={{ cursor: 'pointer', justifyContent: 'space-between' }}
         onClick={() => setIsCollapsed(!isCollapsed)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsCollapsed(!isCollapsed);
+          }
+        }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <AlertCircle size={14} />
           <span>Validation Issues ({validationErrors.length})</span>
         </div>
-        <button
-          type="button"
+        <span
           style={{
-            background: 'none',
-            border: 'none',
             color: 'var(--status-error)',
             fontSize: 11,
-            cursor: 'pointer',
           }}
-          aria-label={isCollapsed ? 'Expand validation issues' : 'Collapse validation issues'}
         >
           {isCollapsed ? 'Expand' : 'Collapse'}
-        </button>
+        </span>
       </div>
       {!isCollapsed && (
         <ul className={styles.errorList}>

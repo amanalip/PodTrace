@@ -47,4 +47,17 @@ describe('ValidationPanel', () => {
 
     expect(screen.getByText('Syntax error in YAML')).toBeInTheDocument();
   });
+
+  it('toggles collapse via keyboard Enter on header and checks aria-expanded', () => {
+    useAppStore.setState({
+      validationErrors: [{ message: 'Syntax error in YAML', line: 3 }],
+    });
+
+    render(<ValidationPanel />);
+    const headerBtn = screen.getByRole('button', { name: /collapse validation issues/i });
+    expect(headerBtn).toHaveAttribute('aria-expanded', 'true');
+
+    fireEvent.keyDown(headerBtn, { key: 'Enter' });
+    expect(screen.queryByText('Syntax error in YAML')).not.toBeInTheDocument();
+  });
 });

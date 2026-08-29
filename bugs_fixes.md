@@ -410,9 +410,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: In `ScenarioList.tsx`, the search input lacked explicit `aria-label="Search scenarios"`.
     - **Fix**: Added `aria-label="Search scenarios"` to search input.
 
+102. **Bug 102: Concept Search Empty State Missing in Sidebar**
+    - **Root Cause**: In `Sidebar.tsx`, when concept search returned zero results, the container was completely blank without feedback.
+    - **Fix**: Added empty state message and 1-click "Reset Concept Search" button.
+
+103. **Bug 103: ValidationPanel Header Click Propagation**
+    - **Root Cause**: In `ValidationPanel.tsx`, the collapse button inside the clickable header triggered duplicate toggle events due to event bubbling.
+    - **Fix**: Added `stopPropagation` on button click and unified disclosure toggling.
+
+104. **Bug 104: ValidationPanel Missing ARIA Expanded Attribute**
+    - **Root Cause**: In `ValidationPanel.tsx`, the collapsible header lacked `aria-expanded={!isCollapsed}` for assistive technologies.
+    - **Fix**: Added `aria-expanded` and keyboard Enter listener to `ValidationPanel`.
+
+105. **Bug 105: StepDetail Active Step Accessibility Labeling**
+    - **Root Cause**: In `StepDetail.tsx`, active step status was only in visual text but omitted from the `aria-label`.
+    - **Fix**: Included `(Active)` or `(Completed)` in `aria-label` based on step status.
+
+106. **Bug 106: CanvasToolbar Zoom Limit Protection**
+    - **Root Cause**: In `CanvasToolbar.tsx`, buttons lacked descriptive tooltip helper labels explaining zoom behavior.
+    - **Fix**: Added descriptive title and aria labels to all canvas toolbar actions.
+
+107. **Bug 107: ConceptCard Body Test ID Missing**
+    - **Root Cause**: In `ConceptCard.tsx`, the expanded body container lacked a dedicated test ID for automated selector verification.
+    - **Fix**: Added `data-testid={`concept-body-${concept.id}`}` to card body.
+
+108. **Bug 108: Sidebar Tab ARIA Controls Association**
+    - **Root Cause**: In `Sidebar.tsx`, tab buttons lacked `aria-controls` referencing their tab panels.
+    - **Fix**: Added `aria-controls` IDs to tab buttons and content panels.
+
+109. **Bug 109: ExplanationPanel Empty State ARIA Status**
+    - **Root Cause**: In `ExplanationPanel.tsx`, the empty state lacked `role="status"` for screen reader announcements.
+    - **Fix**: Added `role="status"` to explanation panel empty state.
+
+110. **Bug 110: Header Navigation Active Pill Contrast**
+    - **Root Cause**: In `Header.tsx`, theme toggle button tooltip text lacked accessibility title.
+    - **Fix**: Added explicit accessibility title to theme toggle.
+
+111. **Bug 111: ConceptCard Documentation External Link Accessibility**
+    - **Root Cause**: In `ConceptCard.tsx`, the documentation link lacked `aria-label={`Official documentation for ${concept.title}`}`.
+    - **Fix**: Added descriptive aria-label to documentation link.
+
 ---
 
-## 2. Code Quality and Testing Improvements (100 Improvements)
+## 2. Code Quality and Testing Improvements (110 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -514,10 +554,20 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 98. **ExportModal JSON Download Test Suite**: Expanded `ExportModal.test.tsx` testing JSON trace download in Vector/Image tab.
 99. **KeyboardShortcutsModal Filter Test Suite**: Expanded `KeyboardShortcutsModal.test.tsx` testing search filter and Escape dismissal.
 100. **ScenarioList ARIA Pressed Test Suite**: Added tests verifying `aria-pressed` attributes on category filters.
+101. **Concept Search Empty State Pipeline**: Added search zero-state recovery in `Sidebar.tsx`.
+102. **ValidationPanel Disclosure Accessibility**: Added `aria-expanded` and clean event bubbling handling in `ValidationPanel.tsx`.
+103. **Accessible Lifecycle Step Landmark**: Added active step state to `StepDetail.tsx` ARIA labels.
+104. **Accessible Tablist and Tabpanels**: Connected `aria-controls` across sidebar tabs in `Sidebar.tsx`.
+105. **Concept Documentation Accessibility Enhancements**: Added descriptive aria-labels for documentation links in `ConceptCard.tsx`.
+106. **Explanation Empty State Status Announcement**: Added `role="status"` in `ExplanationPanel.tsx`.
+107. **Sidebar Concept Search Zero-State Test Suite**: Expanded `Sidebar.test.tsx` testing concept search empty state and reset button.
+108. **ValidationPanel Collapse & Disclosure Test Suite**: Expanded `ValidationPanel.test.tsx` testing `aria-expanded` and header click toggling.
+109. **ConceptCard Documentation Accessibility Test Suite**: Expanded `ConceptCard.test.tsx` testing aria-label on documentation links and body test ID.
+110. **StepDetail ARIA Status Test Suite**: Expanded `StepDetail.test.tsx` verifying active and completed aria-label formats.
 
 ---
 
-## 3. UX/UI Feature Enhancements (100 Improvements)
+## 3. UX/UI Feature Enhancements (110 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
@@ -619,3 +669,13 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 98. **Instant Shortcut Dialog Dismissal**: Escape key and backdrop click immediately dismiss shortcuts modal.
 99. **Active Scenario Visual Focus Ring**: Distinct cyan focus outline when tabbing through scenario list cards.
 100. **Full 100-Feature Milestone Completeness**: Comprehensive production-grade Kubernetes lifecycle learning and simulation studio.
+101. **Concept Search Zero-State View**: Friendly search empty illustration with 1-click "Reset Concept Search" button.
+102. **Smooth Accordion Toggle on Validation Issues**: Refined collapse/expand button state with clear badge counts.
+103. **Descriptive Accessibility Audio Labels for Lifecycle Steps**: Screen readers speak step title, number, and active execution state.
+104. **1-Click Concept Documentation Access**: Direct external link with descriptive accessibility label in concept cards.
+105. **Accessible Sidebar Tab Navigation**: Smooth tab switching with complete ARIA tablist/tabpanel standards.
+106. **High-Contrast Concept Card Key Fact Copy Button**: Subtle checkmark transition on copying concept takeaways.
+107. **Clean Canvas Viewport Reset Animation**: Instant 300ms smooth camera transition to fit cluster diagram to viewport.
+108. **Clear Validation Badge Color Accents**: Crimson badge styling for error count in YAML editor.
+109. **Visual Focus Highlights on Concept Cards**: Subtle glow on expanding and focusing architectural concept cards.
+110. **Unified Multi-View State Machine Architecture**: Seamless interaction between Editor, Scenarios, Concepts, and Canvas.

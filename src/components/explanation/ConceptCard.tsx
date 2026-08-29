@@ -41,7 +41,7 @@ export const ConceptCard: React.FC<ConceptCardProps> = ({
       </button>
 
       {isOpen && (
-        <div className={styles.cardBody}>
+        <div className={styles.cardBody} data-testid={`concept-body-${concept.id}`}>
           <p className={styles.definition}>{concept.definition}</p>
           <div className={styles.keyFact}>
             <Sparkles size={13} className={styles.keyFactIcon} />
@@ -72,6 +72,7 @@ export const ConceptCard: React.FC<ConceptCardProps> = ({
               target="_blank"
               rel="noopener noreferrer"
               className={styles.docsLink}
+              aria-label={`Official documentation for ${concept.title}`}
               onClick={(e) => e.stopPropagation()}
             >
               <span>Kubernetes Documentation</span>

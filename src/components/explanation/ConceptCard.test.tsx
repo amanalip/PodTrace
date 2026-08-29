@@ -25,7 +25,8 @@ describe('ConceptCard', () => {
 
     expect(screen.getByText(/A test component verifies/i)).toBeInTheDocument();
     expect(screen.getByText(/Testing ensures regressions/i)).toBeInTheDocument();
-    const link = screen.getByRole('link', { name: /kubernetes documentation/i });
+    expect(screen.getByTestId(`concept-body-${sampleConcept.id}`)).toBeInTheDocument();
+    const link = screen.getByRole('link', { name: /official documentation for what is a test component\?/i });
     expect(link).toHaveAttribute('href', 'https://kubernetes.io/docs/');
   });
 

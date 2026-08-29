@@ -22,7 +22,7 @@ export const ExplanationPanel: React.FC = () => {
 
   if (!steps || steps.length === 0) {
     return (
-      <div className={styles.emptyState} data-testid="explanation-panel-empty">
+      <div className={styles.emptyState} data-testid="explanation-panel-empty" role="status">
         <Info size={24} className={styles.emptyIcon} />
         <p>No active lifecycle steps.</p>
         <p>Paste a manifest or choose a sample to start tracing.</p>
