@@ -22,10 +22,12 @@ describe('LiveRegion', () => {
     });
   });
 
-  it('announces current step details to screen readers', () => {
+  it('announces current step details to screen readers with polite atomic live region', () => {
     render(<LiveRegion />);
     const region = screen.getByTestId('aria-live-region');
+    expect(region).toHaveAttribute('role', 'status');
     expect(region).toHaveAttribute('aria-live', 'polite');
+    expect(region).toHaveAttribute('aria-atomic', 'true');
     expect(region).toHaveTextContent(/step 1 of 1: apply pod manifest/i);
     expect(region).toHaveTextContent(/kubectl sends http post/i);
   });

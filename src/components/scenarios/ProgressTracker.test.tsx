@@ -32,7 +32,19 @@ describe('ProgressTracker', () => {
     });
 
     render(<ProgressTracker />);
+    expect(screen.getByRole('region', { name: /troubleshooting scenario progress/i })).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '1');
     expect(screen.getByText(/1\/15 \(7%\)/i)).toBeInTheDocument();
     expect(screen.getByTestId('progress-bar-fill')).toHaveStyle({ width: '7%' });
+  });
+
+  it('renders All Solved milestone badge when 100% completed', () => {
+    const allIds = Array.from({ length: 15 }, (_, i) => `sc-${i}`);
+    useAppStore.setState({
+      completedScenarioIds: allIds,
+    });
+
+    render(<ProgressTracker />);
+    expect(screen.getByTestId('all-solved-badge')).toHaveTextContent('All Solved!');
   });
 });

@@ -83,9 +83,12 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         </div>
 
         <div className={styles.body}>
-          <div className={styles.tabs}>
+          <div className={styles.tabs} role="tablist" aria-label="Export formats">
             <button
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'link'}
+              aria-controls="export-tab-panel"
               className={`${styles.tabBtn} ${activeTab === 'link' ? styles.tabBtn_active : ''}`}
               onClick={() => setActiveTab('link')}
             >
@@ -94,6 +97,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             </button>
             <button
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'mermaid'}
+              aria-controls="export-tab-panel"
               className={`${styles.tabBtn} ${activeTab === 'mermaid' ? styles.tabBtn_active : ''}`}
               onClick={() => setActiveTab('mermaid')}
             >
@@ -102,6 +108,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             </button>
             <button
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'svg'}
+              aria-controls="export-tab-panel"
               className={`${styles.tabBtn} ${activeTab === 'svg' ? styles.tabBtn_active : ''}`}
               onClick={() => setActiveTab('svg')}
             >
@@ -110,87 +119,100 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             </button>
           </div>
 
-          {activeTab === 'link' && (
-            <div className={styles.fieldGroup}>
-              <span className={styles.label}>Direct URL to current diagram and step:</span>
-              <div className={styles.inputRow}>
-                <input
-                  type="text"
-                  readOnly
-                  value={shareUrl}
-                  className={styles.input}
-                  data-testid="share-url-input"
-                />
-                <button
-                  type="button"
-                  className={styles.btnAction}
-                  onClick={() => handleCopy(shareUrl, 'link')}
-                  data-testid="copy-link-btn"
-                >
-                  {copiedTarget === 'link' ? <Check size={14} /> : <Copy size={14} />}
-                  <span>{copiedTarget === 'link' ? 'Copied' : 'Copy'}</span>
-                </button>
-              </div>
-              <span className={styles.infoText}>
-                Encodes the current YAML editor content, animation step, and theme directly into the URL hash.
-              </span>
-            </div>
-          )}
-
-          {activeTab === 'mermaid' && (
-            <div className={styles.fieldGroup}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span className={styles.label}>Mermaid Sequence Diagram:</span>
-                <div style={{ display: 'flex', gap: 6 }}>
+          <div id="export-tab-panel" role="tabpanel">
+            {activeTab === 'link' && (
+              <div className={styles.fieldGroup}>
+                <span className={styles.label}>Direct URL to current diagram and step:</span>
+                <div className={styles.inputRow}>
+                  <input
+                    type="text"
+                    readOnly
+                    value={shareUrl}
+                    className={styles.input}
+                    aria-label="Shareable diagram URL"
+                    data-testid="share-url-input"
+                  />
                   <button
                     type="button"
                     className={styles.btnAction}
-                    onClick={() => handleCopy(mermaidSequence, 'mermaid-seq')}
-                    data-testid="copy-mermaid-btn"
+                    onClick={() => handleCopy(shareUrl, 'link')}
+                    title="Copy shareable URL"
+                    aria-label="Copy shareable URL"
+                    aria-live="polite"
+                    data-testid="copy-link-btn"
                   >
-                    {copiedTarget === 'mermaid-seq' ? <Check size={12} /> : <Copy size={12} />}
-                    <span>{copiedTarget === 'mermaid-seq' ? 'Copied' : 'Copy'}</span>
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.btnAction}
-                    style={{ background: '#334155' }}
-                    onClick={() => handleDownloadMermaid(mermaidSequence, 'podtrace-sequence.mmd')}
-                  >
-                    <Download size={12} />
-                    <span>Download</span>
+                    {copiedTarget === 'link' ? <Check size={14} /> : <Copy size={14} />}
+                    <span>{copiedTarget === 'link' ? 'Copied' : 'Copy'}</span>
                   </button>
                 </div>
+                <span className={styles.infoText}>
+                  Encodes the current YAML editor content, animation step, and theme directly into the URL hash.
+                </span>
               </div>
-              <textarea
-                readOnly
-                className={styles.codeArea}
-                value={mermaidSequence}
-                data-testid="mermaid-sequence-area"
-              />
+            )}
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
-                <span className={styles.label}>Mermaid Architecture Topology:</span>
-                <button
-                  type="button"
-                  className={styles.btnAction}
-                  onClick={() => handleCopy(mermaidGraph, 'mermaid-graph')}
-                >
-                  {copiedTarget === 'mermaid-graph' ? <Check size={12} /> : <Copy size={12} />}
-                  <span>{copiedTarget === 'mermaid-graph' ? 'Copied' : 'Copy'}</span>
-                </button>
+            {activeTab === 'mermaid' && (
+              <div className={styles.fieldGroup}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span className={styles.label}>Mermaid Sequence Diagram:</span>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <button
+                      type="button"
+                      className={styles.btnAction}
+                      onClick={() => handleCopy(mermaidSequence, 'mermaid-seq')}
+                      title="Copy Mermaid sequence diagram"
+                      aria-label="Copy Mermaid sequence diagram"
+                      aria-live="polite"
+                      data-testid="copy-mermaid-btn"
+                    >
+                      {copiedTarget === 'mermaid-seq' ? <Check size={12} /> : <Copy size={12} />}
+                      <span>{copiedTarget === 'mermaid-seq' ? 'Copied' : 'Copy'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.btnAction}
+                      style={{ background: '#334155' }}
+                      onClick={() => handleDownloadMermaid(mermaidSequence, 'podtrace-sequence.mmd')}
+                    >
+                      <Download size={12} />
+                      <span>Download</span>
+                    </button>
+                  </div>
+                </div>
+                <textarea
+                  readOnly
+                  className={styles.codeArea}
+                  value={mermaidSequence}
+                  aria-label="Mermaid sequence diagram content"
+                  data-testid="mermaid-sequence-area"
+                />
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
+                  <span className={styles.label}>Mermaid Architecture Topology:</span>
+                  <button
+                    type="button"
+                    className={styles.btnAction}
+                    onClick={() => handleCopy(mermaidGraph, 'mermaid-graph')}
+                    title="Copy Mermaid architecture topology"
+                    aria-label="Copy Mermaid architecture topology"
+                    aria-live="polite"
+                  >
+                    {copiedTarget === 'mermaid-graph' ? <Check size={12} /> : <Copy size={12} />}
+                    <span>{copiedTarget === 'mermaid-graph' ? 'Copied' : 'Copy'}</span>
+                  </button>
+                </div>
+                <textarea
+                  readOnly
+                  className={styles.codeArea}
+                  value={mermaidGraph}
+                  aria-label="Mermaid architecture topology content"
+                  data-testid="mermaid-graph-area"
+                />
               </div>
-              <textarea
-                readOnly
-                className={styles.codeArea}
-                value={mermaidGraph}
-                data-testid="mermaid-graph-area"
-              />
-            </div>
-          )}
+            )}
 
-          {activeTab === 'svg' && (
-            <div className={styles.fieldGroup}>
+            {activeTab === 'svg' && (
+              <div className={styles.fieldGroup}>
               <span className={styles.label}>Export Raw Architecture & Lifecycle Data</span>
               <p className={styles.infoText}>
                 Download structural layout, topology descriptions, and JSON trace data for documentation or incident analysis.
@@ -232,6 +254,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

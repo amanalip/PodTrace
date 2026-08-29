@@ -39,16 +39,24 @@ describe('ExportModal', () => {
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
   });
 
-  it('switches to Mermaid tab and Vector tab', () => {
+  it('switches to Mermaid tab and Vector tab with ARIA tablist standards', () => {
     render(<ExportModal isOpen={true} onClose={vi.fn()} />);
 
-    const mermaidTab = screen.getByRole('button', { name: /mermaid markdown/i });
+    expect(screen.getByRole('tablist', { name: /export formats/i })).toBeInTheDocument();
+    expect(screen.getByRole('tabpanel')).toBeInTheDocument();
+
+    const linkTab = screen.getByRole('tab', { name: /shareable link/i });
+    expect(linkTab).toHaveAttribute('aria-selected', 'true');
+
+    const mermaidTab = screen.getByRole('tab', { name: /mermaid markdown/i });
     fireEvent.click(mermaidTab);
+    expect(mermaidTab).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByTestId('mermaid-sequence-area')).toBeInTheDocument();
     expect(screen.getByTestId('mermaid-graph-area')).toBeInTheDocument();
 
-    const vectorTab = screen.getByRole('button', { name: /vector \/ image/i });
+    const vectorTab = screen.getByRole('tab', { name: /vector \/ image/i });
     fireEvent.click(vectorTab);
+    expect(vectorTab).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByTestId('download-topology-btn')).toBeInTheDocument();
     expect(screen.getByTestId('download-lifecycle-btn')).toBeInTheDocument();
   });
