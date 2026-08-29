@@ -75,6 +75,10 @@ export function generateMermaidSequenceDiagram(steps: LifecycleStep[]): string {
 export function generateMermaidGraphDiagram(nodes: Node[], edges: Edge[]): string {
   const lines: string[] = ['graph TD'];
 
+  const validNodeIds = new Set(
+    nodes.filter((n) => !n.type?.includes('Zone')).map((n) => n.id),
+  );
+
   nodes.forEach((node) => {
     if (node.type?.includes('Zone')) return;
     const id = sanitizeMermaidName(node.id);
@@ -84,6 +88,7 @@ export function generateMermaidGraphDiagram(nodes: Node[], edges: Edge[]): strin
   });
 
   edges.forEach((edge) => {
+    if (!validNodeIds.has(edge.source) || !validNodeIds.has(edge.target)) return;
     const from = sanitizeMermaidName(edge.source);
     const to = sanitizeMermaidName(edge.target);
     const rawLabel = (edge.data?.label as string) || '';

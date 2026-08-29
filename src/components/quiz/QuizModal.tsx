@@ -72,6 +72,9 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
       <div
         className={styles.modal}
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Kubernetes Architecture Quiz"
         data-testid="quiz-modal"
       >
         <div className={styles.header}>
@@ -98,7 +101,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
               </div>
               <div className={styles.scoreBadge}>{getRankBadge()}</div>
               <p style={{ color: '#cbd5e1', fontSize: 13 }}>
-                You scored {Math.round((score / total) * 100)}% on the Kubernetes architecture and lifecycle assessment.
+                You scored {total > 0 ? Math.min(100, Math.max(0, Math.round((score / total) * 100))) : 0}% on the Kubernetes architecture and lifecycle assessment.
               </p>
 
               <div style={{ display: 'flex', gap: '8px', marginTop: 12 }}>
@@ -119,6 +122,15 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
                 >
                   <RotateCcw size={14} />
                   <span>Retry Quiz</span>
+                </button>
+
+                <button
+                  type="button"
+                  className={styles.nextBtn}
+                  onClick={onClose}
+                  data-testid="quiz-done-btn"
+                >
+                  <span>Done</span>
                 </button>
               </div>
 
@@ -169,6 +181,11 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
               </div>
 
               <div
+                role="progressbar"
+                aria-valuenow={currentIndex + 1}
+                aria-valuemin={1}
+                aria-valuemax={total}
+                aria-label={`Question ${currentIndex + 1} of ${total}`}
                 style={{
                   width: '100%',
                   height: 4,

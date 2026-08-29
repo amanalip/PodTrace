@@ -73,4 +73,19 @@ describe('export-utils', () => {
     expect(createObjectURLMock).toHaveBeenCalled();
     expect(revokeObjectURLMock).toHaveBeenCalled();
   });
+
+  it('filters out zone nodes and zone boundary edges from mermaid graph', () => {
+    const nodes: Node[] = [
+      { id: 'node-apiserver', position: { x: 0, y: 0 }, data: { label: 'kube-apiserver' } },
+      { id: 'zone-controlplane', type: 'controlPlaneZone', position: { x: 0, y: 0 }, data: { label: 'Control Plane' } },
+    ];
+    const edges: Edge[] = [
+      { id: 'e1', source: 'zone-controlplane', target: 'node-apiserver', data: { label: 'boundary' } },
+    ];
+
+    const graph = generateMermaidGraphDiagram(nodes, edges);
+    expect(graph).not.toContain('zone_controlplane');
+    expect(graph).not.toContain('boundary');
+    expect(graph).toContain('node_apiserver["kube-apiserver"]');
+  });
 });

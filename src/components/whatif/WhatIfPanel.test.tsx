@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { WhatIfPanel } from './WhatIfPanel.tsx';
 import { useAppStore } from '../../store/index.ts';
@@ -69,5 +69,25 @@ describe('WhatIfPanel', () => {
 
     fireEvent.click(minBtn);
     expect(screen.getByText(/cluster consequences/i)).toBeInTheDocument();
+  });
+
+  it('renders category badge and copies recommended mitigation', () => {
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: vi.fn().mockResolvedValue(undefined),
+      },
+    });
+
+    render(<WhatIfPanel />);
+    fireEvent.click(screen.getByTestId('what-if-launcher'));
+
+    const select = screen.getByTestId('what-if-select');
+    fireEvent.change(select, { target: { value: 'apiserver-down' } });
+
+    expect(screen.getByTestId('what-if-category-badge')).toHaveTextContent(/control-plane/i);
+
+    const copyBtn = screen.getByTestId('copy-mitigation-btn');
+    fireEvent.click(copyBtn);
+    expect(navigator.clipboard.writeText).toHaveBeenCalled();
   });
 });

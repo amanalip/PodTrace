@@ -35,13 +35,18 @@ describe('QuizModal', () => {
     fireEvent.click(reviewBtn);
 
     expect(screen.getByTestId('quiz-review-section')).toBeInTheDocument();
+
+    // Click Done button
+    const doneBtn = screen.getByTestId('quiz-done-btn');
+    fireEvent.click(doneBtn);
+    expect(onClose).toHaveBeenCalled();
   });
 
-  it('renders progress bar and closes on Escape key press', () => {
+  it('renders accessible progress bar and closes on Escape key press', () => {
     const onClose = vi.fn();
     render(<QuizModal isOpen={true} onClose={onClose} />);
 
-    expect(screen.getByTestId('quiz-progress-bar')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '1');
 
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(onClose).toHaveBeenCalledTimes(1);

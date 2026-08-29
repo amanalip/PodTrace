@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { HelpCircle, AlertTriangle, RotateCcw, X, ChevronUp, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { HelpCircle, AlertTriangle, RotateCcw, X, ChevronUp, ChevronDown, Copy, Check } from 'lucide-react';
 import { WHAT_IF_SCENARIOS, getWhatIfScenario } from '../../whatif/whatif-data.ts';
 import { useAppStore } from '../../store/index.ts';
 import styles from './WhatIfPanel.module.css';
@@ -8,6 +8,13 @@ export const WhatIfPanel: React.FC = () => {
   const { activeWhatIfId, activeWhatIf, applyWhatIf, clearWhatIf } = useAppStore();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (activeWhatIfId) {
+      setIsOpen(true);
+    }
+  }, [activeWhatIfId]);
 
   if (!isOpen && !activeWhatIfId) {
     return (
@@ -37,6 +44,13 @@ export const WhatIfPanel: React.FC = () => {
   const handleClose = () => {
     clearWhatIf();
     setIsOpen(false);
+  };
+
+  const handleCopyMitigation = () => {
+    if (!activeWhatIf?.mitigation) return;
+    navigator.clipboard.writeText(activeWhatIf.mitigation);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -91,6 +105,24 @@ export const WhatIfPanel: React.FC = () => {
 
         {activeWhatIf && (
           <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '4px 0 2px 0' }}>
+              <span
+                style={{
+                  fontSize: 10,
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  padding: '2px 6px',
+                  background: 'rgba(245, 158, 11, 0.15)',
+                  color: '#fbbf24',
+                  borderRadius: 4,
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                }}
+                data-testid="what-if-category-badge"
+              >
+                {activeWhatIf.category}
+              </span>
+            </div>
+
             <div className={styles.description}>{activeWhatIf.description}</div>
 
             <div>
@@ -103,7 +135,29 @@ export const WhatIfPanel: React.FC = () => {
             </div>
 
             <div>
-              <div className={styles.sectionTitle} style={{ color: '#22c55e' }}>Recommended Mitigation</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                <div className={styles.sectionTitle} style={{ color: '#22c55e', margin: 0 }}>Recommended Mitigation</div>
+                <button
+                  type="button"
+                  onClick={handleCopyMitigation}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: copied ? '#22c55e' : '#94a3b8',
+                    fontSize: 11,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                  data-testid="copy-mitigation-btn"
+                  title="Copy mitigation"
+                  aria-label="Copy mitigation"
+                >
+                  {copied ? <Check size={12} /> : <Copy size={12} />}
+                  <span>{copied ? 'Copied' : 'Copy'}</span>
+                </button>
+              </div>
               <div className={styles.mitigationBox}>{activeWhatIf.mitigation}</div>
             </div>
 

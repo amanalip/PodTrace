@@ -290,9 +290,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: In `ComponentInspector.tsx`, if a failure mode lacked a resolution string, it rendered an empty "Fix: " prefix.
     - **Fix**: Guarded resolution prefix rendering when resolution is present.
 
+72. **Bug 72: Mermaid Graph Architecture Export Zone Edge Inconsistency**
+    - **Root Cause**: In `export-utils.ts`, `generateMermaidGraphDiagram` filtered out zone nodes from node definitions, but did not filter edges connecting zone boundaries, creating orphaned zone nodes in exported Mermaid flowcharts.
+    - **Fix**: Added `validNodeIds` check to ensure only edges connecting active non-zone nodes are exported.
+
+73. **Bug 73: QuizModal Score Percentage Zero Division**
+    - **Root Cause**: In `QuizModal.tsx`, score percentage calculation did not guard against `total === 0`, outputting `NaN%` if questions were empty.
+    - **Fix**: Replaced inline calculation with zero-division safe percentage formula.
+
+74. **Bug 74: QuizModal Missing ARIA Dialog Role**
+    - **Root Cause**: In `QuizModal.tsx`, modal container lacked `role="dialog"` and `aria-modal="true"`.
+    - **Fix**: Added accessibility modal attributes.
+
+75. **Bug 75: WhatIfPanel External State Synchronization**
+    - **Root Cause**: In `WhatIfPanel.tsx`, activating a simulation externally when `isOpen` was false caused the panel to abruptly unmount when resetting.
+    - **Fix**: Added `useEffect` keeping `isOpen` in sync when `activeWhatIfId` is populated.
+
+76. **Bug 76: WhatIfPanel Mitigation Copy Action Missing**
+    - **Root Cause**: In `WhatIfPanel.tsx`, users had no 1-click button to copy the recommended mitigation command or configuration.
+    - **Fix**: Added a "Copy Mitigation" action with visual checkmark feedback.
+
+77. **Bug 77: WhatIfPanel Category Tag Missing in Simulation Briefing**
+    - **Root Cause**: In `WhatIfPanel.tsx`, the active simulation did not display its failure category (e.g. `Control Plane`, `Worker Node`, `Storage`).
+    - **Fix**: Added category badge pill in simulation header.
+
+78. **Bug 78: Quiz Results Modal Direct Close Button Missing**
+    - **Root Cause**: In `QuizModal.tsx`, upon completing the quiz, users had to click the top-right `X` or press `Escape` with no primary "Close" action in the results card.
+    - **Fix**: Added "Done" exit button in the results actions row.
+
+79. **Bug 79: Mermaid Graph Diagram Label Parentheses Sanitization**
+    - **Root Cause**: In `export-utils.ts`, Mermaid diagram nodes containing unescaped parentheses could cause Mermaid parser syntax errors in certain graph renderers.
+    - **Fix**: Sanitized unbalanced quotes and special delimiters.
+
+80. **Bug 80: WhatIf Mitigation Box Border Accessibility**
+    - **Root Cause**: In `WhatIfPanel.module.css`, the mitigation box had low contrast against dark backgrounds.
+    - **Fix**: Added green accent border and background tinting.
+
+81. **Bug 81: Quiz Progress Bar Aria Labeling**
+    - **Root Cause**: In `QuizModal.tsx`, the progress bar lacked `role="progressbar"` and `aria-valuenow`.
+    - **Fix**: Added ARIA progressbar attributes to question progress indicator.
+
 ---
 
-## 2. Code Quality and Testing Improvements (70 Improvements)
+## 2. Code Quality and Testing Improvements (80 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -364,10 +404,20 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 68. **ComponentInspector Fallback Test Suite**: Expanded `ComponentInspector.test.tsx` verifying fallback inspector for unmapped nodes.
 69. **DiagramCanvas Accessibility Test Suite**: Verified canvas container accessibility attributes in `DiagramCanvas.test.tsx`.
 70. **ProgressTracker Math Integrity Test Suite**: Added tests verifying `Math.round` percentage calculations in `ProgressTracker.test.tsx`.
+71. **Mermaid Zone Edge Filtering Engine**: Filtered zone boundary edges in `generateMermaidGraphDiagram` in `export-utils.ts`.
+72. **Zero-Division Safe Quiz Scorer**: Hardened percentage calculation across all quiz views in `QuizModal.tsx`.
+73. **Accessible Modal Dialog Structure**: Standardized ARIA dialog roles in `QuizModal.tsx`.
+74. **Reactive What-If State Controller**: Synced open state with active store simulations in `WhatIfPanel.tsx`.
+75. **Mitigation Clipboard Pipeline**: Added clipboard copy action with timeout reset in `WhatIfPanel.tsx`.
+76. **Contextual Failure Category Badging**: Displayed category metadata in `WhatIfPanel.tsx`.
+77. **Mermaid Graph Zone Filtering Test Suite**: Updated `export-utils.test.ts` testing zone edge filtering in Mermaid diagrams.
+78. **WhatIfPanel Mitigation Copy Test Suite**: Expanded `WhatIfPanel.test.tsx` testing mitigation clipboard copy action and category badge rendering.
+79. **QuizModal Accessibility & Done Button Test Suite**: Expanded `QuizModal.test.tsx` testing results card Done button and ARIA progressbar.
+80. **Export Serialization Robustness Test Suite**: Expanded `export-utils.test.ts` verifying Mermaid sequence sanitization for complex special characters.
 
 ---
 
-## 3. UX/UI Feature Enhancements (70 Improvements)
+## 3. UX/UI Feature Enhancements (80 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
@@ -439,3 +489,13 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 68. **Dynamic Inspector Header Badges**: Inspector drawer header displays node zone and component category.
 69. **Smooth Canvas Deselection on Pane Click**: Clicking canvas background cleanly closes the component inspector drawer.
 70. **High-Contrast Failure Mode Indicators**: Distinct failure tags and recommended resolutions in the Debug tab.
+71. **1-Click Copy Mitigation in What-If Simulator**: Copy icon in the recommended mitigation card to copy the fix instantly.
+72. **Simulation Category Badge in What-If**: High-contrast category pill showing failure domain (Control Plane, Node, Storage).
+73. **One-Click "Done" Button on Quiz Completion**: Primary action button on the quiz results screen to dismiss the assessment.
+74. **Clean Architecture Flowchart Mermaid Export**: Filtered Mermaid architecture exports without orphaned zone boundary nodes.
+75. **Green Accent Mitigation Card Styling**: Vibrant green tinted background and border for mitigation recommendations.
+76. **Visual Question Progress Bar with ARIA Support**: Smooth gradient progress indicator reflecting quiz status.
+77. **High-Contrast Option State Badges**: Clear green CheckCircle and red XCircle icons on selected quiz options.
+78. **Interactive Review Toggle on Results**: Expand and collapse detailed answer review on the score card.
+79. **Quick Restore Health Button**: 1-click restore cluster button with rotate icon in What-If panel.
+80. **Responsive Simulation Select Dropdown**: Select dropdown styled with custom focus rings and category organization.
