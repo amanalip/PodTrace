@@ -57,4 +57,12 @@ describe('ExportModal', () => {
     render(<ExportModal isOpen={true} onClose={vi.fn()} initialTab="svg" />);
     expect(screen.getByTestId('download-topology-btn')).toBeInTheDocument();
   });
+
+  it('closes on Escape key press', () => {
+    const onClose = vi.fn();
+    render(<ExportModal isOpen={true} onClose={onClose} />);
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
 });

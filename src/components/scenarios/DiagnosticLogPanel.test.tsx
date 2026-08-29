@@ -60,4 +60,39 @@ describe('DiagnosticLogPanel', () => {
 
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
   });
+
+  it('renders dynamic conditions reflecting failed scheduling', () => {
+    const schedulingScenario = SCENARIO_CATALOG.find((s) => s.id === 'pending-cpu') || SCENARIO_CATALOG[0];
+    useAppStore.setState({
+      activeScenario: schedulingScenario,
+      scenarioState: 'failed',
+    });
+
+    render(<DiagnosticLogPanel />);
+
+    const conditionsTab = screen.getByText('Conditions');
+    fireEvent.click(conditionsTab);
+
+    expect(screen.getByText('PodScheduled')).toBeInTheDocument();
+    expect(screen.getByText('ContainersReady')).toBeInTheDocument();
+  });
+
+  it('clears filter query when clear filter button is clicked', () => {
+    const scenario = SCENARIO_CATALOG[0];
+    useAppStore.setState({
+      activeScenario: scenario,
+      scenarioState: 'failed',
+    });
+
+    render(<DiagnosticLogPanel />);
+
+    const input = screen.getByTestId('diag-filter-input');
+    fireEvent.change(input, { target: { value: 'nonexistent-xyz' } });
+
+    const clearBtn = screen.getByTestId('clear-diag-filter-btn');
+    expect(clearBtn).toBeInTheDocument();
+
+    fireEvent.click(clearBtn);
+    expect(input).toHaveValue('');
+  });
 });

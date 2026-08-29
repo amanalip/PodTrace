@@ -1,5 +1,5 @@
 import React from 'react';
-import { Code, BookOpen, Layers } from 'lucide-react';
+import { Code, BookOpen, Layers, X } from 'lucide-react';
 import { useAppStore } from '../../store/index.ts';
 import { YAMLEditor } from '../editor/YAMLEditor.tsx';
 import { CONCEPT_CARDS } from '../../concepts/concept-data.ts';
@@ -70,7 +70,7 @@ export const Sidebar: React.FC = () => {
 
         {activeSidebarTab === 'concepts' && (
           <div className={styles.conceptsList} data-testid="concepts-list">
-            <div style={{ padding: '4px 0 12px 0' }}>
+            <div style={{ padding: '4px 0 12px 0', position: 'relative' }}>
               <input
                 type="text"
                 placeholder="Search Kubernetes concepts..."
@@ -78,7 +78,7 @@ export const Sidebar: React.FC = () => {
                 onChange={(e) => setConceptSearch(e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '6px 10px',
+                  padding: '6px 28px 6px 10px',
                   background: 'var(--bg-tertiary, #0f172a)',
                   border: '1px solid var(--border-color, #334155)',
                   borderRadius: 6,
@@ -88,6 +88,29 @@ export const Sidebar: React.FC = () => {
                 }}
                 data-testid="concept-search-input"
               />
+              {conceptSearch && (
+                <button
+                  type="button"
+                  onClick={() => setConceptSearch('')}
+                  style={{
+                    position: 'absolute',
+                    right: 8,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    color: '#94a3b8',
+                    cursor: 'pointer',
+                    padding: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                  aria-label="Clear concept search"
+                  data-testid="clear-concept-search-btn"
+                >
+                  <X size={13} />
+                </button>
+              )}
             </div>
             {filteredConcepts.map((concept) => (
               <ConceptCard key={concept.id} concept={concept} />

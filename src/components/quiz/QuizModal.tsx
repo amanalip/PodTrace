@@ -16,6 +16,17 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [showReview, setShowReview] = useState(false);
 
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const currentQ = QUIZ_QUESTIONS[currentIndex];
@@ -49,7 +60,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
   };
 
   const getRankBadge = () => {
-    const percentage = Math.round((score / total) * 100);
+    const percentage = total > 0 ? Math.min(100, Math.max(0, Math.round((score / total) * 100))) : 0;
     if (percentage === 100) return 'Kubernetes Master';
     if (percentage >= 70) return 'Cluster Operator';
     if (percentage >= 40) return 'Kubernetes Apprentice';
@@ -155,6 +166,28 @@ export const QuizModal: React.FC<QuizModalProps> = ({ isOpen, onClose }) => {
                   Question {currentIndex + 1} of {total}
                 </span>
                 <span className={styles.badgeCategory}>{currentQ.category}</span>
+              </div>
+
+              <div
+                style={{
+                  width: '100%',
+                  height: 4,
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  borderRadius: 2,
+                  overflow: 'hidden',
+                  marginTop: 6,
+                  marginBottom: 12,
+                }}
+              >
+                <div
+                  style={{
+                    width: `${((currentIndex + 1) / total) * 100}%`,
+                    height: '100%',
+                    background: 'linear-gradient(90deg, #38bdf8, #818cf8)',
+                    transition: 'width 0.2s ease',
+                  }}
+                  data-testid="quiz-progress-bar"
+                />
               </div>
 
               <div className={styles.questionText}>{currentQ.question}</div>

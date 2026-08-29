@@ -56,6 +56,20 @@ export const DiagnosticLogPanel: React.FC = () => {
     setTimeout(() => setCopiedAll(false), 2000);
   };
 
+  const isSchedulingFailed = isFailed && (
+    activeScenario.id === 'pending-cpu' ||
+    activeScenario.id === 'unschedulable-taint' ||
+    activeScenario.id === 'affinity-conflict' ||
+    activeScenario.id === 'pvc-pending'
+  );
+
+  const isInitFailed = isFailed && activeScenario.id === 'init-container-fail';
+
+  const podScheduledTrue = !isSchedulingFailed;
+  const initializedTrue = !isInitFailed && !isSchedulingFailed;
+  const containersReadyTrue = !isFailed;
+  const readyTrue = !isFailed;
+
   return (
     <div className={styles.container} data-testid="diagnostic-log-panel">
       <div className={styles.tabs}>
@@ -119,7 +133,26 @@ export const DiagnosticLogPanel: React.FC = () => {
           <div className={styles.tableWrapper}>
             {filteredEvents.length === 0 ? (
               <div style={{ color: '#64748b', textAlign: 'center', padding: '16px' }}>
-                {filterQuery ? 'No events matching search filter.' : 'No events recorded.'}
+                <div>{filterQuery ? 'No events matching search filter.' : 'No events recorded.'}</div>
+                {filterQuery && (
+                  <button
+                    type="button"
+                    style={{
+                      marginTop: 8,
+                      padding: '4px 8px',
+                      background: 'var(--bg-tertiary, #1e293b)',
+                      border: '1px solid var(--border-color, #334155)',
+                      borderRadius: 4,
+                      color: '#38bdf8',
+                      fontSize: 11,
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => setFilterQuery('')}
+                    data-testid="clear-diag-filter-btn"
+                  >
+                    Clear filter
+                  </button>
+                )}
               </div>
             ) : (
               <table className={styles.table}>
@@ -160,7 +193,25 @@ export const DiagnosticLogPanel: React.FC = () => {
           <div className={styles.logTerminal} data-testid="log-terminal">
             {filteredLogs.length === 0 ? (
               <div style={{ color: '#64748b', textAlign: 'center', padding: '16px' }}>
-                {filterQuery ? 'No logs matching search filter.' : 'No container log output available.'}
+                <div>{filterQuery ? 'No logs matching search filter.' : 'No container log output available.'}</div>
+                {filterQuery && (
+                  <button
+                    type="button"
+                    style={{
+                      marginTop: 8,
+                      padding: '4px 8px',
+                      background: 'var(--bg-tertiary, #1e293b)',
+                      border: '1px solid var(--border-color, #334155)',
+                      borderRadius: 4,
+                      color: '#38bdf8',
+                      fontSize: 11,
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => setFilterQuery('')}
+                  >
+                    Clear filter
+                  </button>
+                )}
               </div>
             ) : (
               filteredLogs.map((log, idx) => {
@@ -187,22 +238,26 @@ export const DiagnosticLogPanel: React.FC = () => {
           <div className={styles.conditionsList}>
             <div className={styles.conditionRow}>
               <span className={styles.conditionName}>PodScheduled</span>
-              <span className={styles.badgeNormal}>True</span>
+              <span className={podScheduledTrue ? styles.badgeNormal : styles.badgeWarning}>
+                {podScheduledTrue ? 'True' : 'False'}
+              </span>
             </div>
             <div className={styles.conditionRow}>
               <span className={styles.conditionName}>Initialized</span>
-              <span className={styles.badgeNormal}>True</span>
+              <span className={initializedTrue ? styles.badgeNormal : styles.badgeWarning}>
+                {initializedTrue ? 'True' : 'False'}
+              </span>
             </div>
             <div className={styles.conditionRow}>
               <span className={styles.conditionName}>ContainersReady</span>
-              <span className={isFailed ? styles.badgeWarning : styles.badgeNormal}>
-                {isFailed ? 'False' : 'True'}
+              <span className={containersReadyTrue ? styles.badgeNormal : styles.badgeWarning}>
+                {containersReadyTrue ? 'True' : 'False'}
               </span>
             </div>
             <div className={styles.conditionRow}>
               <span className={styles.conditionName}>Ready</span>
-              <span className={isFailed ? styles.badgeWarning : styles.badgeNormal}>
-                {isFailed ? 'False' : 'True'}
+              <span className={readyTrue ? styles.badgeNormal : styles.badgeWarning}>
+                {readyTrue ? 'True' : 'False'}
               </span>
             </div>
           </div>

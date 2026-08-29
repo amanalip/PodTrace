@@ -5,6 +5,7 @@ import {
   encodeStateToHash,
   generateMermaidSequenceDiagram,
   generateMermaidGraphDiagram,
+  generateDiagramExportJSON,
   downloadFile,
 } from '../../export/export-utils.ts';
 import styles from './ExportModal.module.css';
@@ -22,13 +23,24 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 }) => {
   const { yaml, currentStepIndex, theme, steps, nodes, edges } = useAppStore();
   const [activeTab, setActiveTab] = useState<'link' | 'mermaid' | 'svg'>(initialTab);
-  const [copied, setCopied] = useState(false);
+  const [copiedTarget, setCopiedTarget] = useState<string | null>(null);
 
   React.useEffect(() => {
     if (isOpen && initialTab) {
       setActiveTab(initialTab);
     }
   }, [isOpen, initialTab]);
+
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -38,10 +50,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   const mermaidSequence = generateMermaidSequenceDiagram(steps);
   const mermaidGraph = generateMermaidGraphDiagram(nodes, edges);
 
-  const handleCopy = (text: string) => {
+  const handleCopy = (text: string, targetId: string) => {
     navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setCopiedTarget(targetId);
+    setTimeout(() => setCopiedTarget(null), 2000);
   };
 
   const handleDownloadMermaid = (content: string, filename: string) => {
@@ -109,11 +121,11 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 <button
                   type="button"
                   className={styles.btnAction}
-                  onClick={() => handleCopy(shareUrl)}
+                  onClick={() => handleCopy(shareUrl, 'link')}
                   data-testid="copy-link-btn"
                 >
-                  {copied ? <Check size={14} /> : <Copy size={14} />}
-                  <span>{copied ? 'Copied' : 'Copy'}</span>
+                  {copiedTarget === 'link' ? <Check size={14} /> : <Copy size={14} />}
+                  <span>{copiedTarget === 'link' ? 'Copied' : 'Copy'}</span>
                 </button>
               </div>
               <span className={styles.infoText}>
@@ -130,11 +142,11 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   <button
                     type="button"
                     className={styles.btnAction}
-                    onClick={() => handleCopy(mermaidSequence)}
+                    onClick={() => handleCopy(mermaidSequence, 'mermaid-seq')}
                     data-testid="copy-mermaid-btn"
                   >
-                    {copied ? <Check size={12} /> : <Copy size={12} />}
-                    <span>Copy</span>
+                    {copiedTarget === 'mermaid-seq' ? <Check size={12} /> : <Copy size={12} />}
+                    <span>{copiedTarget === 'mermaid-seq' ? 'Copied' : 'Copy'}</span>
                   </button>
                   <button
                     type="button"
@@ -159,10 +171,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 <button
                   type="button"
                   className={styles.btnAction}
-                  onClick={() => handleCopy(mermaidGraph)}
+                  onClick={() => handleCopy(mermaidGraph, 'mermaid-graph')}
                 >
-                  {copied ? <Check size={12} /> : <Copy size={12} />}
-                  <span>Copy</span>
+                  {copiedTarget === 'mermaid-graph' ? <Check size={12} /> : <Copy size={12} />}
+                  <span>{copiedTarget === 'mermaid-graph' ? 'Copied' : 'Copy'}</span>
                 </button>
               </div>
               <textarea
@@ -205,19 +217,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   className={styles.btnAction}
                   style={{ background: '#1e293b' }}
                   onClick={() => {
-                    const json = JSON.stringify(
-                      {
-                        exportedAt: new Date().toISOString(),
-                        app: 'PodTrace',
-                        stepIndex: currentStepIndex,
-                        manifest: yaml,
-                        steps,
-                        nodes,
-                        edges,
-                      },
-                      null,
-                      2,
-                    );
+                    const json = generateDiagramExportJSON(yaml, currentStepIndex, steps, nodes, edges);
                     downloadFile(json, 'podtrace-diagram.json', 'application/json');
                   }}
                   data-testid="download-json-btn"

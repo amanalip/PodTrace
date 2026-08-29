@@ -36,4 +36,14 @@ describe('QuizModal', () => {
 
     expect(screen.getByTestId('quiz-review-section')).toBeInTheDocument();
   });
+
+  it('renders progress bar and closes on Escape key press', () => {
+    const onClose = vi.fn();
+    render(<QuizModal isOpen={true} onClose={onClose} />);
+
+    expect(screen.getByTestId('quiz-progress-bar')).toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
 });

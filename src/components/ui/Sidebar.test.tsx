@@ -30,4 +30,21 @@ describe('Sidebar', () => {
     expect(screen.getByTestId('scenario-list')).toBeInTheDocument();
     expect(screen.getByText(/troubleshooting progress/i)).toBeInTheDocument();
   });
+
+  it('filters concepts and clears search input with clear button', () => {
+    render(<Sidebar />);
+
+    const conceptsTab = screen.getByRole('tab', { name: /concepts/i });
+    fireEvent.click(conceptsTab);
+
+    const input = screen.getByTestId('concept-search-input');
+    fireEvent.change(input, { target: { value: 'API Server' } });
+
+    expect(screen.getByText('What is the API Server?')).toBeInTheDocument();
+
+    const clearBtn = screen.getByTestId('clear-concept-search-btn');
+    fireEvent.click(clearBtn);
+
+    expect(input).toHaveValue('');
+  });
 });

@@ -170,9 +170,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: In `export-utils.ts`, `downloadFile` created blobs with raw MIME types without explicitly declaring `charset=utf-8`, risking character corruption on unicode content.
     - **Fix**: Declared `charset=utf-8` in download blob options.
 
+42. **Bug 42: DiagnosticLogPanel PodScheduled and Initialized Condition Desynchronization**
+    - **Root Cause**: In `DiagnosticLogPanel.tsx`, `PodScheduled` and `Initialized` conditions were hardcoded to `True`, showing erroneous healthy scheduled state during scheduling failure scenarios (`pending-cpu`, `unschedulable-taint`) and init container failures.
+    - **Fix**: Derived dynamic condition states based on active scenario failure type.
+
+43. **Bug 43: ExportModal Duplicated JSON Serialization Logic**
+    - **Root Cause**: In `ExportModal.tsx`, `activeTab === 'svg'` manually stringified exported state instead of reusing `generateDiagramExportJSON`.
+    - **Fix**: Imported and called `generateDiagramExportJSON(yaml, currentStepIndex, steps, nodes, edges)`.
+
+44. **Bug 44: QuizModal Keyboard Escape Accessibility Trap**
+    - **Root Cause**: In `QuizModal.tsx`, pressing `Escape` failed to close the modal dialog, violating keyboard accessibility standards.
+    - **Fix**: Added global `Escape` keydown handler.
+
+45. **Bug 45: ExportModal Keyboard Escape Accessibility Trap**
+    - **Root Cause**: In `ExportModal.tsx`, pressing `Escape` failed to close the modal dialog.
+    - **Fix**: Added global `Escape` keydown handler.
+
+46. **Bug 46: Concept Search Clear Button Missing in Sidebar**
+    - **Root Cause**: In `Sidebar.tsx`, the concept search input lacked a clear button when text was entered, requiring manual backspacing.
+    - **Fix**: Added clear `X` icon button in concept search bar.
+
+47. **Bug 47: ExportModal Shared Copy State Flash**
+    - **Root Cause**: In `ExportModal.tsx`, copying the sequence diagram caused the architecture topology copy button to also show "Copied".
+    - **Fix**: Replaced single boolean with `copiedTarget` identifier (`'link' | 'mermaid-seq' | 'mermaid-graph'`).
+
+48. **Bug 48: QuizModal Dynamic Question Count Percentage Clamping**
+    - **Root Cause**: In `QuizModal.tsx`, `getRankBadge` and results card calculated percentage without guarding against empty or dynamic array changes.
+    - **Fix**: Added clamped percentage calculation with zero-division fallback.
+
+49. **Bug 49: DiagnosticLogPanel Clear Filter Action Missing**
+    - **Root Cause**: In `DiagnosticLogPanel.tsx`, when log or event filter returned zero matches, there was no quick button to reset the filter query.
+    - **Fix**: Added clear filter button in empty state.
+
+50. **Bug 50: Component Inspector GitHub Link External Security**
+    - **Root Cause**: In `ComponentInspector.tsx`, GitHub external links lacked `rel="noopener noreferrer"`.
+    - **Fix**: Added `rel="noopener noreferrer"` attribute.
+
+51. **Bug 51: Quiz Progress Bar Missing During Active Assessment**
+    - **Root Cause**: In `QuizModal.tsx`, question progression had no visual progress bar indicating completion status across questions.
+    - **Fix**: Added animated gradient progress bar reflecting current question index.
+
 ---
 
-## 2. Code Quality and Testing Improvements (40 Improvements)
+## 2. Code Quality and Testing Improvements (50 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -214,10 +254,20 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 38. **ScenarioList Empty State Test Suite**: Added unit tests in `ScenarioList.test.tsx` verifying empty search results and filter reset triggers.
 39. **WhatIfPanel Minimization Test Suite**: Updated `WhatIfPanel.test.tsx` testing the minimize/expand toggle and scenario selection.
 40. **DiagramLegend Full Styles Test Suite**: Updated `DiagramLegend.test.tsx` verifying all node statuses, edge statuses (including error and warning), and zone boundaries.
+41. **Contextual Condition Engine**: Dynamic condition status derivation in `DiagnosticLogPanel.tsx` matching Kubernetes Pod condition specifications.
+42. **Export Serialization Code Reuse**: Replaced inline JSON stringification with `generateDiagramExportJSON` in `ExportModal.tsx`.
+43. **Accessible Keyboard Modal Controller**: Standardized `Escape` key listeners across `QuizModal.tsx` and `ExportModal.tsx`.
+44. **Granular Copy State Tracking**: Targeted copy state management preventing multi-button state collision in `ExportModal.tsx`.
+45. **Concept Search Reset Architecture**: Integrated clear button and reactive state clearing in `Sidebar.tsx`.
+46. **Quiz Progress Bar Indicator**: Added visual question progression bar in `QuizModal.tsx`.
+47. **Diagnostic Panel Filter Reset Engine**: Added interactive filter reset action in `DiagnosticLogPanel.tsx`.
+48. **DiagnosticLogPanel Condition Test Suite**: Expanded `DiagnosticLogPanel.test.tsx` testing dynamic `PodScheduled` and `Initialized` conditions for scheduling and init failure scenarios.
+49. **ExportModal Granular Copy Test Suite**: Updated `ExportModal.test.tsx` testing separate copy state triggers and `Escape` key modal closure.
+50. **QuizModal Escape & Reset Test Suite**: Expanded `QuizModal.test.tsx` testing `Escape` key close and answer review progression.
 
 ---
 
-## 3. UX/UI Feature Enhancements (40 Improvements)
+## 3. UX/UI Feature Enhancements (50 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
@@ -259,3 +309,13 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 38. **Safe UTF-8 File Downloads**: Exported YAML, Mermaid, and JSON files save with explicit UTF-8 charset declarations.
 39. **Smooth Collapsible Transition in What-If**: Smooth slide and fade transitions when toggling What-If panel height.
 40. **High-Contrast Failure Edge Legends**: Clear red and amber preview lines in the legend card.
+41. **Dynamic Pod Conditions in Diagnostics**: Pod conditions in the Diagnostics tab reflect actual failure status (`PodScheduled: False`, `Initialized: False`, `ContainersReady: False`).
+42. **Quiz Progress Bar**: Animated cyan progress bar indicating quiz completion status across questions.
+43. **Independent Copy Confirmations in Export**: Copy buttons in Mermaid sequence and architecture diagrams now flash "Copied" independently.
+44. **Quick Clear Button in Concept Search**: Fast 1-click `X` button inside concept search input.
+45. **Diagnostic Filter Reset Button**: 1-click "Clear filter" action when searching diagnostic events or logs returns empty results.
+46. **Escape Key Modal Dismissal**: Close Quiz and Export modals instantly with the `Escape` key.
+47. **Clean Condition Status Badges**: Distinct color badges for Pod conditions (Green for True, Amber/Red for False).
+48. **Consistent JSON Export Format**: Single unified JSON export structure whether downloaded from Export modal or toolbar.
+49. **Visual Indicator on Quiz Question Steps**: Question index pill with category tag on quiz cards.
+50. **Refined Modal Overlay Transitions**: Smooth backdrop blur and fade-in animations on all modals.
