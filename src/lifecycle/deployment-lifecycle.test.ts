@@ -35,4 +35,16 @@ describe('deployment-lifecycle', () => {
     expect(steps[11].nodeStatusUpdates?.['node-pod-api-deployment-2']).toBe('success');
     expect(steps[11].nodeStatusUpdates?.['node-pod-api-deployment-3']).toBe('success');
   });
+
+  it('handles single replica deployment configuration', () => {
+    const steps = createDeploymentLifecycleSteps('single-deploy', 1);
+    expect(steps).toHaveLength(12);
+    expect(steps[11].nodeStatusUpdates?.['node-pod-single-deploy-1']).toBe('success');
+  });
+
+  it('verifies scheduler step in deployment lifecycle', () => {
+    const steps = createDeploymentLifecycleSteps('multi-deploy', 2);
+    expect(steps[7].componentName).toBe('kube-scheduler');
+    expect(steps[7].title).toContain('Scheduler evaluates candidate worker');
+  });
 });

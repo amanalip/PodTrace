@@ -2,6 +2,16 @@ import { describe, it, expect } from 'vitest';
 import { validateResource } from './validator.ts';
 
 describe('validator', () => {
+  it('detects invalid non-object doc', () => {
+    const errors = validateResource(null);
+    expect(errors.some((e) => e.message.includes('expected an object definition'))).toBe(true);
+  });
+
+  it('detects string primitive doc', () => {
+    const errors = validateResource('not-a-yaml-object');
+    expect(errors.some((e) => e.message.includes('expected an object definition'))).toBe(true);
+  });
+
   it('detects missing apiVersion', () => {
     const doc = { kind: 'Pod', metadata: { name: 'test' }, spec: { containers: [{ name: 'c1' }] } };
     const errors = validateResource(doc);
@@ -93,5 +103,133 @@ describe('validator', () => {
     };
     const errors = validateResource(doc);
     expect(errors.some((e) => e.message.includes('Container name "MyContainer_App" is invalid'))).toBe(true);
+  });
+
+  it('detects ExternalName Service without externalName', () => {
+    const doc = {
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: { name: 'ext-svc' },
+      spec: { type: 'ExternalName' },
+    };
+    const errors = validateResource(doc);
+    expect(errors.some((e) => e.message.includes('ExternalName Service requires spec.externalName'))).toBe(true);
+  });
+
+  it('detects ConfigMap with invalid key names', () => {
+    const doc = {
+      apiVersion: 'v1',
+      kind: 'ConfigMap',
+      metadata: { name: 'my-cm' },
+      data: { 'invalid key name with spaces!': 'value' },
+    };
+    const errors = validateResource(doc);
+    expect(errors.some((e) => e.message.includes('Invalid key name'))).toBe(true);
+  });
+
+  it('detects Secret with invalid key names', () => {
+    const doc = {
+      apiVersion: 'v1',
+      kind: 'Secret',
+      metadata: { name: 'my-sec' },
+      data: { 'bad key@#': 'c2VjcmV0' },
+    };
+    const errors = validateResource(doc);
+    expect(errors.some((e) => e.message.includes('Invalid key name'))).toBe(true);
+  });
+
+  it('detects Ingress without rules or defaultBackend', () => {
+    const doc = {
+      apiVersion: 'networking.k8s.io/v1',
+      kind: 'Ingress',
+      metadata: { name: 'my-ingress' },
+      spec: {},
+    };
+    const errors = validateResource(doc);
+    expect(errors.some((e) => e.message.includes('Ingress requires spec.rules or spec.defaultBackend'))).toBe(true);
+  });
+
+  it('detects HPA without scaleTargetRef', () => {
+    const doc = {
+      apiVersion: 'autoscaling/v2',
+      kind: 'HorizontalPodAutoscaler',
+      metadata: { name: 'my-hpa' },
+      spec: {},
+    };
+    const errors = validateResource(doc);
+    expect(errors.some((e) => e.message.includes('HPA requires spec.scaleTargetRef'))).toBe(true);
+  });
+
+  it('detects Job without template.spec.containers', () => {
+    const doc = {
+      apiVersion: 'batch/v1',
+      kind: 'Job',
+      metadata: { name: 'my-job' },
+      spec: { template: { spec: {} } },
+    };
+    const errors = validateResource(doc);
+    expect(errors.some((e) => e.message.includes('Job requires spec.template.spec.containers'))).toBe(true);
+  });
+
+  it('detects CronJob without schedule or jobTemplate', () => {
+    const doc = {
+      apiVersion: 'batch/v1',
+      kind: 'CronJob',
+      metadata: { name: 'my-cron' },
+      spec: {},
+    };
+    const errors = validateResource(doc);
+    expect(errors.some((e) => e.message.includes('CronJob requires spec.schedule'))).toBe(true);
+  });
+
+  it('detects PVC without accessModes', () => {
+    const doc = {
+      apiVersion: 'v1',
+      kind: 'PersistentVolumeClaim',
+      metadata: { name: 'my-pvc' },
+      spec: {},
+    };
+    const errors = validateResource(doc);
+    expect(errors.some((e) => e.message.includes('PVC requires spec.accessModes'))).toBe(true);
+  });
+
+  it('detects PV without capacity and accessModes', () => {
+    const doc = {
+      apiVersion: 'v1',
+      kind: 'PersistentVolume',
+      metadata: { name: 'my-pv' },
+      spec: {},
+    };
+    const errors = validateResource(doc);
+    expect(errors.some((e) => e.message.includes('PV requires spec.capacity'))).toBe(true);
+  });
+
+  it('detects NetworkPolicy without podSelector', () => {
+    const doc = {
+      apiVersion: 'networking.k8s.io/v1',
+      kind: 'NetworkPolicy',
+      metadata: { name: 'my-netpol' },
+      spec: {},
+    };
+    const errors = validateResource(doc);
+    expect(errors.some((e) => e.message.includes('NetworkPolicy requires spec.podSelector'))).toBe(true);
+  });
+
+  it('passes valid Pod manifest with no errors', () => {
+    const doc = {
+      apiVersion: 'v1',
+      kind: 'Pod',
+      metadata: { name: 'valid-pod' },
+      spec: {
+        containers: [
+          {
+            name: 'web',
+            image: 'nginx:alpine',
+          },
+        ],
+      },
+    };
+    const errors = validateResource(doc);
+    expect(errors).toHaveLength(0);
   });
 });

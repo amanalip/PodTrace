@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { RightSidebar } from './RightSidebar.tsx';
 import { useAppStore } from '../../store/index.ts';
+import { SCENARIO_CATALOG } from '../../scenarios/scenario-data.ts';
 
 describe('RightSidebar', () => {
   beforeEach(() => {
@@ -42,5 +43,16 @@ describe('RightSidebar', () => {
     expect(
       screen.getByText(/No active scenario loaded\. Select a scenario/i),
     ).toBeInTheDocument();
+  });
+
+  it('renders active failure badge count when a scenario is failed', () => {
+    const sc = SCENARIO_CATALOG[0];
+    useAppStore.setState({
+      activeScenario: sc,
+      scenarioState: 'failed',
+    });
+
+    render(<RightSidebar />);
+    expect(screen.getByRole('tab', { name: /diagnostics/i })).toBeInTheDocument();
   });
 });

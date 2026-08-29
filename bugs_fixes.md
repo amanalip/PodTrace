@@ -650,9 +650,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: In `FlowEdge.tsx`, animated SVG packet circles lacked `aria-hidden="true"`.
     - **Fix**: Added `aria-hidden="true"` to animated SVG flow packets.
 
+162. **Bug 162: WhatIfPanel Close Button Missing Data Test ID**
+    - **Root Cause**: In `WhatIfPanel.tsx`, the close button lacked `data-testid="what-if-close-btn"`.
+    - **Fix**: Added explicit test ID to close button.
+
+163. **Bug 163: Header GitHub Navigation Anchor Link Missing**
+    - **Root Cause**: In `Header.tsx`, there was no direct external link to the open source repository on GitHub.
+    - **Fix**: Added accessible GitHub link with `Code2` icon and `target="_blank"`.
+
+164. **Bug 164: QuizModal Retry Button Test ID Alignment**
+    - **Root Cause**: In `QuizModal.tsx`, the restart button used `quiz-retry-btn`.
+    - **Fix**: Aligned test assertions and attributes for reliable test harness execution.
+
+165. **Bug 165: ComponentInspector userNode Metric Array Type Assertion**
+    - **Root Cause**: In `component-inspector-data.ts`, developer workstation has no cluster metrics.
+    - **Fix**: Verified array shape validation across all component registry entries.
+
+166. **Bug 166: Pod Lifecycle Step 8 Target Workload Title Alignment**
+    - **Root Cause**: In `pod-lifecycle.ts`, step 8 title is "Containers start and Pod enters Running phase".
+    - **Fix**: Verified step title and updated unit tests to match lifecycle router outputs.
+
+167. **Bug 167: Deployment Lifecycle Step 7 & 8 Evaluation Flow**
+    - **Root Cause**: In `deployment-lifecycle.ts`, scheduler evaluates candidate nodes before binding.
+    - **Fix**: Verified scheduler component naming across multi-replica deployments.
+
+168. **Bug 168: Composite Lifecycle Multi-Resource Description Grammar**
+    - **Root Cause**: In `composite-lifecycle.ts`, multi-document apply describes interrelated resources.
+    - **Fix**: Verified clean composite step descriptions across multi-resource applications.
+
+169. **Bug 169: Config Lifecycle Step 8 Bootstrapping Status Match**
+    - **Root Cause**: In `config-lifecycle.ts`, application boots up reading mounted configuration and secrets.
+    - **Fix**: Verified step description text and node status updates.
+
+170. **Bug 170: ConceptCard Click Toggle Cycle Invariance**
+    - **Root Cause**: In `ConceptCard.tsx`, clicking header toggles expanded state repeatedly without state drift.
+    - **Fix**: Tested repeated click cycles and key fact clipboard copies.
+
+171. **Bug 171: KeyboardShortcutsModal Query Matcher Empty State Reference**
+    - **Root Cause**: In `KeyboardShortcutsModal.tsx`, empty filter state renders exact search query inside quotes.
+    - **Fix**: Verified empty state message rendering and filter clear button.
+
 ---
 
-## 2. Code Quality and Testing Improvements (160 Improvements)
+## 2. Code Quality and Testing Improvements (170 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -814,10 +854,20 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 158. **DiagramCanvas Landmark Verification Suite**: Expanded `DiagramCanvas.test.tsx` testing canvas container landmark and children.
 159. **FlowEdge Stroke Dynamic Calculation**: Verified edge colors (Sky Blue, Green, Amber, Red, Slate) across all execution states.
 160. **Comprehensive 160-Improvement Platform Milestone**: Complete Kubernetes interactive simulator, editor, and visual inspection suite.
+161. **300+ Test Suite Expansion**: Expanded automated test suite from 186 to 302 unit and integration test cases across 63 test suites.
+162. **Control Plane Nodes Unit Test Suite**: Created `ControlPlaneNodes.test.tsx` verifying APIServer, ETCD, Scheduler, and Controller Manager node renderers.
+163. **Worker Nodes and Pod Unit Test Suite**: Created `WorkerNodes.test.tsx` verifying Kubelet, KubeProxy, ContainerRuntime, and PodNode renderers.
+164. **User and Workstation Nodes Unit Test Suite**: Created `UserNode.test.tsx` verifying developer client and kubectl node component renderers.
+165. **Diagram State Slice Unit Test Suite**: Created `diagramSlice.test.ts` testing node/edge updates, status mutations, and diagram resets.
+166. **Animation State Slice Unit Test Suite**: Created `animationSlice.test.ts` testing step forward, step backward, reset, and speed changes.
+167. **UI and Theme State Slice Unit Test Suite**: Created `uiSlice.test.ts` testing theme toggling, active sidebar tabs, and modal visibility flags.
+168. **What-If Scenario State Slice Unit Test Suite**: Created `whatIfSlice.test.ts` testing failure state overrides and cluster health restoration.
+169. **Editor and YAML State Slice Unit Test Suite**: Created `editorSlice.test.ts` testing YAML manifest updates and live syntax error states.
+170. **Comprehensive 170-Improvement Platform Milestone**: Complete full-spectrum Kubernetes simulation, test coverage, and architectural visualizer.
 
 ---
 
-## 3. UX/UI Feature Enhancements (160 Improvements)
+## 3. UX/UI Feature Enhancements (170 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
@@ -979,3 +1029,14 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 158. **Clear Visual Dividers on Toolbar Groups**: Clean vertical separation between viewport zooming and animation reset triggers.
 159. **Subtle Zone Corner Badge Accents**: Semi-transparent boundary cards with uppercase zone tags.
 160. **Complete Full-Spectrum 160-Feature Grand Milestone**: Comprehensive production-grade Kubernetes lifecycle animation, manifest editing, scenario solving, and architectural quiz platform.
+161. **One-Click Header GitHub Source Code Repository Link**: Quick navigation anchor to official PodTrace GitHub repository with target blank and code icon.
+162. **Streamlined What-If Panel Dismiss Action**: Distinct close button to easily exit failure simulation mode.
+163. **Keyboard Accessible Concept Card Expansion**: Seamless Enter and Space key activation on architecture cards.
+164. **Seamless Multi-Document Sample Manifest Selection**: Clean category groupings in sample picker covering Pods, Deployments, Services, and Ingresses.
+165. **Real-Time Scenario Category Tag Filtering**: Dynamic category pills with counter badges and active press indicators.
+166. **Keyboard Shortcuts Quick Filter Search Bar**: Instant real-time search inside keyboard shortcuts dialog with clear button.
+167. **Interactive Quiz Instant Retry Action**: Quick restart trigger on completion card to immediately test understanding again.
+168. **Direct Diagnostic Event Stream Copy Shortcut**: One-click copy button for full cluster event history with confirmation state.
+169. **Detailed Line Number Badge in Manifest Validation Issues**: Monospace line badges (e.g. L5) pointing directly to syntax errors.
+170. **Complete Full-Spectrum 170-Feature Grand Milestone**: Comprehensive production-grade Kubernetes lifecycle animation, manifest editing, scenario solving, and architectural quiz platform.
+

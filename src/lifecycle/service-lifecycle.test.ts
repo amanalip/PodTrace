@@ -35,4 +35,16 @@ describe('service-lifecycle', () => {
     expect(steps[8].edgeId).toBe('edge-coredns-watch');
     expect(steps[8].componentName).toBe('CoreDNS');
   });
+
+  it('handles NodePort service type correctly', () => {
+    const steps = createServiceLifecycleSteps('nodeport-svc', 'NodePort', '10.96.20.10');
+    expect(steps).toHaveLength(10);
+    expect(steps[0].title).toContain('Service');
+  });
+
+  it('handles LoadBalancer service type correctly', () => {
+    const steps = createServiceLifecycleSteps('lb-svc', 'LoadBalancer', '10.96.50.60');
+    expect(steps).toHaveLength(10);
+    expect(steps[0].title).toContain('Service');
+  });
 });

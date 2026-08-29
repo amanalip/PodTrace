@@ -80,4 +80,29 @@ describe('FailureOverlay', () => {
     fireEvent.click(screen.getByTestId('dismiss-success-overlay-btn'));
     expect(useAppStore.getState().scenarioState).toBe('idle');
   });
+
+  it('allows dismissing completed banner with x button', () => {
+    useAppStore.setState({
+      activeScenario: mockScenario,
+      activeScenarioId: mockScenario.id,
+      scenarioState: 'completed',
+    });
+
+    render(<FailureOverlay />);
+    const xBtn = screen.getByTestId('dismiss-overlay-x');
+    fireEvent.click(xBtn);
+    expect(useAppStore.getState().scenarioState).toBe('idle');
+  });
+
+  it('displays custom feedback when scenarioState is fixing', () => {
+    useAppStore.setState({
+      activeScenario: mockScenario,
+      activeScenarioId: mockScenario.id,
+      scenarioState: 'fixing',
+      scenarioFeedback: 'Please check container port assignment.',
+    });
+
+    render(<FailureOverlay />);
+    expect(screen.getByText('Please check container port assignment.')).toBeInTheDocument();
+  });
 });

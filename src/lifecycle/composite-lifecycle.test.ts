@@ -33,4 +33,17 @@ describe('composite-lifecycle', () => {
     // Step 11: Ingress routes
     expect(steps[10].title).toContain('Ingress Controller');
   });
+
+  it('handles 2-resource configuration cleanly', () => {
+    const steps = createCompositeLifecycleSteps(2, 'db-deploy', 'db-svc', 'db-ing');
+    expect(steps).toHaveLength(12);
+    expect(steps[0].what).toContain('2 interrelated Kubernetes resources');
+  });
+
+  it('verifies final client traffic step 12 completes successfully', () => {
+    const steps = createCompositeLifecycleSteps(3, 'shop-deploy', 'shop-svc', 'shop-ing');
+    const step12 = steps[11];
+    expect(step12.title).toContain('Full-stack application');
+    expect(step12.nodeStatusUpdates?.['node-pod-shop-deploy-1']).toBe('success');
+  });
 });

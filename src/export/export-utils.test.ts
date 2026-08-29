@@ -4,6 +4,7 @@ import {
   decodeStateFromHash,
   generateMermaidSequenceDiagram,
   generateMermaidGraphDiagram,
+  generateDiagramExportJSON,
   downloadFile,
 } from './export-utils.ts';
 import { LifecycleStep } from '../model/types.ts';
@@ -28,6 +29,15 @@ describe('export-utils', () => {
     expect(decodeStateFromHash('#data=not-valid-base64-json!')).toBeNull();
   });
 
+  it('generates diagram export JSON with metadata and steps', () => {
+    const jsonStr = generateDiagramExportJSON('apiVersion: v1', 2, [], [], []);
+    const parsed = JSON.parse(jsonStr);
+    expect(parsed.app).toBe('PodTrace');
+    expect(parsed.stepIndex).toBe(2);
+    expect(parsed.manifest).toBe('apiVersion: v1');
+    expect(Array.isArray(parsed.steps)).toBe(true);
+  });
+
   it('generates mermaid sequence diagram accurately', () => {
     const steps: LifecycleStep[] = [
       {
@@ -48,6 +58,22 @@ describe('export-utils', () => {
     expect(sequence).toContain('node_kubectl->>node_apiserver: POST /api/v1/pods');
   });
 
+  it('generates mermaid sequence diagram when steps lack source/target node IDs', () => {
+    const steps: LifecycleStep[] = [
+      {
+        stepNumber: 1,
+        title: 'Internal cluster step',
+        componentName: 'apiserver',
+        componentRole: 'API',
+        what: 'Internal compute',
+        why: 'Validation',
+      },
+    ];
+
+    const sequence = generateMermaidSequenceDiagram(steps);
+    expect(sequence).toContain('Client->>Cluster: Internal cluster step');
+  });
+
   it('generates mermaid graph architecture accurately', () => {
     const nodes: Node[] = [
       { id: 'node-apiserver', position: { x: 0, y: 0 }, data: { label: 'kube-apiserver' } },
@@ -55,12 +81,14 @@ describe('export-utils', () => {
     ];
     const edges: Edge[] = [
       { id: 'e1', source: 'node-apiserver', target: 'node-etcd', data: { label: 'gRPC 2379' } },
+      { id: 'e2', source: 'node-etcd', target: 'node-apiserver' },
     ];
 
     const graph = generateMermaidGraphDiagram(nodes, edges);
     expect(graph).toContain('graph TD');
     expect(graph).toContain('node_apiserver["kube-apiserver"]');
     expect(graph).toContain('node_apiserver -->|"gRPC 2379"| node_etcd');
+    expect(graph).toContain('node_etcd --> node_apiserver');
   });
 
   it('triggers browser file download with blob', () => {

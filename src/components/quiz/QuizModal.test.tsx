@@ -18,7 +18,7 @@ describe('QuizModal', () => {
     expect(screen.getByRole('radiogroup')).toBeInTheDocument();
     expect(screen.getAllByRole('radio').length).toBe(4);
 
-    // Answer all questions
+    // Answer all questions correctly
     for (let i = 0; i < QUIZ_QUESTIONS.length; i++) {
       const q = QUIZ_QUESTIONS[i];
       const optBtn = screen.getByTestId(`quiz-opt-${q.correctIndex}`);
@@ -44,6 +44,38 @@ describe('QuizModal', () => {
     // Click Done button
     const doneBtn = screen.getByTestId('quiz-done-btn');
     fireEvent.click(doneBtn);
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it('allows retrying the quiz via Retake Quiz button', () => {
+    render(<QuizModal isOpen={true} onClose={() => {}} />);
+
+    // Answer all questions incorrectly (choose index !== correctIndex)
+    for (let i = 0; i < QUIZ_QUESTIONS.length; i++) {
+      const q = QUIZ_QUESTIONS[i];
+      const wrongIndex = (q.correctIndex + 1) % 4;
+      const optBtn = screen.getByTestId(`quiz-opt-${wrongIndex}`);
+      fireEvent.click(optBtn);
+
+      const nextBtn = screen.getByTestId('quiz-next-btn');
+      fireEvent.click(nextBtn);
+    }
+
+    expect(screen.getByTestId('quiz-results')).toBeInTheDocument();
+    expect(screen.getByText(/Kubernetes Novice/i)).toBeInTheDocument();
+
+    const restartBtn = screen.getByTestId('quiz-retry-btn');
+    fireEvent.click(restartBtn);
+
+    expect(screen.getByText(/Question 1 of/i)).toBeInTheDocument();
+  });
+
+  it('closes when overlay background is clicked', () => {
+    const onClose = vi.fn();
+    render(<QuizModal isOpen={true} onClose={onClose} />);
+
+    const overlay = screen.getByTestId('quiz-modal-overlay');
+    fireEvent.click(overlay);
     expect(onClose).toHaveBeenCalled();
   });
 

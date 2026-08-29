@@ -88,4 +88,38 @@ metadata:
     expect(result.resources).toHaveLength(0);
     expect(result.errors).toHaveLength(0);
   });
+
+  it('handles multi-doc with one valid and one invalid document', () => {
+    const mixedYaml = `apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: valid-cm
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: invalid-pod
+spec:
+  containers: []
+`;
+    const result = parseAndValidateYaml(mixedYaml);
+    expect(result.resources).toHaveLength(1);
+    expect(result.errors.length).toBeGreaterThan(0);
+    expect(result.errors.some((e) => e.message.includes('at least one container'))).toBe(true);
+  });
+
+  it('handles manifests with trailing comments and whitespace', () => {
+    const yamlWithComments = `apiVersion: v1 # api version
+kind: Service
+metadata:
+  name: comment-svc
+spec:
+  ports:
+    - port: 80 # default http port
+# End of file
+`;
+    const result = parseAndValidateYaml(yamlWithComments);
+    expect(result.errors).toHaveLength(0);
+    expect(result.resources[0].metadata.name).toBe('comment-svc');
+  });
 });

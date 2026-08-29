@@ -51,4 +51,26 @@ describe('pod-lifecycle', () => {
     // Step 8: runtime -> pod (Running)
     expect(steps[7].nodeStatusUpdates?.['node-pod-web-pod']).toBe('success');
   });
+
+  it('includes scheduler filter and score logic in step 4 and 5', () => {
+    const steps = createPodLifecycleSteps('api-pod');
+    const step4 = steps[3];
+    const step5 = steps[4];
+
+    expect(step4.componentName).toBe('kube-scheduler');
+    expect(step4.title).toContain('Scheduler detects');
+    expect(step5.componentName).toBe('kube-scheduler');
+    expect(step5.title).toContain('Scheduler assigns');
+  });
+
+  it('includes kubelet and CRI container launch in steps 6, 7, and 8', () => {
+    const steps = createPodLifecycleSteps('auth-pod');
+    const step7 = steps[6];
+    const step8 = steps[7];
+
+    expect(step7.componentName).toBe('Container Runtime');
+    expect(step7.title).toContain('Kubelet requests');
+    expect(step8.componentName).toBe('Pod Workload');
+    expect(step8.title).toContain('Containers start');
+  });
 });

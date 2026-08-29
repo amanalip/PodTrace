@@ -47,4 +47,15 @@ describe('ConceptCard', () => {
     fireEvent.click(copyBtn);
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(sampleConcept.keyFact);
   });
+
+  it('toggles expansion state on repeated clicks', () => {
+    render(<ConceptCard concept={sampleConcept} />);
+    const headerBtn = screen.getByRole('button');
+
+    fireEvent.click(headerBtn);
+    expect(screen.getByText(/A test component verifies/i)).toBeInTheDocument();
+
+    fireEvent.click(headerBtn);
+    expect(screen.queryByText(/A test component verifies/i)).not.toBeInTheDocument();
+  });
 });

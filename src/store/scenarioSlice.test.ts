@@ -60,6 +60,18 @@ describe('scenarioSlice in useAppStore', () => {
     expect(updated.scenarioFeedback).toBe(mockScenario.successMessage);
   });
 
+  it('checks fix and returns false with error feedback when invalid', () => {
+    const store = useAppStore.getState();
+    store.loadScenario(mockScenario);
+
+    const fixed = store.checkScenarioFix('image: still-broken:1.0', []);
+    expect(fixed).toBe(false);
+
+    const updated = useAppStore.getState();
+    expect(updated.scenarioState).toBe('fixing');
+    expect(updated.scenarioFeedback).toBe('Use nginx:1.27');
+  });
+
   it('resolves and marks scenario as completed', () => {
     const store = useAppStore.getState();
     store.loadScenario(mockScenario);
@@ -68,5 +80,16 @@ describe('scenarioSlice in useAppStore', () => {
     const updated = useAppStore.getState();
     expect(updated.scenarioState).toBe('completed');
     expect(updated.completedScenarioIds).toContain('mock-scenario-1');
+  });
+
+  it('resets scenario state to template in failed state', () => {
+    const store = useAppStore.getState();
+    store.loadScenario(mockScenario);
+    store.resetScenario();
+
+    const updated = useAppStore.getState();
+    expect(updated.activeScenarioId).toBe('mock-scenario-1');
+    expect(updated.scenarioState).toBe('failed');
+    expect(updated.yaml).toBe(mockScenario.yamlTemplate);
   });
 });

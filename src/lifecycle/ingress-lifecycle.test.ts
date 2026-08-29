@@ -35,4 +35,16 @@ describe('ingress-lifecycle', () => {
     expect(steps[10].edgeId).toBe('edge-ic-client-response');
     expect(steps[10].nodeStatusUpdates?.['node-external-client']).toBe('success');
   });
+
+  it('correctly maps host in client request step', () => {
+    const steps = createIngressLifecycleSteps('custom-ing', 'api.company.com', '/v2/users', 'users-svc');
+    const step6 = steps[5];
+    expect(step6.what).toContain('api.company.com');
+  });
+
+  it('correctly targets the backend service in step 8', () => {
+    const steps = createIngressLifecycleSteps('pay-ing', 'pay.company.com', '/checkout', 'checkout-svc');
+    const step8 = steps[7];
+    expect(step8.what).toContain('checkout-svc');
+  });
 });

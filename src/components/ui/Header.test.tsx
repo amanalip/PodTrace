@@ -35,4 +35,36 @@ describe('Header', () => {
     fireEvent.click(shortcutsBtn);
     expect(useAppStore.getState().isShortcutsOpen).toBe(true);
   });
+
+  it('opens quiz modal when quiz button is clicked', () => {
+    render(<Header />);
+
+    const quizBtn = screen.getByTestId('quiz-launcher-btn');
+    fireEvent.click(quizBtn);
+    expect(screen.getByTestId('quiz-modal')).toBeInTheDocument();
+  });
+
+  it('opens export modal when share button is clicked', () => {
+    render(<Header />);
+
+    const shareBtn = screen.getByTestId('header-share-btn');
+    fireEvent.click(shareBtn);
+    expect(screen.getByTestId('export-modal')).toBeInTheDocument();
+  });
+
+  it('opens export modal when export button is clicked', () => {
+    render(<Header />);
+
+    const exportBtn = screen.getByTestId('header-export-btn');
+    fireEvent.click(exportBtn);
+    expect(screen.getByTestId('export-modal')).toBeInTheDocument();
+  });
+
+  it('provides a valid GitHub repository link with target blank', () => {
+    render(<Header />);
+
+    const githubLink = screen.getByLabelText(/view podtrace source code on github/i);
+    expect(githubLink).toHaveAttribute('href', 'https://github.com/amanap/PodTrace');
+    expect(githubLink).toHaveAttribute('target', '_blank');
+  });
 });

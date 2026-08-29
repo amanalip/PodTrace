@@ -53,4 +53,14 @@ describe('KeyboardShortcutsModal', () => {
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(useAppStore.getState().isShortcutsOpen).toBe(false);
   });
+
+  it('displays empty state when filter matches no shortcuts', () => {
+    useAppStore.setState({ isShortcutsOpen: true });
+    render(<KeyboardShortcutsModal />);
+
+    const filterInput = screen.getByTestId('shortcuts-filter-input');
+    fireEvent.change(filterInput, { target: { value: 'nonexistent-shortcut-xyz' } });
+
+    expect(screen.getByText(/No shortcuts found matching/i)).toBeInTheDocument();
+  });
 });

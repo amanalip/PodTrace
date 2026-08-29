@@ -18,7 +18,7 @@ describe('SamplePicker', () => {
     expect(screen.getByText(/Simple Pod \(Basics\)/i)).toBeInTheDocument();
   });
 
-  it('loads sample manifest into store when selected', () => {
+  it('loads simple-pod sample manifest into store when selected', () => {
     render(<SamplePicker />);
 
     const select = screen.getByTestId('sample-picker-select');
@@ -26,5 +26,34 @@ describe('SamplePicker', () => {
 
     const sample = SAMPLE_LIBRARY.find((s) => s.id === 'simple-pod');
     expect(useAppStore.getState().yaml).toBe(sample?.yaml);
+  });
+
+  it('loads multi-container-pod sample manifest into store when selected', () => {
+    render(<SamplePicker />);
+
+    const select = screen.getByTestId('sample-picker-select');
+    fireEvent.change(select, { target: { value: 'multi-container-pod' } });
+
+    const sample = SAMPLE_LIBRARY.find((s) => s.id === 'multi-container-pod');
+    expect(useAppStore.getState().yaml).toBe(sample?.yaml);
+  });
+
+  it('loads full-stack deployment-service-ingress manifest when selected', () => {
+    render(<SamplePicker />);
+
+    const select = screen.getByTestId('sample-picker-select');
+    const fullStack = SAMPLE_LIBRARY.find((s) => s.category === 'Full stack');
+    if (fullStack) {
+      fireEvent.change(select, { target: { value: fullStack.id } });
+      expect(useAppStore.getState().yaml).toBe(fullStack.yaml);
+    }
+  });
+
+  it('ignores empty selection value without crashing', () => {
+    render(<SamplePicker />);
+
+    const select = screen.getByTestId('sample-picker-select');
+    fireEvent.change(select, { target: { value: '' } });
+    expect(useAppStore.getState().yaml).toBe('');
   });
 });

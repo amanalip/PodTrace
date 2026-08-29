@@ -29,6 +29,18 @@ describe('StepDetail', () => {
     expect(screen.getByRole('link', { name: /docs/i })).toHaveAttribute('href', mockStep.docsUrl);
   });
 
+  it('renders completed role label when step is past', () => {
+    render(<StepDetail step={mockStep} status="past" />);
+    expect(screen.getByRole('button', { name: `Step 1: ${mockStep.title} (Completed)` })).toBeInTheDocument();
+    expect(screen.getByText('Step 1')).toBeInTheDocument();
+  });
+
+  it('renders standard step number when step is future', () => {
+    render(<StepDetail step={mockStep} status="future" />);
+    expect(screen.getByRole('button', { name: `Step 1: ${mockStep.title}` })).toBeInTheDocument();
+    expect(screen.getByText('Step 1')).toBeInTheDocument();
+  });
+
   it('triggers onClick on mouse click and keyboard Enter/Space', () => {
     const onClick = vi.fn();
     render(<StepDetail step={mockStep} status="future" onClick={onClick} />);

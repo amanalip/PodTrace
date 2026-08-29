@@ -60,4 +60,27 @@ describe('ValidationPanel', () => {
     fireEvent.keyDown(headerBtn, { key: 'Enter' });
     expect(screen.queryByText('Syntax error in YAML')).not.toBeInTheDocument();
   });
+
+  it('handles validation error item without line number cleanly', () => {
+    useAppStore.setState({
+      validationErrors: [{ message: 'Global schema error' }],
+    });
+
+    render(<ValidationPanel />);
+    expect(screen.getByText('Validation Issues (1)')).toBeInTheDocument();
+    expect(screen.getByText('Global schema error')).toBeInTheDocument();
+    expect(screen.queryByText(/^L/)).not.toBeInTheDocument();
+  });
+
+  it('toggles collapse via keyboard Space on header button', () => {
+    useAppStore.setState({
+      validationErrors: [{ message: 'Port value out of range', line: 8 }],
+    });
+
+    render(<ValidationPanel />);
+    const headerBtn = screen.getByRole('button', { name: /collapse validation issues/i });
+    fireEvent.keyDown(headerBtn, { key: ' ' });
+
+    expect(screen.queryByText('Port value out of range')).not.toBeInTheDocument();
+  });
 });

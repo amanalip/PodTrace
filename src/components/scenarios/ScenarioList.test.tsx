@@ -74,4 +74,32 @@ describe('ScenarioList', () => {
 
     expect(screen.getByTestId('scenario-detail')).toBeInTheDocument();
   });
+
+  it('activates scenario card via keyboard Space key', () => {
+    render(<ScenarioList />);
+
+    const card = screen.getByTestId('scenario-card-imagepullbackoff');
+    fireEvent.keyDown(card, { key: ' ' });
+
+    expect(screen.getByTestId('scenario-detail')).toBeInTheDocument();
+  });
+
+  it('filters by Networking category and verifies Service scenarios', () => {
+    render(<ScenarioList />);
+
+    const netPill = screen.getByRole('button', { name: /Networking/i });
+    fireEvent.click(netPill);
+
+    expect(screen.getByText('Service Selector Label Mismatch')).toBeInTheDocument();
+    expect(screen.getByText('Service targetPort Mismatch')).toBeInTheDocument();
+  });
+
+  it('filters by Security category and verifies NonRoot scenarios', () => {
+    render(<ScenarioList />);
+
+    const secPill = screen.getByRole('button', { name: /Security/i });
+    fireEvent.click(secPill);
+
+    expect(screen.getByText('ReadOnlyRootFilesystem Crash')).toBeInTheDocument();
+  });
 });

@@ -83,6 +83,7 @@ export const WhatIfPanel: React.FC = () => {
             onClick={handleClose}
             aria-label="Close What If"
             title="Close What If simulator"
+            data-testid="what-if-close-btn"
             style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0 }}
           >
             <X size={14} />

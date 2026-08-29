@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layers, Sun, Moon, Share2, Download, Award, Keyboard } from 'lucide-react';
+import { Layers, Sun, Moon, Share2, Download, Award, Keyboard, Code2 } from 'lucide-react';
 import { useAppStore } from '../../store/index.ts';
 import { ExportModal } from '../export/ExportModal.tsx';
 import { QuizModal } from '../quiz/QuizModal.tsx';
@@ -87,6 +87,19 @@ export const Header: React.FC = () => {
             <Download size={14} />
             <span>Export</span>
           </button>
+
+          <a
+            href="https://github.com/amanap/PodTrace"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.actionButton}
+            aria-label="View PodTrace source code on GitHub"
+            title="GitHub Repository"
+            data-testid="header-github-link"
+          >
+            <Code2 size={14} />
+            <span>GitHub</span>
+          </a>
         </div>
       </header>
 

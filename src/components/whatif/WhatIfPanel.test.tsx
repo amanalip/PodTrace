@@ -96,4 +96,30 @@ describe('WhatIfPanel', () => {
     fireEvent.click(copyBtn);
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
   });
+
+  it('closes simulator panel and clears active what if scenario', () => {
+    render(<WhatIfPanel />);
+    fireEvent.click(screen.getByTestId('what-if-launcher'));
+
+    const select = screen.getByTestId('what-if-select');
+    fireEvent.change(select, { target: { value: 'apiserver-down' } });
+
+    const closeBtn = screen.getByTestId('what-if-close-btn');
+    fireEvent.click(closeBtn);
+
+    expect(screen.queryByTestId('what-if-panel')).not.toBeInTheDocument();
+    expect(useAppStore.getState().activeWhatIfId).toBeNull();
+  });
+
+  it('resets what-if scenario when empty option is selected in dropdown', () => {
+    render(<WhatIfPanel />);
+    fireEvent.click(screen.getByTestId('what-if-launcher'));
+
+    const select = screen.getByTestId('what-if-select');
+    fireEvent.change(select, { target: { value: 'apiserver-down' } });
+    expect(useAppStore.getState().activeWhatIfId).toBe('apiserver-down');
+
+    fireEvent.change(select, { target: { value: '' } });
+    expect(useAppStore.getState().activeWhatIfId).toBeNull();
+  });
 });
