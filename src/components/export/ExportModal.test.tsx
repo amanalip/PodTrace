@@ -61,9 +61,34 @@ describe('ExportModal', () => {
     expect(screen.getByTestId('download-lifecycle-btn')).toBeInTheDocument();
   });
 
+  it('copies Mermaid sequence diagram markdown on click', () => {
+    render(<ExportModal isOpen={true} onClose={vi.fn()} initialTab="mermaid" />);
+
+    const copySeqBtn = screen.getByTestId('copy-mermaid-sequence-btn');
+    fireEvent.click(copySeqBtn);
+    expect(navigator.clipboard.writeText).toHaveBeenCalled();
+  });
+
+  it('copies Mermaid graph topology markdown on click', () => {
+    render(<ExportModal isOpen={true} onClose={vi.fn()} initialTab="mermaid" />);
+
+    const copyGraphBtn = screen.getByTestId('copy-mermaid-graph-btn');
+    fireEvent.click(copyGraphBtn);
+    expect(navigator.clipboard.writeText).toHaveBeenCalled();
+  });
+
   it('honors initialTab prop when specified as svg', () => {
     render(<ExportModal isOpen={true} onClose={vi.fn()} initialTab="svg" />);
     expect(screen.getByTestId('download-topology-btn')).toBeInTheDocument();
+  });
+
+  it('closes when close icon button is clicked', () => {
+    const onClose = vi.fn();
+    render(<ExportModal isOpen={true} onClose={onClose} />);
+
+    const closeBtn = screen.getByLabelText(/close export modal/i);
+    fireEvent.click(closeBtn);
+    expect(onClose).toHaveBeenCalled();
   });
 
   it('closes on Escape key press', () => {

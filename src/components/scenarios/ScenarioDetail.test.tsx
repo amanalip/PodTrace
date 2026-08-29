@@ -54,4 +54,26 @@ describe('ScenarioDetail', () => {
     fireEvent.click(copyBtn);
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(scenario.yamlTemplate);
   });
+
+  it('renders completed badge when scenario ID is in completed list', () => {
+    useAppStore.setState({ completedScenarioIds: [scenario.id] });
+    render(<ScenarioDetail scenario={scenario} onBack={vi.fn()} />);
+
+    expect(screen.getByTestId('completed-badge')).toBeInTheDocument();
+  });
+
+  it('resets scenario to initial broken template when Reset button is clicked', () => {
+    useAppStore.setState({
+      activeScenario: scenario,
+      activeScenarioId: scenario.id,
+      yaml: 'apiVersion: v1\n# modified',
+    });
+
+    render(<ScenarioDetail scenario={scenario} onBack={vi.fn()} />);
+
+    const resetBtn = screen.getByTestId('reset-scenario-btn');
+    fireEvent.click(resetBtn);
+
+    expect(useAppStore.getState().yaml).toBe(scenario.yamlTemplate);
+  });
 });

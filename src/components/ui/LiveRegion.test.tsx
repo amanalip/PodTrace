@@ -83,4 +83,46 @@ describe('LiveRegion', () => {
     const region = screen.getByTestId('aria-live-region');
     expect(region).toHaveTextContent(/command still contains exit 1 error/i);
   });
+
+  it('announces default fix attempt message when scenarioFeedback is null in fixing state', () => {
+    useAppStore.setState({
+      scenarioState: 'fixing',
+      scenarioFeedback: null,
+    });
+
+    render(<LiveRegion />);
+    const region = screen.getByTestId('aria-live-region');
+    expect(region).toHaveTextContent(/fix attempt evaluated/i);
+  });
+
+  it('announces scenario success message when scenario is in resolved state', () => {
+    useAppStore.setState({
+      scenarioState: 'resolved',
+      activeScenario: {
+        id: 'crashloopbackoff',
+        title: 'CrashLoopBackOff on Startup',
+        category: 'pod-lifecycle',
+        difficulty: 'Beginner',
+        description: 'Test',
+        yamlTemplate: '...',
+        failureStep: 9,
+        failureDetails: {
+          errorType: 'CrashLoopBackOff',
+          failingStep: 9,
+          failingNodeId: 'node-pod',
+          logs: [],
+          events: [],
+          fixHint: 'Fix',
+        },
+        successMessage: 'Great job, container starts without errors!',
+        explanation: 'Exp',
+        validator: () => ({ isFixed: true }),
+      },
+      scenarioFeedback: null,
+    });
+
+    render(<LiveRegion />);
+    const region = screen.getByTestId('aria-live-region');
+    expect(region).toHaveTextContent(/Great job, container starts without errors!/i);
+  });
 });

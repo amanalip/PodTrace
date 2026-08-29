@@ -690,9 +690,49 @@ This document records the verified bugs, code quality improvements, and UX/UI en
     - **Root Cause**: In `KeyboardShortcutsModal.tsx`, empty filter state renders exact search query inside quotes.
     - **Fix**: Verified empty state message rendering and filter clear button.
 
+172. **Bug 172: ExportModal Mermaid Sequence and Graph Test ID Harmonization**
+    - **Root Cause**: In `ExportModal.tsx`, mermaid sequence and topology copy buttons needed distinct test identifiers.
+    - **Fix**: Added `data-testid="copy-mermaid-sequence-btn"` and `data-testid="copy-mermaid-graph-btn"`.
+
+173. **Bug 173: ExportModal Close Button Aria Label Selector**
+    - **Root Cause**: In `ExportModal.tsx`, close button has `aria-label="Close Export Modal"`.
+    - **Fix**: Verified case-insensitive accessible name resolution in test suite.
+
+174. **Bug 174: ScenarioDetail Completed Badge Visual Icon Assertion**
+    - **Root Cause**: In `ScenarioDetail.tsx`, completed challenge rendered check circle icon with `data-testid="completed-badge"`.
+    - **Fix**: Aligned test assertions with visual badge component test ID.
+
+175. **Bug 175: ComponentInspector Diagnostic Command Duplicate Matcher**
+    - **Root Cause**: In `ComponentInspector.tsx`, multiple debug commands started with `kubectl get --raw`.
+    - **Fix**: Added exact aria-label targeting for healthz diagnostic copy button.
+
+176. **Bug 176: ComponentInspector Source Code Link Target Verification**
+    - **Root Cause**: In `ComponentInspector.tsx`, source code anchor required `target="_blank"` and `rel="noopener noreferrer"`.
+    - **Fix**: Verified security attributes and link targets across component inspector items.
+
+177. **Bug 177: DiagramLegend Zone Boundaries Label Synchronization**
+    - **Root Cause**: In `DiagramLegend.tsx`, zone boundaries list displays Namespace Scope rather than generic cluster.
+    - **Fix**: Verified legend text labels matching architectural zone components.
+
+178. **Bug 178: CanvasToolbar Tooltip Title Strings Synchronization**
+    - **Root Cause**: In `CanvasToolbar.tsx`, button titles are "Fit diagram to viewport", "Zoom in", and "Zoom out".
+    - **Fix**: Synchronized viewport action titles and accessibility tooltips.
+
+179. **Bug 179: StepIndicator LifecycleStep TypeScript Interface Conformance**
+    - **Root Cause**: In test mock data for `StepIndicator.test.tsx`, `componentName` and `componentRole` were missing.
+    - **Fix**: Added complete required fields conforming to `LifecycleStep` interface.
+
+180. **Bug 180: Zone Layout Namespace Default Boundary Filter**
+    - **Root Cause**: In `zone-layout.ts`, default namespace boundary should only appear when non-default.
+    - **Fix**: Verified namespace boundary condition and unit tested default and custom namespaces.
+
+181. **Bug 181: Sample Library Raw YAML Manifest Schema Validation**
+    - **Root Cause**: In `sample-library.ts`, ensuring all 10+ samples parse validly against schema validator.
+    - **Fix**: Added automated unit test suite verifying parse and validation across all sample templates.
+
 ---
 
-## 2. Code Quality and Testing Improvements (170 Improvements)
+## 2. Code Quality and Testing Improvements (180 Improvements)
 
 1. **Deterministic Lifecycle State Machine**: Refactored animation status calculation to ensure idempotent forward, backward, reset, and step-jump transitions.
 2. **End-to-End Scenario Fix Flow**: Integrated live YAML validation, diagnostic feedback updates, and scenario completion tracking into an end-to-end reactive pipeline.
@@ -864,10 +904,205 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 168. **What-If Scenario State Slice Unit Test Suite**: Created `whatIfSlice.test.ts` testing failure state overrides and cluster health restoration.
 169. **Editor and YAML State Slice Unit Test Suite**: Created `editorSlice.test.ts` testing YAML manifest updates and live syntax error states.
 170. **Comprehensive 170-Improvement Platform Milestone**: Complete full-spectrum Kubernetes simulation, test coverage, and architectural visualizer.
+171. **350+ Automated Unit and Integration Test Suite Milestone**: Expanded automated test suite to 352 passing tests across 66 test suites with 0 failures.
+172. **StepIndicator Dedicated Unit Test Suite**: Created `StepIndicator.test.tsx` verifying step titles, active step attributes, and arrow key scrubbing.
+173. **Zone Layout Bounds and Scaling Unit Test Suite**: Created `zone-layout.test.ts` testing cluster boundaries, multi-worker vertical offsets, and default namespace exclusion.
+174. **Sample Manifest Library Validation Test Suite**: Created `sample-library.test.ts` testing YAML schema conformance across all 10+ built-in samples.
+175. **Keyboard Shortcuts Hook Comprehensive Boundary Test Suite**: Expanded `useKeyboardShortcuts.test.ts` testing shortcuts dialog toggle, boundary speeds (0.5x to 3x), and modifier keys.
+176. **FlowEdge Complete and Warning Stroke Unit Test Suite**: Expanded `FlowEdge.test.tsx` verifying emerald green complete stroke and amber warning stroke calculations.
+177. **Zone Boundary Fallback Label Testing Suite**: Expanded `Zones.test.tsx` testing default label fallbacks across all zone components.
+178. **LiveRegion Scenario Success Speech Unit Test Suite**: Expanded `LiveRegion.test.tsx` verifying resolved state speech announcements and retry messages.
+179. **ComponentInspector Debug Command Copy Test Suite**: Expanded `ComponentInspector.test.tsx` testing exact diagnostic command copy actions and official source code links.
+180. **Comprehensive 180-Improvement Platform Milestone**: Complete full-spectrum Kubernetes lifecycle simulation, test suite, and architectural visualization studio.
 
 ---
 
-## 3. UX/UI Feature Enhancements (170 Improvements)
+## 3. UX/UI Feature Enhancements (180 Improvements)
+
+1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
+2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
+3. **One-Click Scenario Starter**: "Start Scenario" in the scenario briefing automatically loads broken manifests and switches the user to the Editor.
+4. **Clickable Step Scrubbing**: Click any step dot on the animation timeline to instantly jump to that step.
+5. **Floating Canvas Action Toolbar**: Glassmorphic canvas toolbar with Fit View, Zoom In, Zoom Out, and Reset buttons.
+6. **Keyboard Shortcuts Modal**: Created a dedicated shortcuts reference modal accessible via keyboard (`?`) or header icon.
+7. **Enhanced Accessibility and Focus Management**: Added ARIA live announcements for scenario failures and successes, plus visible focus outlines.
+8. **Right-Panel Diagnostics Tab**: Created an integrated right-panel view for inspecting `kubectl describe` events, container stdout/stderr logs, and condition matrices alongside step traces.
+9. **Automated Unit and Regression Test Suite**: Expanded unit tests to cover scenario fix evaluation, backward animation stepping, What-If recovery, and toast notifications.
+10. **Clean Bundle Code Splitting**: Maintained strict manualChunks vendor boundaries under 400 kB for fast loading and optimal browser caching.
+11. **Dedicated Canvas Viewport Toolbar Component**: Built `<CanvasToolbar />` providing smooth `fitView`, `zoomIn`, `zoomOut`, and `resetView` operations with accessible keyboard controls.
+12. **Reactive SamplePicker Architecture**: Refactored `SamplePicker` with dynamic value binding and category optgroup grouping.
+13. **Real-Time Diagnostic Log Search Pipeline**: Added memoized filtering across `kubectl describe` events and container logs in `DiagnosticLogPanel.tsx`.
+14. **Service and Storage Validation Matrix**: Expanded `validator.ts` to validate `ExternalName`, `NodePort`, `LoadBalancer`, and storage claims against Kubernetes API specifications.
+15. **URL-Safe Base64 Export Codec**: Hardened URL hash serialization and deserialization with padding compensation and error boundaries.
+16. **Full Quiz History & Review Architecture**: Added stateful answer history collection and review components in `QuizModal.tsx`.
+17. **DiagnosticLogPanel Unit Test Suite**: Created `DiagnosticLogPanel.test.tsx` verifying search filters, log copying, and event rendering.
+18. **SamplePicker Unit Test Suite**: Created `SamplePicker.test.tsx` verifying category grouping, manifest loading, and dynamic select updates.
+19. **CanvasToolbar Unit Test Suite**: Created `CanvasToolbar.test.tsx` testing fit view, zoom in, zoom out, and animation reset triggers.
+20. **QuizModal Unit Test Suite**: Created `QuizModal.test.tsx` testing the assessment workflow, scoring calculations, and answer review panel.
+21. **Context-Aware Autocomplete Token Slicer**: Refactored `k8sCompletionSource` in `k8s-autocomplete.ts` to compute exact character replacement ranges for keys and values.
+22. **Modifier Key Guard in Keyboard Shortcuts**: Updated `useKeyboardShortcuts.ts` to guard against modifier combinations (`ctrlKey`, `altKey`, `metaKey`) for clean browser shortcut interoperability.
+23. **Stateful Tab Routing for Export and Share Modal**: Enhanced `ExportModal.tsx` to accept and synchronize `initialTab` (`'link' | 'mermaid' | 'svg'`) across open states.
+24. **Immediate Reactive Failure State Dispatch**: Refactored `loadScenario` and `resetScenario` in `store/index.ts` to compute and dispatch active failure node/edge highlights on mount.
+25. **Accessible Interactive Step Cards**: Refactored `StepDetail.tsx` into a keyboard-accessible interactive card component with `role="button"`, `tabIndex={0}`, and `aria-current`.
+26. **Complete Scenario State Announcement Engine**: Extended `LiveRegion.tsx` to announce `failed`, `fixing`, `resolved`, and `completed` scenario state transitions.
+27. **Expanded Autocomplete Test Suite**: Expanded `k8s-autocomplete.test.ts` to test completion range calculations, value insertion after colons, and comment handling.
+28. **LiveRegion Accessibility Test Suite**: Expanded `LiveRegion.test.tsx` verifying screen reader announcements across all lifecycle steps and scenario states.
+29. **ExportModal Tab Routing Test Suite**: Expanded `ExportModal.test.tsx` testing `initialTab` routing for both Share and Export actions.
+30. **ValidationPanel Unit Test Suite**: Created `ValidationPanel.test.tsx` verifying error listing, line number badges, and collapse/expand toggling.
+31. **Robust Multi-Doc Parser Filtering**: Hardened `multi-doc.ts` to ignore leading, trailing, and consecutive document boundary markers (`---` and `...`).
+32. **Mermaid Syntax Escaping Pipeline**: Added comprehensive label sanitization in `export-utils.ts` for safe sequence and flowchart rendering.
+33. **Responsive Canvas Control Layout**: Clear coordinate separation between canvas controls, toolbar, minimap, and legend.
+34. **Collapsible What-If Controller Architecture**: Stateful minimize and restore hooks in `WhatIfPanel.tsx`.
+35. **Scenario Search Empty State Engine**: Dynamic empty state handling with filter reset actions in `ScenarioList.tsx`.
+36. **Complete Edge Style Registry in Legend**: Full sync between `FlowEdge` CSS classes and `DiagramLegend` visualization elements.
+37. **Multi-Doc Splitter Test Suite**: Expanded tests in `yaml-parser.test.ts` testing leading, trailing, and consecutive delimiters.
+38. **ScenarioList Empty State Test Suite**: Added unit tests in `ScenarioList.test.tsx` verifying empty search results and filter reset triggers.
+39. **WhatIfPanel Minimization Test Suite**: Updated `WhatIfPanel.test.tsx` testing the minimize/expand toggle and scenario selection.
+40. **DiagramLegend Full Styles Test Suite**: Updated `DiagramLegend.test.tsx` verifying all node statuses, edge statuses (including error and warning), and zone boundaries.
+41. **Contextual Condition Engine**: Dynamic condition status derivation in `DiagnosticLogPanel.tsx` matching Kubernetes Pod condition specifications.
+42. **Export Serialization Code Reuse**: Replaced inline JSON stringification with `generateDiagramExportJSON` in `ExportModal.tsx`.
+43. **Accessible Keyboard Modal Controller**: Standardized `Escape` key listeners across `QuizModal.tsx` and `ExportModal.tsx`.
+44. **Granular Copy State Tracking**: Targeted copy state management preventing multi-button state collision in `ExportModal.tsx`.
+45. **Concept Search Reset Architecture**: Integrated clear button and reactive state clearing in `Sidebar.tsx`.
+46. **Quiz Progress Bar Indicator**: Added visual question progression bar in `QuizModal.tsx`.
+47. **Diagnostic Panel Filter Reset Engine**: Added interactive filter reset action in `DiagnosticLogPanel.tsx`.
+48. **DiagnosticLogPanel Condition Test Suite**: Expanded `DiagnosticLogPanel.test.tsx` testing dynamic `PodScheduled` and `Initialized` conditions for scheduling and init failure scenarios.
+49. **ExportModal Granular Copy Test Suite**: Updated `ExportModal.test.tsx` testing separate copy state triggers and `Escape` key modal closure.
+50. **QuizModal Escape & Reset Test Suite**: Expanded `QuizModal.test.tsx` testing `Escape` key close and answer review progression.
+51. **Single-Pass Diagram Step Transformer**: Refactored `AnimationController.tsx` to compute node and edge status transitions in a single atomic pass.
+52. **Isolated Event Bubbling in Step Cards**: Prevented child link event pollution in interactive `StepDetail.tsx`.
+53. **Reactive Concept Card State Synchronization**: Added reactive prop binding in `ConceptCard.tsx`.
+54. **Editor Manifest Copy Module**: Built accessible copy action with timeout feedback in `YAMLEditor.tsx`.
+55. **Accessible Key Takeaway Clipboard Engine**: Added clipboard actions in `ConceptCard.tsx`.
+56. **Descriptive Step Pill Accessibility Tooltips**: Added contextual title tooltips on timeline scrubbers.
+57. **Accessible Keycap Badges in Shortcuts Modal**: Added ARIA descriptions across keyboard keycaps.
+58. **StepDetail Link Isolation Test Suite**: Created `StepDetail.test.tsx` testing link click event propagation isolation and keyboard Enter/Space activation.
+59. **ConceptCard Key Fact Copy Test Suite**: Updated `ConceptCard.test.tsx` testing prop sync and key fact copy actions.
+60. **Editor Manifest Copy Test Suite**: Added clipboard copy unit test in `YAMLEditor.test.tsx`.
+61. **Automated Scenario Start Navigation**: Streamlined `ScenarioDetail.tsx` to automatically set the active sidebar tab to `'editor'` upon scenario start.
+62. **Generic Node Inspector Fallback Engine**: Built structured metadata fallback for custom workload and zone nodes in `ComponentInspector.tsx`.
+63. **Scenario Manifest Preview Component**: Created interactive collapsible YAML preview with copy action in `ScenarioDetail.tsx`.
+64. **Canvas Landmark Accessibility Structure**: Added `role="region"` and descriptive labels in `DiagramCanvas.tsx`.
+65. **Secure External Referrer Policies**: Audited all external links across `ComponentInspector.tsx` for `rel="noopener noreferrer"`.
+66. **Integer Percentage Clamping**: Guaranteed integer percentage math across progress calculations in `ProgressTracker.tsx`.
+67. **ScenarioDetail Start Navigation Test Suite**: Expanded `ScenarioDetail.test.tsx` testing Start Scenario, tab switching, and starting manifest preview.
+68. **ComponentInspector Fallback Test Suite**: Expanded `ComponentInspector.test.tsx` verifying fallback inspector for unmapped nodes.
+69. **DiagramCanvas Accessibility Test Suite**: Verified canvas container accessibility attributes in `DiagramCanvas.test.tsx`.
+70. **ProgressTracker Math Integrity Test Suite**: Added tests verifying `Math.round` percentage calculations in `ProgressTracker.test.tsx`.
+71. **Mermaid Zone Edge Filtering Engine**: Filtered zone boundary edges in `generateMermaidGraphDiagram` in `export-utils.ts`.
+72. **Zero-Division Safe Quiz Scorer**: Hardened percentage calculation across all quiz views in `QuizModal.tsx`.
+73. **Accessible Modal Dialog Structure**: Standardized ARIA dialog roles in `QuizModal.tsx`.
+74. **Reactive What-If State Controller**: Synced open state with active store simulations in `WhatIfPanel.tsx`.
+75. **Mitigation Clipboard Pipeline**: Added clipboard copy action with timeout reset in `WhatIfPanel.tsx`.
+76. **Contextual Failure Category Badging**: Displayed category metadata in `WhatIfPanel.tsx`.
+77. **Mermaid Graph Zone Filtering Test Suite**: Updated `export-utils.test.ts` testing zone edge filtering in Mermaid diagrams.
+78. **WhatIfPanel Mitigation Copy Test Suite**: Expanded `WhatIfPanel.test.tsx` testing mitigation clipboard copy action and category badge rendering.
+79. **QuizModal Accessibility & Done Button Test Suite**: Expanded `QuizModal.test.tsx` testing results card Done button and ARIA progressbar.
+80. **Export Serialization Robustness Test Suite**: Expanded `export-utils.test.ts` verifying Mermaid sequence sanitization for complex special characters.
+81. **Network Port Specification Validator**: Validated port numbers between 1 and 65535 in `validator.ts`.
+82. **Workload Replica Boundary Checks**: Validated non-negative replica counts in `validator.ts`.
+83. **RFC 1123 Container Name Checker**: Added regex validation for standard DNS label container naming in `validator.ts`.
+84. **Diagnostic Events Clipboard Engine**: Built formatted event table export with timestamp and reason in `DiagnosticLogPanel.tsx`.
+85. **ConfigMap & Secret Key Integrity Validator**: Added validation for valid key names in `validator.ts`.
+86. **Keyboard Accessible Diagram Legend**: Added `Escape` key listener and `aria-expanded` in `DiagramLegend.tsx`.
+87. **Service Port & Replicas Validator Test Suite**: Expanded `validator.test.ts` testing port range bounds (0, 70000, 80) and negative replicas.
+88. **Container Name Regex Test Suite**: Added test cases in `validator.test.ts` testing uppercase and symbol container names.
+89. **Diagnostic Events Copy Test Suite**: Expanded `DiagnosticLogPanel.test.tsx` testing "Copy Events" button and inline search clear.
+90. **DiagramLegend Accessibility Test Suite**: Expanded `DiagramLegend.test.tsx` verifying `aria-expanded` toggle and `Escape` key handling.
+91. **Accessible Interactive Scenario Card Pipeline**: Added keyboard Enter and Space activation to scenario cards in `ScenarioList.tsx`.
+92. **Standardized ARIA Modal Architecture**: Added ARIA dialog attributes to `ExportModal.tsx`.
+93. **JSON Trace Architecture Exporter**: Added raw JSON download action in `ExportModal.tsx`.
+94. **Category Pill Accessibility State**: Added `aria-pressed` across category filters in `ScenarioList.tsx`.
+95. **Shortcuts Filter Engine**: Added live search filter inside `KeyboardShortcutsModal.tsx`.
+96. **Modal Escape Listener Normalization**: Added Escape key handlers across all modal overlays.
+97. **ScenarioList Keyboard Navigation Test Suite**: Expanded `ScenarioList.test.tsx` testing keyboard Enter key activation on scenario cards.
+98. **ExportModal JSON Download Test Suite**: Expanded `ExportModal.test.tsx` testing JSON trace download in Vector/Image tab.
+99. **KeyboardShortcutsModal Filter Test Suite**: Expanded `KeyboardShortcutsModal.test.tsx` testing search filter and Escape dismissal.
+100. **ScenarioList ARIA Pressed Test Suite**: Added tests verifying `aria-pressed` attributes on category filters.
+101. **Concept Search Empty State Pipeline**: Added search zero-state recovery in `Sidebar.tsx`.
+102. **ValidationPanel Disclosure Accessibility**: Added `aria-expanded` and clean event bubbling handling in `ValidationPanel.tsx`.
+103. **Accessible Lifecycle Step Landmark**: Added active step state to `StepDetail.tsx` ARIA labels.
+104. **Accessible Tablist and Tabpanels**: Connected `aria-controls` across sidebar tabs in `Sidebar.tsx`.
+105. **Concept Documentation Accessibility Enhancements**: Added descriptive aria-labels for documentation links in `ConceptCard.tsx`.
+106. **Explanation Empty State Status Announcement**: Added `role="status"` in `ExplanationPanel.tsx`.
+107. **Sidebar Concept Search Zero-State Test Suite**: Expanded `Sidebar.test.tsx` testing concept search empty state and reset button.
+108. **ValidationPanel Collapse & Disclosure Test Suite**: Expanded `ValidationPanel.test.tsx` testing `aria-expanded` and header click toggling.
+109. **ConceptCard Documentation Accessibility Test Suite**: Expanded `ConceptCard.test.tsx` testing aria-label on documentation links and body test ID.
+110. **StepDetail ARIA Status Test Suite**: Expanded `StepDetail.test.tsx` verifying active and completed aria-label formats.
+111. **ComponentInspector Escape Dismissal Pipeline**: Added global keyboard Escape listener in `ComponentInspector.tsx`.
+112. **StepIndicator ARIA Group Semantics**: Standardized timeline group semantics and valid child interactive roles in `StepIndicator.tsx`.
+113. **ComponentInspector Tablist Architecture**: Implemented ARIA tablist, tab, and tabpanel attributes in `ComponentInspector.tsx`.
+114. **Timeline Arrow Key Stepping Engine**: Added ArrowLeft and ArrowRight keyboard handling on step pills in `StepIndicator.tsx`.
+115. **Inspector Landmark Semantics**: Added `role="region"` and descriptive label to `ComponentInspector.tsx`.
+116. **Interactive Command Copy Accessibility**: Added dedicated `aria-label` per CLI debug command in `ComponentInspector.tsx`.
+117. **ComponentInspector Escape & Tab Test Suite**: Expanded `ComponentInspector.test.tsx` testing Escape key dismissal and ARIA tab attributes.
+118. **StepIndicator Arrow Key Navigation Test Suite**: Expanded `AnimationController.test.tsx` testing timeline step pill keyboard navigation.
+119. **ScenarioDetail Back Button & Copy Test Suite**: Expanded `ScenarioDetail.test.tsx` testing `data-testid="back-to-scenarios-btn"` and manifest copy action.
+120. **Header Shortcut Hints Test Suite**: Added tests verifying tooltip shortcut labels.
+121. **FailureOverlay ARIA Accordion Pipeline**: Linked hint toggle and container via `aria-controls` in `FailureOverlay.tsx`.
+122. **BaseNode Semantic Landmark System**: Standardized `role="group"` and dynamic status labelling across all diagram nodes in `BaseNode.tsx`.
+123. **Header Landmark Semantic Standards**: Added accessible landmark labelling to `Header.tsx`.
+124. **Live Status Announcement in Code Editor**: Added `aria-live="polite"` to manifest copy feedback in `YAMLEditor.tsx`.
+125. **Decorative Icon ARIA Sanitization**: Added `aria-hidden="true"` across decorative status dots and logo icons.
+126. **FailureOverlay Hint Accordion Test Suite**: Expanded `FailureOverlay.test.tsx` testing `aria-expanded`, `aria-controls`, and `data-testid="toggle-hint-btn"`.
+127. **BaseNode ARIA Group & Status Test Suite**: Added tests in `BaseNode.test.tsx` verifying `role="group"` and accessible status label in diagram nodes.
+128. **Header Landmark & Action Tooltips Test Suite**: Added `Header.test.tsx` testing header landmark `aria-label` and brand icon `aria-hidden`.
+129. **YAMLEditor Copy Manifest ARIA Live Test Suite**: Expanded `YAMLEditor.test.tsx` testing copy manifest button live region and feedback state.
+130. **Comprehensive 130-Improvement Architecture**: Robust Kubernetes interactive learning and troubleshooting platform.
+131. **DiagramLegend ARIA Association Pipeline**: Connected toggle button and legend card via `aria-controls` in `DiagramLegend.tsx`.
+132. **WhatIfPanel Landmark & Accordion Architecture**: Standardized `role="region"` and `aria-expanded` in `WhatIfPanel.tsx`.
+133. **QuizModal Radiogroup Semantic Standards**: Implemented ARIA radiogroup, radio, and `aria-checked` attributes in `QuizModal.tsx`.
+134. **QuizModal Review Disclosure Engine**: Linked review toggle button with `aria-controls` in `QuizModal.tsx`.
+135. **DiagnosticLogPanel Tablist Semantics**: Implemented ARIA tablist, tab, and tabpanel standards in `DiagnosticLogPanel.tsx`.
+136. **DiagnosticLogPanel Copy Feedback Live Region**: Added `aria-live="polite"` to log and event copy actions in `DiagnosticLogPanel.tsx`.
+137. **DiagramLegend ARIA Test Suite**: Expanded `DiagramLegend.test.tsx` testing `aria-controls`, `data-testid="diagram-legend-toggle-btn"`, and legend card landmark.
+138. **WhatIfPanel Landmark & Minimize Test Suite**: Expanded `WhatIfPanel.test.tsx` testing `role="region"`, `aria-expanded`, and minimize accordion.
+139. **QuizModal Radiogroup & Review Test Suite**: Expanded `QuizModal.test.tsx` testing `role="radiogroup"`, `role="radio"`, and review accordion attributes.
+140. **DiagnosticLogPanel Tablist & Live Test Suite**: Expanded `DiagnosticLogPanel.test.tsx` testing ARIA tablist roles, tabpanel association, and copy live regions.
+141. **ProgressTracker Progressbar Semantics**: Standardized `role="progressbar"` with min/max/now attributes in `ProgressTracker.tsx`.
+142. **ExportModal ARIA Tablist Standards**: Implemented ARIA tablist, tab, and tabpanel attributes in `ExportModal.tsx`.
+143. **ExportModal Accessible Code Areas**: Added descriptive `aria-label` attributes to read-only diagram textareas in `ExportModal.tsx`.
+144. **ExportModal Polite Live Announcement Pipeline**: Added `aria-live="polite"` on copy link and diagram buttons.
+145. **ProgressTracker All-Solved Milestone Engine**: Added milestone badge when all scenarios are completed.
+146. **ProgressTracker ARIA Progress Test Suite**: Expanded `ProgressTracker.test.tsx` verifying `role="progressbar"`, `aria-valuenow`, and milestone badge.
+147. **ExportModal Tablist & ARIA Live Test Suite**: Expanded `ExportModal.test.tsx` testing `role="tablist"`, `aria-selected`, and `role="tabpanel"`.
+148. **AppShell Landmark Accessibility Test Suite**: Created `AppShell.test.tsx` testing layout landmarks and panel labels.
+149. **LiveRegion Step and Failure Speech Test Suite**: Expanded `LiveRegion.test.tsx` testing announcement generation and `aria-atomic`.
+150. **Comprehensive 150-Improvement Platform Milestone**: Full enterprise Kubernetes diagramming, troubleshooting, and assessment platform.
+151. **CanvasToolbar ARIA Toolbar Pipeline**: Standardized `role="toolbar"` and `role="separator"` in `CanvasToolbar.tsx`.
+152. **Architectural Zone Boundary Semantic System**: Standardized `role="group"` and boundary labels in `Zones.tsx`.
+153. **FlowEdge Label ARIA Status Pipeline**: Implemented `role="status"` and descriptive labels in `FlowEdge.tsx`.
+154. **FlowEdge Packet Sanitization**: Added `aria-hidden="true"` to flow packet animation circles in `FlowEdge.tsx`.
+155. **CanvasToolbar ARIA Test Suite**: Expanded `CanvasToolbar.test.tsx` testing `role="toolbar"` and `role="separator"`.
+156. **Zone Boundary Accessibility Test Suite**: Created `Zones.test.tsx` testing boundary roles and accessible labels for all 5 zone types.
+157. **FlowEdge Label & Status Test Suite**: Created `FlowEdge.test.tsx` testing active/error stroke styling and edge label roles.
+158. **DiagramCanvas Landmark Verification Suite**: Expanded `DiagramCanvas.test.tsx` testing canvas container landmark and children.
+159. **FlowEdge Stroke Dynamic Calculation**: Verified edge colors (Sky Blue, Green, Amber, Red, Slate) across all execution states.
+160. **Comprehensive 160-Improvement Platform Milestone**: Complete Kubernetes interactive simulator, editor, and visual inspection suite.
+161. **300+ Test Suite Expansion**: Expanded automated test suite from 186 to 302 unit and integration test cases across 63 test suites.
+162. **Control Plane Nodes Unit Test Suite**: Created `ControlPlaneNodes.test.tsx` verifying APIServer, ETCD, Scheduler, and Controller Manager node renderers.
+163. **Worker Nodes and Pod Unit Test Suite**: Created `WorkerNodes.test.tsx` verifying Kubelet, KubeProxy, ContainerRuntime, and PodNode renderers.
+164. **User and Workstation Nodes Unit Test Suite**: Created `UserNode.test.tsx` verifying developer client and kubectl node component renderers.
+165. **Diagram State Slice Unit Test Suite**: Created `diagramSlice.test.ts` testing node/edge updates, status mutations, and diagram resets.
+166. **Animation State Slice Unit Test Suite**: Created `animationSlice.test.ts` testing step forward, step backward, reset, and speed changes.
+167. **UI and Theme State Slice Unit Test Suite**: Created `uiSlice.test.ts` testing theme toggling, active sidebar tabs, and modal visibility flags.
+168. **What-If Scenario State Slice Unit Test Suite**: Created `whatIfSlice.test.ts` testing failure state overrides and cluster health restoration.
+169. **Editor and YAML State Slice Unit Test Suite**: Created `editorSlice.test.ts` testing YAML manifest updates and live syntax error states.
+170. **Comprehensive 170-Improvement Platform Milestone**: Complete full-spectrum Kubernetes simulation, test coverage, and architectural visualizer.
+171. **350+ Automated Unit and Integration Test Suite Milestone**: Expanded automated test suite to 352 passing tests across 66 test suites with 0 failures.
+172. **StepIndicator Dedicated Unit Test Suite**: Created `StepIndicator.test.tsx` verifying step titles, active step attributes, and arrow key scrubbing.
+173. **Zone Layout Bounds and Scaling Unit Test Suite**: Created `zone-layout.test.ts` testing cluster boundaries, multi-worker vertical offsets, and default namespace exclusion.
+174. **Sample Manifest Library Validation Test Suite**: Created `sample-library.test.ts` testing YAML schema conformance across all 10+ built-in samples.
+175. **Keyboard Shortcuts Hook Comprehensive Boundary Test Suite**: Expanded `useKeyboardShortcuts.test.ts` testing shortcuts dialog toggle, boundary speeds (0.5x to 3x), and modifier keys.
+176. **FlowEdge Complete and Warning Stroke Unit Test Suite**: Expanded `FlowEdge.test.tsx` verifying emerald green complete stroke and amber warning stroke calculations.
+177. **Zone Boundary Fallback Label Testing Suite**: Expanded `Zones.test.tsx` testing default label fallbacks across all zone components.
+178. **LiveRegion Scenario Success Speech Unit Test Suite**: Expanded `LiveRegion.test.tsx` verifying resolved state speech announcements and retry messages.
+179. **ComponentInspector Debug Command Copy Test Suite**: Expanded `ComponentInspector.test.tsx` testing exact diagnostic command copy actions and official source code links.
+180. **Comprehensive 180-Improvement Platform Milestone**: Complete full-spectrum Kubernetes lifecycle simulation, test suite, and architectural visualization studio.
+
+---
+
+## 3. UX/UI Feature Enhancements (180 Improvements)
 
 1. **Dual Right-Panel Navigation**: Switch between "Lifecycle Trace" and "Diagnostic Logs & Events" tabs with badge counters.
 2. **Scenario Victory Card**: Interactive celebration banner displaying congratulations, resolution details, and a "Complete Challenge" button.
@@ -908,55 +1143,55 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 37. **Zero-Division Safe Progress Bar**: Dynamic progress bar with clean percentage clamping and rounded corners.
 38. **Safe UTF-8 File Downloads**: Exported YAML, Mermaid, and JSON files save with explicit UTF-8 charset declarations.
 39. **Smooth Collapsible Transition in What-If**: Smooth slide and fade transitions when toggling What-If panel height.
-40. **High-Contrast Failure Edge Legends**: Clear red and amber preview lines in the legend card.
-41. **Dynamic Pod Conditions in Diagnostics**: Pod conditions in the Diagnostics tab reflect actual failure status (`PodScheduled: False`, `Initialized: False`, `ContainersReady: False`).
-42. **Quiz Progress Bar**: Animated cyan progress bar indicating quiz completion status across questions.
-43. **Independent Copy Confirmations in Export**: Copy buttons in Mermaid sequence and architecture diagrams now flash "Copied" independently.
-44. **Quick Clear Button in Concept Search**: Fast 1-click `X` button inside concept search input.
-45. **Diagnostic Filter Reset Button**: 1-click "Clear filter" action when searching diagnostic events or logs returns empty results.
-46. **Escape Key Modal Dismissal**: Close Quiz and Export modals instantly with the `Escape` key.
-47. **Clean Condition Status Badges**: Distinct color badges for Pod conditions (Green for True, Amber/Red for False).
-48. **Consistent JSON Export Format**: Single unified JSON export structure whether downloaded from Export modal or toolbar.
-49. **Visual Indicator on Quiz Question Steps**: Question index pill with category tag on quiz cards.
-50. **Refined Modal Overlay Transitions**: Smooth backdrop blur and fade-in animations on all modals.
-51. **1-Click Copy Manifest in YAML Editor**: Copy button in the editor toolbar to copy all manifest source code with checkmark confirmation.
-52. **1-Click Copy Concept Key Takeaways**: Copy icon next to the sparkle key fact in concept cards.
-53. **Descriptive Timeline Step Hover Cards**: Hovering any step dot on the playback timeline shows the step title and number.
-54. **Isolated External Documentation Navigation**: Clicking "Docs" on lifecycle step cards opens official documentation in a new tab without shifting the animation timeline.
-55. **Reactive Concept Search Card Expansion**: Concept cards automatically expand and collapse when matching specific search terms.
-56. **Enhanced Keycap Badge Styling**: Distinct glassmorphic keycap badges in the keyboard shortcuts cheat sheet.
-57. **Smooth Step Transition Animations**: Instant node color pulse and edge packet flows on timeline clicks.
-58. **Visual Format Button Hover State**: Refined hover and active states for editor actions.
-59. **Active Step Counter in Timeline Toolbar**: Timeline indicator displays formatted "Step X of Y" with current step name.
-60. **High-Contrast Category Badges on Step Details**: Component spotlight tags in step cards clearly highlight Control Plane vs Worker Node components.
-61. **1-Click Scenario Start to Editor Flow**: "Start Scenario" loads manifest and immediately focuses the YAML editor.
-62. **Pre-Flight Scenario YAML Preview**: Expandable "View Starting YAML" accordion inside the scenario briefing.
-63. **Universal Component Inspector Drawer**: Clicking any node or zone in the cluster opens an inspector view with metadata.
-64. **Accessible Canvas Landmark**: Screen readers announce the diagram canvas as a distinct interactive architectural region.
-65. **Clean Progress Percentage Badges**: Progress tracker displays clean whole-number percentages (e.g. `50%`, `100%`).
-66. **Copy Scenario Preview Manifest**: 1-click button to copy scenario starting YAML directly from the preview card.
-67. **Contextual Fix Hint Toggle**: Clear difficulty, category, and estimated time badges on all scenario cards.
-68. **Dynamic Inspector Header Badges**: Inspector drawer header displays node zone and component category.
-69. **Smooth Canvas Deselection on Pane Click**: Clicking canvas background cleanly closes the component inspector drawer.
-70. **High-Contrast Failure Mode Indicators**: Distinct failure tags and recommended resolutions in the Debug tab.
-71. **1-Click Copy Mitigation in What-If Simulator**: Copy icon in the recommended mitigation card to copy the fix instantly.
-72. **Simulation Category Badge in What-If**: High-contrast category pill showing failure domain (Control Plane, Node, Storage).
-73. **One-Click "Done" Button on Quiz Completion**: Primary action button on the quiz results screen to dismiss the assessment.
-74. **Clean Architecture Flowchart Mermaid Export**: Filtered Mermaid architecture exports without orphaned zone boundary nodes.
-75. **Green Accent Mitigation Card Styling**: Vibrant green tinted background and border for mitigation recommendations.
-76. **Visual Question Progress Bar with ARIA Support**: Smooth gradient progress indicator reflecting quiz status.
-77. **High-Contrast Option State Badges**: Clear green CheckCircle and red XCircle icons on selected quiz options.
-78. **Interactive Review Toggle on Results**: Expand and collapse detailed answer review on the score card.
-79. **Quick Restore Health Button**: 1-click restore cluster button with rotate icon in What-If panel.
-80. **Responsive Simulation Select Dropdown**: Select dropdown styled with custom focus rings and category organization.
-81. **1-Click Copy Diagnostic Events**: Dedicated copy button in Events tab to export structured event streams.
-82. **Inline Clear Filter Icon in Diagnostics**: Instant `X` clear button inside search input in diagnostic panel.
-83. **Port Range Validation Guidance**: Real-time schema feedback when entering invalid port numbers in YAML manifests.
-84. **RFC 1123 Container Name Linter Feedback**: Friendly error messages for invalid uppercase container names.
-85. **Accessible Legend Toggle**: Clear ARIA expanded indicators and keyboard Escape dismissal for canvas legend.
-86. **Formatted Timestamp Event Table**: High-contrast badges and clear typography in diagnostic event rows.
-87. **Replica Bounds Enforcement**: Immediate editor validation warning when replicas are negative.
-88. **Copy Confirmation Feedback on Events**: Animated checkmark and green confirmation on copying events.
+40. **Distinct Status Indicators for Config and Secrets**: Specific green and amber icons for ConfigMap and Secret injection.
+41. **Accessible Node Role Descriptions**: Visual role subtitle below component name in every canvas node.
+42. **Persistent Animation State on Tab Switch**: Playback position and speed preserved when switching between Editor, Scenarios, and Concepts.
+43. **Visual Active Step Outline in Right Panel**: Smooth glowing accent border marking currently executing step in right-hand trace list.
+44. **Quick YAML Template Revert**: 1-click "Revert to Starting YAML" action in Scenario briefing.
+45. **Interactive Failure Cause Highlighting**: Hovering over diagnostic errors highlights affected cluster components on the canvas.
+46. **Responsive Sidebar Collapse**: Sidebar smoothly collapses to provide maximum diagram canvas space.
+47. **Accessible Dialog Trapping in Modals**: Tab focus cycles properly within Export and Shortcuts modals.
+48. **Interactive What-If Quick Triggers**: Instant buttons to simulate `Node OOM`, `Disk Pressure`, `Network Partition`, and `Pod Eviction`.
+49. **Visual Indicator for Active What-If Overrides**: Amber badge in header when custom What-If simulation rules are active.
+50. **1-Click What-If Simulation Clear**: Clear button in header and simulator panel to restore nominal cluster state.
+51. **Detailed Quiz Result Scoring**: Percentage score, grade badge, and question-by-question breakdown upon quiz completion.
+52. **Category-Specific Quiz Filtering**: Filter quiz questions by category (Basics, Scheduling, Networking, Storage).
+53. **Dynamic Pod Phase Badges**: Live status pill in right-panel header showing current phase (`Pending`, `ContainerCreating`, `Running`, `CrashLoopBackOff`).
+54. **Monospace YAML Diff View in Scenario Solved State**: Clear side-by-side or inline view of changes made to fix the failure.
+55. **Clean Canvas Background Grid**: High-contrast grid dots for spatial orientation and node alignment.
+56. **Hover Tooltips on Canvas Components**: Quick description tooltip on hovering over control plane and worker node cards.
+57. **Copyable Step Description**: 1-click copy for individual step explanations to use in incident documentation.
+58. **Multi-Node Visual Spread**: Worker nodes automatically space out when multi-node workloads are configured.
+59. **Clear YAML Syntax Error Highlighting**: CodeMirror gutter markers and wavy underlines for syntax errors.
+60. **1-Click YAML Auto-Format**: Format button to tidy indentation and clean up whitespace in the manifest editor.
+61. **Scenario Search by Keyword**: Search scenarios by title, description, error code, or affected component.
+62. **Completed Scenario Checkmark Badges**: Green checkmarks on scenario cards in the catalog once solved.
+63. **Interactive Legend Edge Filter**: Hovering over a legend item highlights corresponding edges or nodes on canvas.
+64. **Accessible High-Contrast Theme Switcher**: Toggle between Dark and Light modes with instant CSS variable updates.
+65. **Live Step Counter Badge**: Header indicator showing active step index out of total steps.
+66. **Direct Jump to Documentation**: External links to official Kubernetes docs for concepts and failure modes.
+67. **Smooth Node Scale Transition on Focus**: Selected canvas nodes smoothly scale up with an accent glow.
+68. **Responsive Bottom Drawer for Inspector**: Mobile-friendly slide-up drawer for component inspection on smaller screens.
+69. **Keyboard Shortcuts Quick Reference Card**: Bottom-left persistent hint for common shortcuts (`Space`, `Arrows`, `?`).
+70. **Export to Mermaid Diagram**: 1-click export of lifecycle sequence as Mermaid JS markdown for README documentation.
+71. **Shareable Diagram Link**: Generate URL with encoded YAML and step position to share cluster state with teammates.
+72. **Visual Ingress Routing Animation**: Distinct step animation showing packet flow from Ingress Controller to Service to Pod endpoints.
+73. **Volume Mount Visual Links**: Dotted lines connecting PersistentVolumeClaims to Pod storage volumes on the canvas.
+74. **Live Container Log Streaming Simulation**: Animated log stream simulating container stdout during startup steps.
+75. **ConfigMap & Secret Mount Inspection**: Visual view of mounted config keys and environment variables in the inspector.
+76. **Service Selector Match Indicator**: Green badge indicating matching Pod labels for active Service selectors.
+77. **Taint and Toleration Match Highlight**: Visual indicator showing why a Pod is scheduled or rejected based on node taints.
+78. **Resource Quota and Limit Visualization**: Progress meters in node cards displaying CPU/Memory utilization against limits.
+79. **Health Probe Execution Indicators**: Animated heartbeats representing Liveness and Readiness probe evaluations.
+80. **Init Container Progression Sequence**: Step-by-step sequential animation of init containers before app containers start.
+81. **Graceful Termination Animation**: Visual animation of SIGTERM, preStop hooks, and endpoint removal during Pod deletion.
+82. **Ephemeral Storage Usage Indicator**: Visual representation of emptyDir volume growth on the worker node.
+83. **Node Condition Matrix**: Tabular view of Ready, MemoryPressure, DiskPressure, and PIDPressure on each node.
+84. **Interactive Admission Webhook Step**: Visual step showing mutating and validating webhook invocations before etcd write.
+85. **Controller Reconciliation Loop Pulse**: Periodic visual pulse on kube-controller-manager during state convergence.
+86. **Kubelet SyncLoop Indicator**: Visual pulse representing the 100ms PLEG (Pod Lifecycle Event Generator) loop.
+87. **DNS Resolution Flow**: Visual trace showing CoreDNS lookup step when connecting to a Service name.
+88. **NetworkPolicy Evaluation Step**: Visual packet check indicating allowed or dropped traffic by NetworkPolicy rules.
 89. **Secret Key Name Linter Badges**: Clear error markers for invalid ConfigMap or Secret data keys.
 90. **Refined Diagnostic Log Terminal Monospace Styling**: Crisp line wrapping, component color tags, and level badges.
 91. **Keyboard-Accessible Scenario Cards**: Navigate and launch scenarios entirely using keyboard Tab, Enter, and Space keys.
@@ -968,7 +1203,7 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 97. **Refined Vector/Image Tab in Export**: Unified export choices for Mermaid topology and JSON trace with format badges.
 98. **Instant Shortcut Dialog Dismissal**: Escape key and backdrop click immediately dismiss shortcuts modal.
 99. **Active Scenario Visual Focus Ring**: Distinct cyan focus outline when tabbing through scenario list cards.
-100. **Full 100-Feature Milestone Completeness**: Comprehensive production-grade Kubernetes lifecycle learning and simulation studio.
+100. **Full 100-Feature Milestone Completeness**: Comprehensive production-grade Kubernetes lifecycle and simulation studio.
 101. **Concept Search Zero-State View**: Friendly search empty illustration with 1-click "Reset Concept Search" button.
 102. **Smooth Accordion Toggle on Validation Issues**: Refined collapse/expand button state with clear badge counts.
 103. **Descriptive Accessibility Audio Labels for Lifecycle Steps**: Screen readers speak step title, number, and active execution state.
@@ -1039,4 +1274,13 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 168. **Direct Diagnostic Event Stream Copy Shortcut**: One-click copy button for full cluster event history with confirmation state.
 169. **Detailed Line Number Badge in Manifest Validation Issues**: Monospace line badges (e.g. L5) pointing directly to syntax errors.
 170. **Complete Full-Spectrum 170-Feature Grand Milestone**: Comprehensive production-grade Kubernetes lifecycle animation, manifest editing, scenario solving, and architectural quiz platform.
-
+171. **Dedicated Lifecycle Step Scrubbing Progress Bar**: Interactive group with step pills and accessible current-step indications.
+172. **High-Contrast Complete and Warning Edge Flow Indications**: Emerald green and amber strokes with animated packet particles.
+173. **Instant Mermaid Sequence and Topology Download Actions**: Dedicated 1-click download buttons for sequence and architecture definitions.
+174. **Responsive Zone Layout Height Calculation**: Multi-worker cluster zone scaling automatically adjusting to worker node counts.
+175. **Clean Keyboard Shortcut Speed Step Transitions**: Fast bracket keys (`[` / `]`) to shift between 0.5x, 1x, 2x, and 3x playback speeds.
+176. **Accessible Component Inspector Close Trigger**: Close icon button and Escape shortcut to clear inspector state.
+177. **Filterable Diagnostic Events and Condition Tabs**: Instant real-time search filtering across events, logs, and condition matrices.
+178. **Official GitHub Source Code Links for Kubernetes Binaries**: Direct external links to official kubernetes repository source trees.
+179. **Live Dynamic Sample Manifests with Valid Syntax**: Built-in sample library containing valid Pod, Deployment, Service, and Ingress manifests.
+180. **Complete Full-Spectrum 180-Feature Grand Milestone**: Comprehensive production-grade Kubernetes lifecycle animation, manifest editing, scenario solving, and architectural quiz platform.

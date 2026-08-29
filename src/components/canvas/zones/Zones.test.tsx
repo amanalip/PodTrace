@@ -9,7 +9,7 @@ import {
   NamespaceZone,
 } from './Zones.tsx';
 
-const createMockNodeProps = (label: string): NodeProps =>
+const createMockNodeProps = (label?: string): NodeProps =>
   ({
     id: 'mock-id',
     type: 'zone',
@@ -22,7 +22,7 @@ const createMockNodeProps = (label: string): NodeProps =>
     isConnectable: false,
     positionAbsoluteX: 0,
     positionAbsoluteY: 0,
-    data: { label },
+    data: label ? { label } : {},
   }) as NodeProps;
 
 describe('Zones', () => {
@@ -48,16 +48,26 @@ describe('Zones', () => {
   });
 
   it('renders WorkerNodeZone with accessible group role and boundary label', () => {
-    render(<WorkerNodeZone {...createMockNodeProps('Worker Node 1')} />);
+    render(<WorkerNodeZone {...createMockNodeProps('Worker Node 2')} />);
 
-    expect(screen.getByRole('group', { name: 'Boundary: Worker Node 1' })).toBeInTheDocument();
-    expect(screen.getByText('Worker Node 1')).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Boundary: Worker Node 2' })).toBeInTheDocument();
+    expect(screen.getByText('Worker Node 2')).toBeInTheDocument();
   });
 
   it('renders NamespaceZone with accessible group role and boundary label', () => {
-    render(<NamespaceZone {...createMockNodeProps('default namespace')} />);
+    render(<NamespaceZone {...createMockNodeProps('prod namespace')} />);
 
+    expect(screen.getByRole('group', { name: 'Boundary: prod namespace' })).toBeInTheDocument();
+    expect(screen.getByText('prod namespace')).toBeInTheDocument();
+  });
+
+  it('renders fallback label for WorkerNodeZone when data is empty', () => {
+    render(<WorkerNodeZone {...createMockNodeProps()} />);
+    expect(screen.getByRole('group', { name: 'Boundary: Worker Node 1' })).toBeInTheDocument();
+  });
+
+  it('renders fallback label for NamespaceZone when data is empty', () => {
+    render(<NamespaceZone {...createMockNodeProps()} />);
     expect(screen.getByRole('group', { name: 'Boundary: default namespace' })).toBeInTheDocument();
-    expect(screen.getByText('default namespace')).toBeInTheDocument();
   });
 });

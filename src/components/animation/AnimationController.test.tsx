@@ -39,6 +39,23 @@ describe('AnimationController', () => {
     expect(useAppStore.getState().currentStepIndex).toBe(0);
   });
 
+  it('disables previous step button when at first step', () => {
+    useAppStore.setState({ currentStepIndex: 0 });
+    render(<AnimationController />);
+
+    const prevBtn = screen.getByRole('button', { name: /previous step/i });
+    expect(prevBtn).toBeDisabled();
+  });
+
+  it('disables next step button when at last step', () => {
+    const steps = useAppStore.getState().steps;
+    useAppStore.setState({ currentStepIndex: steps.length - 1 });
+    render(<AnimationController />);
+
+    const nextBtn = screen.getByRole('button', { name: /next step/i });
+    expect(nextBtn).toBeDisabled();
+  });
+
   it('toggles play/pause state on play button click', () => {
     render(<AnimationController />);
 
@@ -57,6 +74,12 @@ describe('AnimationController', () => {
     const speedSelect = screen.getByRole('combobox', { name: /playback speed/i });
     fireEvent.change(speedSelect, { target: { value: '2' } });
     expect(useAppStore.getState().playbackSpeed).toBe(2);
+
+    fireEvent.change(speedSelect, { target: { value: '0.5' } });
+    expect(useAppStore.getState().playbackSpeed).toBe(0.5);
+
+    fireEvent.change(speedSelect, { target: { value: '3' } });
+    expect(useAppStore.getState().playbackSpeed).toBe(3);
   });
 
   it('resets animation on reset button click', () => {

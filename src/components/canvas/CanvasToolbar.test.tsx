@@ -34,4 +34,40 @@ describe('CanvasToolbar', () => {
 
     expect(resetSpy).toHaveBeenCalled();
   });
+
+  it('triggers fit view action when fit view button is clicked', () => {
+    render(
+      <ReactFlowProvider>
+        <CanvasToolbar />
+      </ReactFlowProvider>,
+    );
+
+    const fitBtn = screen.getByTestId('canvas-fit-view');
+    expect(fitBtn).toHaveAttribute('title', 'Fit diagram to viewport');
+    fireEvent.click(fitBtn);
+  });
+
+  it('triggers zoom in action when zoom in button is clicked', () => {
+    render(
+      <ReactFlowProvider>
+        <CanvasToolbar />
+      </ReactFlowProvider>,
+    );
+
+    const zoomInBtn = screen.getByTestId('canvas-zoom-in');
+    expect(zoomInBtn).toHaveAttribute('title', 'Zoom in');
+    fireEvent.click(zoomInBtn);
+  });
+
+  it('triggers zoom out action when zoom out button is clicked', () => {
+    render(
+      <ReactFlowProvider>
+        <CanvasToolbar />
+      </ReactFlowProvider>,
+    );
+
+    const zoomOutBtn = screen.getByTestId('canvas-zoom-out');
+    expect(zoomOutBtn).toHaveAttribute('title', 'Zoom out');
+    fireEvent.click(zoomOutBtn);
+  });
 });

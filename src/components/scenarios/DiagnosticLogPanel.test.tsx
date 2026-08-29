@@ -81,6 +81,24 @@ describe('DiagnosticLogPanel', () => {
     expect(screen.getByText('ContainersReady')).toBeInTheDocument();
   });
 
+  it('renders conditions reflecting failed init container', () => {
+    const initScenario = SCENARIO_CATALOG.find((s) => s.id === 'init-container-fail');
+    if (initScenario) {
+      useAppStore.setState({
+        activeScenario: initScenario,
+        scenarioState: 'failed',
+      });
+
+      render(<DiagnosticLogPanel />);
+
+      const conditionsTab = screen.getByText('Conditions');
+      fireEvent.click(conditionsTab);
+
+      expect(screen.getByText('Initialized')).toBeInTheDocument();
+      expect(screen.getByText('Ready')).toBeInTheDocument();
+    }
+  });
+
   it('clears filter query when clear filter button is clicked', () => {
     const scenario = SCENARIO_CATALOG[0];
     useAppStore.setState({
@@ -125,5 +143,23 @@ describe('DiagnosticLogPanel', () => {
     const clearIcon = screen.getByTestId('clear-diag-search-icon');
     fireEvent.click(clearIcon);
     expect(input).toHaveValue('');
+  });
+
+  it('filters logs by query in container logs tab and shows empty state when unmatched', () => {
+    const scenario = SCENARIO_CATALOG[0];
+    useAppStore.setState({
+      activeScenario: scenario,
+      scenarioState: 'failed',
+    });
+
+    render(<DiagnosticLogPanel />);
+
+    const logsTab = screen.getByText(/Logs \(/i);
+    fireEvent.click(logsTab);
+
+    const input = screen.getByTestId('diag-filter-input');
+    fireEvent.change(input, { target: { value: 'unmatched-log-text-xyz' } });
+
+    expect(screen.getByText(/No logs matching search filter/i)).toBeInTheDocument();
   });
 });

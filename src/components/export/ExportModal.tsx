@@ -163,7 +163,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                       title="Copy Mermaid sequence diagram"
                       aria-label="Copy Mermaid sequence diagram"
                       aria-live="polite"
-                      data-testid="copy-mermaid-btn"
+                      data-testid="copy-mermaid-sequence-btn"
                     >
                       {copiedTarget === 'mermaid-seq' ? <Check size={12} /> : <Copy size={12} />}
                       <span>{copiedTarget === 'mermaid-seq' ? 'Copied' : 'Copy'}</span>
@@ -196,6 +196,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     title="Copy Mermaid architecture topology"
                     aria-label="Copy Mermaid architecture topology"
                     aria-live="polite"
+                    data-testid="copy-mermaid-graph-btn"
                   >
                     {copiedTarget === 'mermaid-graph' ? <Check size={12} /> : <Copy size={12} />}
                     <span>{copiedTarget === 'mermaid-graph' ? 'Copied' : 'Copy'}</span>

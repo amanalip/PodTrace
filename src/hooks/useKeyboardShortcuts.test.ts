@@ -14,6 +14,7 @@ describe('useKeyboardShortcuts', () => {
         { stepNumber: 3, title: 'Step 3', componentName: 'C', componentRole: 'R', what: 'W3', why: 'Why3' },
       ],
       selectedNodeId: 'node-apiserver',
+      isShortcutsOpen: false,
     });
   });
 
@@ -83,5 +84,31 @@ describe('useKeyboardShortcuts', () => {
 
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', ctrlKey: true }));
     expect(useAppStore.getState().currentStepIndex).toBe(1);
+  });
+
+  it('toggles shortcuts help modal on ? key press', () => {
+    renderHook(() => useKeyboardShortcuts());
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: '?' }));
+    expect(useAppStore.getState().isShortcutsOpen).toBe(true);
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: '?' }));
+    expect(useAppStore.getState().isShortcutsOpen).toBe(false);
+  });
+
+  it('clamps minimum playback speed at 0.5x when pressing [', () => {
+    useAppStore.setState({ playbackSpeed: 0.5 });
+    renderHook(() => useKeyboardShortcuts());
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: '[' }));
+    expect(useAppStore.getState().playbackSpeed).toBe(0.5);
+  });
+
+  it('clamps maximum playback speed at 3x when pressing ]', () => {
+    useAppStore.setState({ playbackSpeed: 3 });
+    renderHook(() => useKeyboardShortcuts());
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: ']' }));
+    expect(useAppStore.getState().playbackSpeed).toBe(3);
   });
 });

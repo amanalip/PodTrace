@@ -45,4 +45,14 @@ describe('DiagramCanvas', () => {
     const region = screen.getByRole('region', { name: /kubernetes architecture flow diagram/i });
     expect(region).toBeInTheDocument();
   });
+
+  it('renders floating canvas viewport controls toolbar', () => {
+    render(<DiagramCanvas />);
+    expect(screen.getByTestId('canvas-toolbar')).toBeInTheDocument();
+  });
+
+  it('renders diagram status and boundary legend button', () => {
+    render(<DiagramCanvas />);
+    expect(screen.getByTestId('diagram-legend-toggle-btn')).toBeInTheDocument();
+  });
 });

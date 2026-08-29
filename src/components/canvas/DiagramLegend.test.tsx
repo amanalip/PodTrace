@@ -35,6 +35,27 @@ describe('DiagramLegend', () => {
     expect(useAppStore.getState().isLegendOpen).toBe(false);
   });
 
+  it('renders node status descriptions when open', () => {
+    useAppStore.setState({ isLegendOpen: true });
+    render(<DiagramLegend />);
+
+    expect(screen.getByText('Idle (waiting)')).toBeInTheDocument();
+    expect(screen.getByText('Active (processing step)')).toBeInTheDocument();
+    expect(screen.getByText('Success / Running')).toBeInTheDocument();
+    expect(screen.getByText('Pending / Warning')).toBeInTheDocument();
+    expect(screen.getByText('Error / Failed')).toBeInTheDocument();
+  });
+
+  it('renders zone boundary descriptions when open', () => {
+    useAppStore.setState({ isLegendOpen: true });
+    render(<DiagramLegend />);
+
+    expect(screen.getByText('Local Workstation')).toBeInTheDocument();
+    expect(screen.getByText('Control Plane')).toBeInTheDocument();
+    expect(screen.getByText('Worker Node')).toBeInTheDocument();
+    expect(screen.getByText('Namespace Scope')).toBeInTheDocument();
+  });
+
   it('closes legend when Escape key is pressed', () => {
     useAppStore.setState({ isLegendOpen: true });
     render(<DiagramLegend />);

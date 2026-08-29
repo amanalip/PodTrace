@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ComponentInspector } from './ComponentInspector.tsx';
 import { useAppStore } from '../../store/index.ts';
@@ -16,6 +16,12 @@ describe('ComponentInspector', () => {
         },
       ],
     });
+
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: vi.fn().mockResolvedValue(undefined),
+      },
+    });
   });
 
   it('renders nothing when no node is selected', () => {
@@ -23,7 +29,7 @@ describe('ComponentInspector', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('renders deep-dive information when node is selected', () => {
+  it('renders detailed information when node is selected', () => {
     useAppStore.setState({ selectedNodeId: 'node-apiserver' });
 
     render(<ComponentInspector />);
@@ -58,7 +64,30 @@ describe('ComponentInspector', () => {
     expect(screen.getByText('kubectl get --raw /healthz')).toBeInTheDocument();
   });
 
-  it('closes inspector when close button is clicked or Escape key is pressed', () => {
+  it('copies debug command on button click in debug tab', () => {
+    useAppStore.setState({ selectedNodeId: 'node-apiserver' });
+
+    render(<ComponentInspector />);
+    const debugTab = screen.getByRole('tab', { name: /debug/i });
+    fireEvent.click(debugTab);
+
+    const copyBtn = screen.getByLabelText('Copy kubectl get --raw /healthz');
+    fireEvent.click(copyBtn);
+
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('kubectl get --raw /healthz');
+  });
+
+  it('closes inspector when close icon button is clicked', () => {
+    useAppStore.setState({ selectedNodeId: 'node-apiserver' });
+
+    render(<ComponentInspector />);
+    const closeBtn = screen.getByLabelText(/close inspector/i);
+    fireEvent.click(closeBtn);
+
+    expect(useAppStore.getState().selectedNodeId).toBeNull();
+  });
+
+  it('closes inspector when Escape key is pressed', () => {
     useAppStore.setState({ selectedNodeId: 'node-apiserver' });
 
     render(<ComponentInspector />);
@@ -83,5 +112,14 @@ describe('ComponentInspector', () => {
     expect(screen.getByTestId('component-inspector')).toBeInTheDocument();
     expect(screen.getByText('my-custom-operator')).toBeInTheDocument();
     expect(screen.getByText(/Cluster Architecture Component/i)).toBeInTheDocument();
+  });
+
+  it('provides a valid official Kubernetes source link', () => {
+    useAppStore.setState({ selectedNodeId: 'node-apiserver' });
+
+    render(<ComponentInspector />);
+    const sourceLink = screen.getByRole('link', { name: /source code on github/i });
+    expect(sourceLink).toHaveAttribute('href', 'https://github.com/kubernetes/kubernetes/tree/master/cmd/kube-apiserver');
+    expect(sourceLink).toHaveAttribute('target', '_blank');
   });
 });
