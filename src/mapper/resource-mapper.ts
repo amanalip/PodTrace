@@ -40,7 +40,20 @@ export function mapResourcesToDiagram(resources: K8sResource[]): DiagramMappingR
     case 'Pod':
       return mapPodResource(primaryResource as PodResource);
     case 'Deployment':
+    case 'StatefulSet':
+    case 'DaemonSet':
+    case 'ReplicaSet':
       return mapDeploymentResource(primaryResource as DeploymentResource);
+    case 'Job':
+    case 'CronJob':
+      return mapPodResource({
+        apiVersion: primaryResource.apiVersion,
+        kind: 'Pod',
+        metadata: primaryResource.metadata,
+        spec: (primaryResource.spec as Record<string, unknown>)?.template
+          ? ((primaryResource.spec as Record<string, unknown>).template as Record<string, unknown>).spec as PodResource['spec']
+          : { containers: [{ name: primaryResource.metadata?.name || 'job-container' }] },
+      } as PodResource);
     case 'Service':
       return mapServiceResource(primaryResource as ServiceResource);
     case 'Ingress':
@@ -48,6 +61,7 @@ export function mapResourcesToDiagram(resources: K8sResource[]): DiagramMappingR
     case 'ConfigMap':
     case 'Secret':
     case 'PersistentVolumeClaim':
+    case 'PersistentVolume':
       return mapConfigResource(
         primaryResource as ConfigMapResource | SecretResource | PersistentVolumeClaimResource,
       );

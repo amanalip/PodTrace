@@ -1,16 +1,16 @@
 import { LifecycleStep } from '../model/types.ts';
 
 export function createConfigLifecycleSteps(
-  kind: 'ConfigMap' | 'Secret' | 'PersistentVolumeClaim' = 'ConfigMap',
+  kind: 'ConfigMap' | 'Secret' | 'PersistentVolumeClaim' | 'PersistentVolume' = 'ConfigMap',
   name = 'app-config',
 ): LifecycleStep[] {
   const isSecret = kind === 'Secret';
-  const isPVC = kind === 'PersistentVolumeClaim';
+  const isPVC = kind === 'PersistentVolumeClaim' || kind === 'PersistentVolume';
 
   const typeDesc = isSecret
     ? 'base64 encoded confidential data'
     : isPVC
-      ? 'persistent storage claim'
+      ? 'persistent storage resource definition'
       : 'key-value configuration data';
 
   return [
@@ -24,12 +24,17 @@ export function createConfigLifecycleSteps(
       what: `The developer applies the ${kind} manifest containing ${typeDesc}. kubectl submits the payload to the API server.`,
       why: `${kind} decouples configuration artifacts and storage requirements from container image binaries.`,
       componentName: 'kubectl',
-      componentRole: 'CLI client submitting resource manifests.',
-      docsUrl: 'https://kubernetes.io/docs/concepts/configuration/configmap/',
+      componentRole: 'Command-line tool communicating with cluster API.',
+      docsUrl: isSecret
+        ? 'https://kubernetes.io/docs/concepts/configuration/secret/'
+        : isPVC
+          ? 'https://kubernetes.io/docs/concepts/storage/persistent-volumes/'
+          : 'https://kubernetes.io/docs/concepts/configuration/configmap/',
       durationMs: 2000,
       nodeStatusUpdates: {
         'node-user': 'success',
         'node-kubectl': 'active',
+        [`node-config-${name}`]: 'idle',
       },
       edgeStatusUpdates: {
         'edge-user-kubectl': 'active',
@@ -37,24 +42,25 @@ export function createConfigLifecycleSteps(
     },
     {
       stepNumber: 2,
-      title: `API Server validates ${kind} structure`,
+      title: `API Server authenticates and validates ${kind}`,
       sourceNodeId: 'node-kubectl',
       targetNodeId: 'node-apiserver',
       edgeId: 'edge-kubectl-apiserver',
-      edgeLabel: `POST ${kind}`,
+      edgeLabel: `POST /api/v1/namespaces/default/${kind.toLowerCase()}s`,
       what: isSecret
-        ? 'kube-apiserver checks Secret size limits (1MB maximum) and verifies valid base64 key-value pairings.'
+        ? 'Validates base64 data encoding, size limits (1MB maximum per Secret), and authorizes RBAC permissions.'
         : isPVC
-          ? 'kube-apiserver validates storage requests, storageClassName, and accessModes.'
-          : 'kube-apiserver validates UTF-8 key-value strings and size limits (1MB maximum).',
-      why: 'Validation ensures payloads meet cluster storage limits and format constraints.',
+          ? 'Validates requested storage capacity, accessModes (e.g. ReadWriteOnce), and storageClassName conformance.'
+          : 'Validates key formatting, data size (1MB maximum per ConfigMap), and namespace constraints.',
+      why: 'Admission controllers enforce namespace boundaries and cluster quotas before storage.',
       componentName: 'kube-apiserver',
-      componentRole: 'Cluster gateway validating object schema.',
+      componentRole: 'Cluster REST gateway and schema validator.',
       docsUrl: 'https://kubernetes.io/docs/concepts/overview/components/#kube-apiserver',
       durationMs: 2000,
       nodeStatusUpdates: {
         'node-kubectl': 'success',
         'node-apiserver': 'active',
+        [`node-config-${name}`]: 'idle',
       },
       edgeStatusUpdates: {
         'edge-user-kubectl': 'complete',

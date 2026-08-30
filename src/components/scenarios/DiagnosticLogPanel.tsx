@@ -67,16 +67,16 @@ export const DiagnosticLogPanel: React.FC = () => {
   };
 
   const isSchedulingFailed = isFailed && (
-    activeScenario.id === 'pending-cpu' ||
-    activeScenario.id === 'unschedulable-taint' ||
-    activeScenario.id === 'affinity-conflict' ||
+    activeScenario.category === 'scheduling' ||
     activeScenario.id === 'pvc-pending'
   );
 
-  const isInitFailed = isFailed && activeScenario.id === 'init-container-fail';
+  const isStorageOrConfigFailed = isFailed && (
+    activeScenario.category === 'storage'
+  );
 
   const podScheduledTrue = !isSchedulingFailed;
-  const initializedTrue = !isInitFailed && !isSchedulingFailed;
+  const initializedTrue = !isSchedulingFailed && !isStorageOrConfigFailed;
   const containersReadyTrue = !isFailed;
   const readyTrue = !isFailed;
 

@@ -13,7 +13,7 @@ export function getLifecycleStepsForResources(resources: K8sResource[]): Lifecyc
   }
 
   if (resources.length > 1) {
-    const deployment = resources.find((r) => r.kind === 'Deployment');
+    const deployment = resources.find((r) => r.kind === 'Deployment' || r.kind === 'StatefulSet' || r.kind === 'DaemonSet');
     const service = resources.find((r) => r.kind === 'Service');
     const ingress = resources.find((r) => r.kind === 'Ingress');
     const depName = deployment?.metadata?.name || 'app-deployment';
@@ -29,11 +29,19 @@ export function getLifecycleStepsForResources(resources: K8sResource[]): Lifecyc
       const podName = primaryResource.metadata?.name || 'pod';
       return createPodLifecycleSteps(podName);
     }
-    case 'Deployment': {
+    case 'Deployment':
+    case 'StatefulSet':
+    case 'DaemonSet':
+    case 'ReplicaSet': {
       const dep = primaryResource as DeploymentResource;
-      const deploymentName = dep.metadata?.name || 'deployment';
+      const workloadName = dep.metadata?.name || primaryResource.kind.toLowerCase();
       const replicas = dep.spec?.replicas ?? 3;
-      return createDeploymentLifecycleSteps(deploymentName, replicas);
+      return createDeploymentLifecycleSteps(workloadName, replicas);
+    }
+    case 'Job':
+    case 'CronJob': {
+      const jobName = primaryResource.metadata?.name || primaryResource.kind.toLowerCase();
+      return createPodLifecycleSteps(jobName);
     }
     case 'Service': {
       const svc = primaryResource as ServiceResource;
@@ -58,7 +66,8 @@ export function getLifecycleStepsForResources(resources: K8sResource[]): Lifecyc
     }
     case 'ConfigMap':
     case 'Secret':
-    case 'PersistentVolumeClaim': {
+    case 'PersistentVolumeClaim':
+    case 'PersistentVolume': {
       const name = primaryResource.metadata?.name || 'config';
       return createConfigLifecycleSteps(primaryResource.kind, name);
     }

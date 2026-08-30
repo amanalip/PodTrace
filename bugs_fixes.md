@@ -4,7 +4,7 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 
 ---
 
-## 1. Verified Bug Fixes (21 Bugs Resolved)
+## 1. Verified Bug Fixes (186 Bugs Resolved)
 
 1. **Bug 1: DiagnosticLogPanel Unrendered in Main UI**
    - **Root Cause**: `DiagnosticLogPanel.tsx` was implemented and tested in isolation but was never mounted or rendered inside `AppShell.tsx`, `Sidebar.tsx`, or `ExplanationPanel.tsx`. Users investigating troubleshooting scenarios could not view `kubectl describe` events, container logs, or pod conditions.
@@ -729,6 +729,26 @@ This document records the verified bugs, code quality improvements, and UX/UI en
 181. **Bug 181: Sample Library Raw YAML Manifest Schema Validation**
     - **Root Cause**: In `sample-library.ts`, ensuring all 10+ samples parse validly against schema validator.
     - **Fix**: Added automated unit test suite verifying parse and validation across all sample templates.
+
+182. **Bug 182: DiagnosticLogPanel Conditions Desynchronization on Scheduling Failures**
+    - **Root Cause**: In `DiagnosticLogPanel.tsx`, `isSchedulingFailed` checked against non-existent scenario IDs (`pending-cpu`, `unschedulable-taint`, `affinity-conflict`) rather than matching `category === 'scheduling' || id === 'pvc-pending'`. As a result, scheduling troubleshooting scenarios (`unschedulable-cpu`, `nodeselector-mismatch`, `taint-toleration`) erroneously reported `PodScheduled: True` on the condition matrix during failure states.
+    - **Fix**: Updated condition calculation in `DiagnosticLogPanel.tsx` to evaluate `activeScenario.category === 'scheduling' || activeScenario.id === 'pvc-pending'` and `activeScenario.category === 'storage'`.
+
+183. **Bug 183: Workload Kinds Defaulting to Hardcoded Nginx Pod on Canvas**
+    - **Root Cause**: `mapResourcesToDiagram` in `resource-mapper.ts` defaulted `StatefulSet`, `DaemonSet`, `Job`, `CronJob`, and `PersistentVolume` to `STATIC_INITIAL_NODES`, rendering a static hardcoded `nginx-pod` on the canvas instead of mapping the actual workload name, replicas, and container specs.
+    - **Fix**: Extended `mapResourcesToDiagram` to route `StatefulSet`, `DaemonSet`, and `ReplicaSet` through `mapDeploymentResource`, `Job` and `CronJob` through `mapPodResource`, and `PersistentVolume` through `mapConfigResource`.
+
+184. **Bug 184: Lifecycle Step Engine Fallback to Hardcoded Nginx Pod on Workload Kinds**
+    - **Root Cause**: In `lifecycle/steps.ts`, `StatefulSet`, `DaemonSet`, `Job`, `CronJob`, and `PersistentVolume` were routed to `createPodLifecycleSteps('nginx-pod')` in the default case, generating steps with hardcoded strings rather than the workload's metadata name and replica count.
+    - **Fix**: Added explicit cases in `getLifecycleStepsForResources` generating deployment, pod, and storage lifecycle steps dynamically for `StatefulSet`, `DaemonSet`, `ReplicaSet`, `Job`, `CronJob`, and `PersistentVolume`.
+
+185. **Bug 185: AnimationEngine Step Activation Failure on Steps Lacking Explicit Status Maps**
+    - **Root Cause**: In `AnimationEngine.ts`, if a lifecycle step provided `sourceNodeId`, `targetNodeId`, or `edgeId` without explicit `nodeStatusUpdates` or `edgeStatusUpdates` dictionaries, `applyStepToDiagram` set all nodes to `idle` and edges to `inactive`, leaving the canvas static during playback.
+    - **Fix**: Added automatic fallback activation in `applyStepToDiagram` marking `sourceNodeId`, `targetNodeId`, and `edgeId` as active when status maps are omitted.
+
+186. **Bug 186: Scenario Completion Tracking Desynchronization in checkScenarioFix**
+    - **Root Cause**: In `store/index.ts`, when a user fixed a YAML manifest in the editor, `checkScenarioFix` transitioned `scenarioState` to `'resolved'`, but did not add `activeScenarioId` to `completedScenarioIds`. Consequently, the sidebar scenario list and category completion badges did not reflect completion until navigating elsewhere and calling `resolveScenario()`.
+    - **Fix**: Updated `checkScenarioFix` to immediately record `activeScenarioId` into `completedScenarioIds` upon successful validation.
 
 ---
 

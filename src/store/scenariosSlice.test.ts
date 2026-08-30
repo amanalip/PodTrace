@@ -44,6 +44,7 @@ describe('scenariosSlice in useAppStore', () => {
     expect(isFixedTrue).toBe(true);
     expect(useAppStore.getState().scenarioState).toBe('resolved');
     expect(useAppStore.getState().scenarioFeedback).toBe(scenario.successMessage);
+    expect(useAppStore.getState().completedScenarioIds).toContain(scenario.id);
   });
 
   it('marks scenario as completed and persists to completedScenarioIds list', () => {

@@ -79,4 +79,23 @@ describe('AnimationEngine', () => {
     expect(nodes[1].data.status).toBe('idle');
     expect(edges[0].data?.status).toBe('inactive');
   });
+
+  it('falls back to source, target, and edgeId activation when status maps are omitted', () => {
+    const stepWithoutMaps: LifecycleStep = {
+      stepNumber: 1,
+      title: 'Fallback Step',
+      what: 'What',
+      why: 'Why',
+      componentName: 'kubectl',
+      componentRole: 'CLI',
+      sourceNodeId: 'node-user',
+      targetNodeId: 'node-kubectl',
+      edgeId: 'edge-1',
+    };
+
+    const { nodes, edges } = applyStepToDiagram(stepWithoutMaps, initialNodes, initialEdges);
+    expect(nodes[0].data.status).toBe('active');
+    expect(nodes[1].data.status).toBe('active');
+    expect(edges[0].data?.status).toBe('active');
+  });
 });

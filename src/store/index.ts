@@ -197,9 +197,14 @@ export const useAppStore = create<AppStore>((set) => ({
       if (result.isFixed) {
         const { nodes, edges } = mapResourcesToDiagram(resources);
         const resolvedSteps = getLifecycleStepsForResources(resources);
+        const completed = state.activeScenarioId && !state.completedScenarioIds.includes(state.activeScenarioId)
+          ? [...state.completedScenarioIds, state.activeScenarioId]
+          : state.completedScenarioIds;
+
         return {
           scenarioState: 'resolved',
           scenarioFeedback: state.activeScenario.successMessage,
+          completedScenarioIds: completed,
           nodes,
           edges,
           steps: resolvedSteps,

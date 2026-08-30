@@ -66,7 +66,7 @@ describe('DiagnosticLogPanel', () => {
   });
 
   it('renders dynamic conditions reflecting failed scheduling', () => {
-    const schedulingScenario = SCENARIO_CATALOG.find((s) => s.id === 'pending-cpu') || SCENARIO_CATALOG[0];
+    const schedulingScenario = SCENARIO_CATALOG.find((s) => s.id === 'unschedulable-cpu') || SCENARIO_CATALOG[0];
     useAppStore.setState({
       activeScenario: schedulingScenario,
       scenarioState: 'failed',
@@ -79,6 +79,9 @@ describe('DiagnosticLogPanel', () => {
 
     expect(screen.getByText('PodScheduled')).toBeInTheDocument();
     expect(screen.getByText('ContainersReady')).toBeInTheDocument();
+
+    const falseBadges = screen.getAllByText('False');
+    expect(falseBadges.length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders conditions reflecting failed init container', () => {
