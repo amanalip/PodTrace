@@ -14,6 +14,24 @@ describe('ComponentInspector', () => {
           position: { x: 0, y: 0 },
           data: { label: 'kube-apiserver' },
         },
+        {
+          id: 'node-etcd',
+          type: 'etcdNode',
+          position: { x: 0, y: 0 },
+          data: { label: 'etcd' },
+        },
+        {
+          id: 'node-scheduler',
+          type: 'schedulerNode',
+          position: { x: 0, y: 0 },
+          data: { label: 'kube-scheduler' },
+        },
+        {
+          id: 'node-kubelet',
+          type: 'kubeletNode',
+          position: { x: 0, y: 0 },
+          data: { label: 'kubelet' },
+        },
       ],
     });
 
@@ -121,5 +139,29 @@ describe('ComponentInspector', () => {
     const sourceLink = screen.getByRole('link', { name: /source code on github/i });
     expect(sourceLink).toHaveAttribute('href', 'https://github.com/kubernetes/kubernetes/tree/master/cmd/kube-apiserver');
     expect(sourceLink).toHaveAttribute('target', '_blank');
+  });
+
+  it('renders etcd inspector details when etcd node is selected', () => {
+    useAppStore.setState({ selectedNodeId: 'node-etcd' });
+
+    render(<ComponentInspector />);
+    expect(screen.getByText(/Distributed Key-Value Store/i)).toBeInTheDocument();
+    expect(screen.getByText(/Provides strongly consistent state storage/i)).toBeInTheDocument();
+  });
+
+  it('renders kube-scheduler inspector details when scheduler node is selected', () => {
+    useAppStore.setState({ selectedNodeId: 'node-scheduler' });
+
+    render(<ComponentInspector />);
+    expect(screen.getByText(/Workload Placement Engine/i)).toBeInTheDocument();
+    expect(screen.getByText(/Identifies unscheduled Pods/i)).toBeInTheDocument();
+  });
+
+  it('renders kubelet inspector details when kubelet node is selected', () => {
+    useAppStore.setState({ selectedNodeId: 'node-kubelet' });
+
+    render(<ComponentInspector />);
+    expect(screen.getByText(/Primary Worker Node Agent/i)).toBeInTheDocument();
+    expect(screen.getByText(/Watches Pod specifications assigned/i)).toBeInTheDocument();
   });
 });

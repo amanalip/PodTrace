@@ -55,4 +55,44 @@ describe('DiagramCanvas', () => {
     render(<DiagramCanvas />);
     expect(screen.getByTestId('diagram-legend-toggle-btn')).toBeInTheDocument();
   });
+
+  it('renders animation controller timeline playback bar when steps are present', () => {
+    useAppStore.setState({
+      steps: [
+        {
+          stepNumber: 1,
+          title: 'Initial step',
+          what: 'Validating manifest',
+          why: 'Entrypoint',
+          componentName: 'kubectl',
+          componentRole: 'CLI',
+        },
+      ],
+    });
+
+    render(<DiagramCanvas />);
+    expect(screen.getByTestId('animation-controller')).toBeInTheDocument();
+  });
+
+  it('renders what-if simulator launcher trigger', () => {
+    render(<DiagramCanvas />);
+    expect(screen.getByTestId('what-if-launcher')).toBeInTheDocument();
+  });
+
+  it('updates rendered nodes dynamically when store nodes are populated', () => {
+    useAppStore.setState({
+      nodes: [
+        {
+          id: 'node-custom-tester',
+          type: 'podNode',
+          position: { x: 50, y: 50 },
+          data: { label: 'Custom Test Workload', status: 'active' },
+        },
+      ],
+      edges: [],
+    });
+
+    render(<DiagramCanvas />);
+    expect(screen.getByText('Custom Test Workload')).toBeInTheDocument();
+  });
 });

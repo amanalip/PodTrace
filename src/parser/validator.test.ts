@@ -215,6 +215,74 @@ describe('validator', () => {
     expect(errors.some((e) => e.message.includes('NetworkPolicy requires spec.podSelector'))).toBe(true);
   });
 
+  it('detects StatefulSet without spec or containers', () => {
+    const docWithoutSpec = {
+      apiVersion: 'apps/v1',
+      kind: 'StatefulSet',
+      metadata: { name: 'my-sts' },
+    };
+    expect(validateResource(docWithoutSpec).some((e) => e.message.includes('StatefulSet requires a spec block'))).toBe(true);
+
+    const docWithoutContainers = {
+      apiVersion: 'apps/v1',
+      kind: 'StatefulSet',
+      metadata: { name: 'my-sts' },
+      spec: { template: { spec: {} } },
+    };
+    expect(validateResource(docWithoutContainers).some((e) => e.message.includes('StatefulSet requires spec.template.spec.containers'))).toBe(true);
+  });
+
+  it('detects DaemonSet without spec or containers', () => {
+    const docWithoutSpec = {
+      apiVersion: 'apps/v1',
+      kind: 'DaemonSet',
+      metadata: { name: 'my-ds' },
+    };
+    expect(validateResource(docWithoutSpec).some((e) => e.message.includes('DaemonSet requires a spec block'))).toBe(true);
+
+    const docWithoutContainers = {
+      apiVersion: 'apps/v1',
+      kind: 'DaemonSet',
+      metadata: { name: 'my-ds' },
+      spec: { template: { spec: { containers: [] } } },
+    };
+    expect(validateResource(docWithoutContainers).some((e) => e.message.includes('DaemonSet requires spec.template.spec.containers'))).toBe(true);
+  });
+
+  it('detects Service without spec block', () => {
+    const doc = {
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: { name: 'empty-svc' },
+    };
+    expect(validateResource(doc).some((e) => e.message.includes('Service requires a spec block'))).toBe(true);
+  });
+
+  it('detects HPA scaleTargetRef missing name or kind property', () => {
+    const docMissingName = {
+      apiVersion: 'autoscaling/v2',
+      kind: 'HorizontalPodAutoscaler',
+      metadata: { name: 'my-hpa' },
+      spec: { scaleTargetRef: { kind: 'Deployment' } },
+    };
+    expect(validateResource(docMissingName).some((e) => e.message.includes('HPA scaleTargetRef requires kind and name'))).toBe(true);
+  });
+
+  it('detects Job and CronJob without spec blocks', () => {
+    const jobDoc = { apiVersion: 'batch/v1', kind: 'Job', metadata: { name: 'job' } };
+    expect(validateResource(jobDoc).some((e) => e.message.includes('Job requires a spec block'))).toBe(true);
+
+    const cronJobDoc = { apiVersion: 'batch/v1', kind: 'CronJob', metadata: { name: 'cron' } };
+    expect(validateResource(cronJobDoc).some((e) => e.message.includes('CronJob requires a spec block'))).toBe(true);
+  });
+
+  it('correctly calculates line offsets when provided', () => {
+    const doc = { apiVersion: 'v1', kind: 'Pod', metadata: { name: 'offset-pod' } };
+    const errors = validateResource(doc, 25);
+    expect(errors.length).toBeGreaterThan(0);
+    expect(errors[0].line).toBe(26);
+  });
+
   it('passes valid Pod manifest with no errors', () => {
     const doc = {
       apiVersion: 'v1',
@@ -231,5 +299,138 @@ describe('validator', () => {
     };
     const errors = validateResource(doc);
     expect(errors).toHaveLength(0);
+  });
+
+  it('passes valid Deployment, Service, and Ingress manifests', () => {
+    const deploy = {
+      apiVersion: 'apps/v1',
+      kind: 'Deployment',
+      metadata: { name: 'web-deploy' },
+      spec: {
+        replicas: 2,
+        template: { spec: { containers: [{ name: 'nginx', image: 'nginx:latest' }] } },
+      },
+    };
+    expect(validateResource(deploy)).toHaveLength(0);
+
+    const svc = {
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: { name: 'web-svc' },
+      spec: {
+        ports: [{ port: 80, targetPort: 80 }],
+      },
+    };
+    expect(validateResource(svc)).toHaveLength(0);
+
+    const ing = {
+      apiVersion: 'networking.k8s.io/v1',
+      kind: 'Ingress',
+      metadata: { name: 'web-ing' },
+      spec: {
+        rules: [{ host: 'example.com' }],
+      },
+    };
+    expect(validateResource(ing)).toHaveLength(0);
+  });
+
+  it('passes valid StatefulSet with volumeClaimTemplates', () => {
+    const statefulSet = {
+      apiVersion: 'apps/v1',
+      kind: 'StatefulSet',
+      metadata: { name: 'db-sts' },
+      spec: {
+        serviceName: 'db-svc',
+        replicas: 3,
+        template: {
+          spec: {
+            containers: [{ name: 'postgres', image: 'postgres:15' }],
+          },
+        },
+      },
+    };
+    expect(validateResource(statefulSet)).toHaveLength(0);
+  });
+
+  it('passes valid DaemonSet manifest', () => {
+    const daemonSet = {
+      apiVersion: 'apps/v1',
+      kind: 'DaemonSet',
+      metadata: { name: 'node-exporter' },
+      spec: {
+        template: {
+          spec: {
+            containers: [{ name: 'exporter', image: 'prom/node-exporter:v1.6' }],
+          },
+        },
+      },
+    };
+    expect(validateResource(daemonSet)).toHaveLength(0);
+  });
+
+  it('passes valid Job and CronJob manifests', () => {
+    const job = {
+      apiVersion: 'batch/v1',
+      kind: 'Job',
+      metadata: { name: 'db-migrate' },
+      spec: {
+        template: {
+          spec: {
+            containers: [{ name: 'migrate', image: 'flyway:latest' }],
+          },
+        },
+      },
+    };
+    expect(validateResource(job)).toHaveLength(0);
+
+    const cronJob = {
+      apiVersion: 'batch/v1',
+      kind: 'CronJob',
+      metadata: { name: 'nightly-backup' },
+      spec: {
+        schedule: '0 2 * * *',
+        jobTemplate: {
+          spec: {
+            template: {
+              spec: {
+                containers: [{ name: 'backup', image: 'backup-runner:v1' }],
+              },
+            },
+          },
+        },
+      },
+    };
+    expect(validateResource(cronJob)).toHaveLength(0);
+  });
+
+  it('passes valid ConfigMap and Secret manifests', () => {
+    const configMap = {
+      apiVersion: 'v1',
+      kind: 'ConfigMap',
+      metadata: { name: 'app-props' },
+      data: { DB_PORT: '5432' },
+    };
+    expect(validateResource(configMap)).toHaveLength(0);
+
+    const secret = {
+      apiVersion: 'v1',
+      kind: 'Secret',
+      metadata: { name: 'app-creds' },
+      data: { API_KEY: 'c2VjcmV0' },
+    };
+    expect(validateResource(secret)).toHaveLength(0);
+  });
+
+  it('passes valid PersistentVolumeClaim manifest', () => {
+    const pvc = {
+      apiVersion: 'v1',
+      kind: 'PersistentVolumeClaim',
+      metadata: { name: 'data-pvc' },
+      spec: {
+        accessModes: ['ReadWriteOnce'],
+        resources: { requests: { storage: '10Gi' } },
+      },
+    };
+    expect(validateResource(pvc)).toHaveLength(0);
   });
 });

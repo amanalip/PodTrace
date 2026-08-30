@@ -15,6 +15,7 @@ describe('useKeyboardShortcuts', () => {
       ],
       selectedNodeId: 'node-apiserver',
       isShortcutsOpen: false,
+      activeWhatIfId: null,
     });
   });
 
@@ -48,19 +49,29 @@ describe('useKeyboardShortcuts', () => {
     expect(useAppStore.getState().currentStepIndex).toBe(0);
   });
 
-  it('clears selected node on Escape', () => {
+  it('clears selected node and what-if state on Escape', () => {
+    useAppStore.setState({
+      selectedNodeId: 'node-apiserver',
+      activeWhatIfId: 'apiserver-down',
+      isShortcutsOpen: true,
+    });
     renderHook(() => useKeyboardShortcuts());
 
-    expect(useAppStore.getState().selectedNodeId).toBe('node-apiserver');
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     expect(useAppStore.getState().selectedNodeId).toBeNull();
+    expect(useAppStore.getState().activeWhatIfId).toBeNull();
+    expect(useAppStore.getState().isShortcutsOpen).toBe(false);
   });
 
-  it('resets animation on r key press', () => {
+  it('resets animation on lowercase r and uppercase R key press', () => {
     useAppStore.setState({ currentStepIndex: 2 });
     renderHook(() => useKeyboardShortcuts());
 
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'r' }));
+    expect(useAppStore.getState().currentStepIndex).toBe(0);
+
+    useAppStore.setState({ currentStepIndex: 2 });
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'R' }));
     expect(useAppStore.getState().currentStepIndex).toBe(0);
   });
 
@@ -110,5 +121,20 @@ describe('useKeyboardShortcuts', () => {
 
     window.dispatchEvent(new KeyboardEvent('keydown', { key: ']' }));
     expect(useAppStore.getState().playbackSpeed).toBe(3);
+  });
+
+  it('ignores shortcuts when typing in input or textarea targets', () => {
+    renderHook(() => useKeyboardShortcuts());
+
+    const input = document.createElement('input');
+    document.body.appendChild(input);
+
+    const event = new KeyboardEvent('keydown', { key: ' ' });
+    Object.defineProperty(event, 'target', { value: input, writable: false });
+
+    window.dispatchEvent(event);
+    expect(useAppStore.getState().isPlaying).toBe(false);
+
+    document.body.removeChild(input);
   });
 });

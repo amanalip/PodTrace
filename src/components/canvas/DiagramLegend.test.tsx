@@ -46,6 +46,16 @@ describe('DiagramLegend', () => {
     expect(screen.getByText('Error / Failed')).toBeInTheDocument();
   });
 
+  it('renders edge status descriptions when open', () => {
+    useAppStore.setState({ isLegendOpen: true });
+    render(<DiagramLegend />);
+
+    expect(screen.getByText('Edge Status')).toBeInTheDocument();
+    expect(screen.getByText('Active message flow')).toBeInTheDocument();
+    expect(screen.getByText('Completed action')).toBeInTheDocument();
+    expect(screen.getByText('Inactive flow')).toBeInTheDocument();
+  });
+
   it('renders zone boundary descriptions when open', () => {
     useAppStore.setState({ isLegendOpen: true });
     render(<DiagramLegend />);

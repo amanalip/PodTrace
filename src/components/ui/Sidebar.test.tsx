@@ -8,11 +8,15 @@ describe('Sidebar', () => {
     useAppStore.setState({ activeSidebarTab: 'editor' });
   });
 
-  it('renders tab buttons', () => {
+  it('renders tab buttons with appropriate ARIA attributes', () => {
     render(<Sidebar />);
-    expect(screen.getByRole('tab', { name: /editor/i })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: /scenarios/i })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: /concepts/i })).toBeInTheDocument();
+    const editorTab = screen.getByRole('tab', { name: /editor/i });
+    const scenariosTab = screen.getByRole('tab', { name: /scenarios/i });
+    const conceptsTab = screen.getByRole('tab', { name: /concepts/i });
+
+    expect(editorTab).toHaveAttribute('aria-selected', 'true');
+    expect(scenariosTab).toHaveAttribute('aria-selected', 'false');
+    expect(conceptsTab).toHaveAttribute('aria-selected', 'false');
   });
 
   it('switches between tabs', () => {
@@ -66,5 +70,15 @@ describe('Sidebar', () => {
 
     expect(screen.queryByTestId('no-concepts-found')).not.toBeInTheDocument();
     expect(screen.getByText('What is the API Server?')).toBeInTheDocument();
+  });
+
+  it('switches to editor tab when editor tab button is clicked', () => {
+    useAppStore.setState({ activeSidebarTab: 'concepts' });
+    render(<Sidebar />);
+
+    const editorTab = screen.getByRole('tab', { name: /editor/i });
+    fireEvent.click(editorTab);
+
+    expect(useAppStore.getState().activeSidebarTab).toBe('editor');
   });
 });

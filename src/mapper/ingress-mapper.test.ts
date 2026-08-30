@@ -51,4 +51,27 @@ describe('ingress-mapper', () => {
     expect(edges.some((e) => e.id === 'edge-ic-proxy-pod')).toBe(true);
     expect(edges.some((e) => e.id === 'edge-ic-client-response')).toBe(true);
   });
+
+  it('handles fallback defaults when rules array is empty', () => {
+    const minimalIngress: IngressResource = {
+      apiVersion: 'networking.k8s.io/v1',
+      kind: 'Ingress',
+      metadata: { name: 'default-ing' },
+      spec: {},
+    };
+
+    const { nodes } = mapIngressResource(minimalIngress);
+    expect(nodes.some((n) => n.id === 'node-ingress-default-ing')).toBe(true);
+    expect(nodes.some((n) => n.id === 'node-ingress-controller')).toBe(true);
+  });
+
+  it('includes Service and backend pod nodes for target routing', () => {
+    const { nodes } = mapIngressResource(sampleIngress);
+    const svcNode = nodes.find((n) => n.id === 'node-service-api-service');
+    expect(svcNode).toBeDefined();
+    expect(svcNode?.data?.label).toContain('Service: api-service');
+
+    const podNode = nodes.find((n) => n.id === 'node-pod-api-service-backend');
+    expect(podNode).toBeDefined();
+  });
 });

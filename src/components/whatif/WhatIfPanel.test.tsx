@@ -122,4 +122,24 @@ describe('WhatIfPanel', () => {
     fireEvent.change(select, { target: { value: '' } });
     expect(useAppStore.getState().activeWhatIfId).toBeNull();
   });
+
+  it('applies worker node failure scenario correctly', () => {
+    render(<WhatIfPanel />);
+    fireEvent.click(screen.getByTestId('what-if-launcher'));
+
+    const select = screen.getByTestId('what-if-select');
+    fireEvent.change(select, { target: { value: 'worker-node-fail' } });
+    expect(useAppStore.getState().activeWhatIfId).toBe('worker-node-fail');
+    expect(screen.getByText(/What if a Worker Node fails completely\?/i)).toBeInTheDocument();
+  });
+
+  it('applies etcd quorum loss scenario correctly', () => {
+    render(<WhatIfPanel />);
+    fireEvent.click(screen.getByTestId('what-if-launcher'));
+
+    const select = screen.getByTestId('what-if-select');
+    fireEvent.change(select, { target: { value: 'etcd-quorum-loss' } });
+    expect(useAppStore.getState().activeWhatIfId).toBe('etcd-quorum-loss');
+    expect(screen.getByText(/What if etcd loses quorum\?/i)).toBeInTheDocument();
+  });
 });

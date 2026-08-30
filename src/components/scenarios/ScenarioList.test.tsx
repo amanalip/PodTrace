@@ -87,7 +87,7 @@ describe('ScenarioList', () => {
   it('filters by Networking category and verifies Service scenarios', () => {
     render(<ScenarioList />);
 
-    const netPill = screen.getByRole('button', { name: /Networking/i });
+    const netPill = screen.getByRole('button', { name: /^Networking/i });
     fireEvent.click(netPill);
 
     expect(screen.getByText('Service Selector Label Mismatch')).toBeInTheDocument();
@@ -97,9 +97,27 @@ describe('ScenarioList', () => {
   it('filters by Security category and verifies NonRoot scenarios', () => {
     render(<ScenarioList />);
 
-    const secPill = screen.getByRole('button', { name: /Security/i });
+    const secPill = screen.getByRole('button', { name: /^Security/i });
     fireEvent.click(secPill);
 
     expect(screen.getByText('ReadOnlyRootFilesystem Crash')).toBeInTheDocument();
+  });
+
+  it('filters by Storage category and displays PVC scenarios', () => {
+    render(<ScenarioList />);
+
+    const storagePill = screen.getByRole('button', { name: /^Storage/i });
+    fireEvent.click(storagePill);
+
+    expect(screen.getByText('Pending PVC: StorageClass Not Found')).toBeInTheDocument();
+  });
+
+  it('filters by Scale & Update category and displays Rolling Update scenarios', () => {
+    render(<ScenarioList />);
+
+    const scalePill = screen.getByRole('button', { name: /^Scale & Update/i });
+    fireEvent.click(scalePill);
+
+    expect(screen.getByText('Deadlocked Rolling Update (maxUnavailable: 0)')).toBeInTheDocument();
   });
 });

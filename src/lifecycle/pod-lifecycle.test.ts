@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { createPodLifecycleSteps } from './pod-lifecycle.ts';
 
 describe('pod-lifecycle', () => {
-  it('generates exactly 9 sequential steps', () => {
+  it('generates exactly 9 sequential steps with valid metadata', () => {
     const steps = createPodLifecycleSteps('redis-pod');
     expect(steps).toHaveLength(9);
 
@@ -13,11 +13,19 @@ describe('pod-lifecycle', () => {
       expect(step.why).toBeTruthy();
       expect(step.componentName).toBeTruthy();
       expect(step.componentRole).toBeTruthy();
-      expect(step.docsUrl).toBeTruthy();
+      expect(step.docsUrl).toMatch(/^https:\/\/kubernetes\.io\/docs\//);
       expect(step.sourceNodeId).toBeTruthy();
       expect(step.targetNodeId).toBeTruthy();
       expect(step.edgeId).toBeTruthy();
+      expect(step.durationMs).toBe(2000);
     });
+  });
+
+  it('uses default arguments when called with no parameters', () => {
+    const steps = createPodLifecycleSteps();
+    expect(steps).toHaveLength(9);
+    expect(steps[0].edgeLabel).toBe('kubectl apply -f nginx-pod.yaml');
+    expect(steps[7].targetNodeId).toBe('node-pod-nginx-pod');
   });
 
   it('references the target pod node correctly across steps', () => {
@@ -72,5 +80,14 @@ describe('pod-lifecycle', () => {
     expect(step7.title).toContain('Kubelet requests');
     expect(step8.componentName).toBe('Pod Workload');
     expect(step8.title).toContain('Containers start');
+  });
+
+  it('verifies step 9 kube-proxy network rule updates', () => {
+    const steps = createPodLifecycleSteps('db-pod');
+    const step9 = steps[8];
+
+    expect(step9.componentName).toBe('kube-proxy');
+    expect(step9.title).toContain('kube-proxy updates');
+    expect(step9.nodeStatusUpdates?.['node-pod-db-pod']).toBe('success');
   });
 });

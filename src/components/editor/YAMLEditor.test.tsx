@@ -6,7 +6,9 @@ import { DEFAULT_SAMPLE_YAML } from '../../model/constants.ts';
 
 describe('YAMLEditor', () => {
   beforeEach(() => {
-    useAppStore.setState({ yaml: DEFAULT_SAMPLE_YAML });
+    useAppStore.setState({
+      yaml: DEFAULT_SAMPLE_YAML,
+    });
   });
 
   it('renders editor container and toolbar', () => {
@@ -63,5 +65,34 @@ describe('YAMLEditor', () => {
     fireEvent.click(copyBtn);
 
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
+  });
+
+  it('renders error panel when invalid YAML is present in store', () => {
+    const invalidYaml = 'apiVersion: v1\nkind: Pod\nmetadata:\n  name: [broken-syntax';
+    useAppStore.setState({ yaml: invalidYaml });
+
+    render(<YAMLEditor />);
+    expect(screen.getByTestId('validation-panel')).toBeInTheDocument();
+    expect(screen.getByText(/Validation Issues/i)).toBeInTheDocument();
+  });
+
+  it('clears error panel when valid YAML is loaded into store', () => {
+    const invalidYaml = 'apiVersion: v1\nkind: Pod\nmetadata:\n  name: [broken-syntax';
+    useAppStore.setState({ yaml: invalidYaml });
+
+    const { rerender } = render(<YAMLEditor />);
+    expect(screen.getByTestId('validation-panel')).toBeInTheDocument();
+
+    act(() => {
+      useAppStore.setState({ yaml: DEFAULT_SAMPLE_YAML });
+    });
+
+    rerender(<YAMLEditor />);
+    expect(screen.queryByTestId('validation-panel')).not.toBeInTheDocument();
+  });
+
+  it('renders sample picker dropdown within toolbar', () => {
+    render(<YAMLEditor />);
+    expect(screen.getByTestId('sample-picker-select')).toBeInTheDocument();
   });
 });

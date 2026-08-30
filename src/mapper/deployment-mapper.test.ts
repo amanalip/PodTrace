@@ -44,4 +44,55 @@ describe('deployment-mapper', () => {
     expect(edges.some((e) => e.id === 'edge-cm-create-pods')).toBe(true);
     expect(edges.some((e) => e.id === 'edge-scheduler-apiserver')).toBe(true);
   });
+
+  it('handles deployment without explicit replicas by defaulting to 3', () => {
+    const defaultReplicaDeploy: DeploymentResource = {
+      apiVersion: 'apps/v1',
+      kind: 'Deployment',
+      metadata: { name: 'default-app' },
+      spec: {
+        selector: { matchLabels: { app: 'default' } },
+        template: {
+          metadata: { labels: { app: 'default' } },
+          spec: {
+            containers: [{ name: 'app', image: 'nginx:alpine' }],
+          },
+        },
+      },
+    };
+
+    const { nodes } = mapDeploymentResource(defaultReplicaDeploy);
+    expect(nodes.some((n) => n.id === 'node-pod-default-app-1')).toBe(true);
+    expect(nodes.some((n) => n.id === 'node-pod-default-app-2')).toBe(true);
+    expect(nodes.some((n) => n.id === 'node-pod-default-app-3')).toBe(true);
+  });
+
+  it('generates specified number of replica pods', () => {
+    const multiReplicaDeploy: DeploymentResource = {
+      apiVersion: 'apps/v1',
+      kind: 'Deployment',
+      metadata: { name: 'custom-scale' },
+      spec: {
+        replicas: 4,
+        selector: { matchLabels: { app: 'scale' } },
+        template: {
+          metadata: { labels: { app: 'scale' } },
+          spec: {
+            containers: [{ name: 'app', image: 'nginx:alpine' }],
+          },
+        },
+      },
+    };
+
+    const { nodes } = mapDeploymentResource(multiReplicaDeploy);
+    const podNodes = nodes.filter((n) => n.id.startsWith('node-pod-custom-scale-'));
+    expect(podNodes).toHaveLength(4);
+  });
+
+  it('includes controller manager node managing deployment replica controllers', () => {
+    const { nodes } = mapDeploymentResource(sampleDeployment);
+    const cmNode = nodes.find((n) => n.id === 'node-controllermanager');
+    expect(cmNode).toBeDefined();
+    expect(cmNode?.data?.subtitle).toContain('Deployment');
+  });
 });

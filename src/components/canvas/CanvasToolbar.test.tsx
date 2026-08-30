@@ -70,4 +70,17 @@ describe('CanvasToolbar', () => {
     expect(zoomOutBtn).toHaveAttribute('title', 'Zoom out');
     fireEvent.click(zoomOutBtn);
   });
+
+  it('has accessible buttons with proper aria-labels and tooltips', () => {
+    render(
+      <ReactFlowProvider>
+        <CanvasToolbar />
+      </ReactFlowProvider>,
+    );
+
+    expect(screen.getByRole('button', { name: /fit diagram to viewport/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /zoom in/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /zoom out/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /reset viewport and animation/i })).toBeInTheDocument();
+  });
 });

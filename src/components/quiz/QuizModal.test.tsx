@@ -47,6 +47,28 @@ describe('QuizModal', () => {
     expect(onClose).toHaveBeenCalled();
   });
 
+  it('displays explanation after selecting an option', () => {
+    render(<QuizModal isOpen={true} onClose={() => {}} />);
+
+    expect(screen.queryByTestId('quiz-explanation')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('quiz-next-btn')).not.toBeInTheDocument();
+
+    const optBtn = screen.getByTestId('quiz-opt-0');
+    fireEvent.click(optBtn);
+
+    expect(screen.getByTestId('quiz-explanation')).toBeInTheDocument();
+    expect(screen.getByTestId('quiz-next-btn')).toBeInTheDocument();
+  });
+
+  it('closes when close button in header is clicked', () => {
+    const onClose = vi.fn();
+    render(<QuizModal isOpen={true} onClose={onClose} />);
+
+    const closeBtn = screen.getByRole('button', { name: /close quiz/i });
+    fireEvent.click(closeBtn);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
   it('allows retrying the quiz via Retake Quiz button', () => {
     render(<QuizModal isOpen={true} onClose={() => {}} />);
 

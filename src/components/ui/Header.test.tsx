@@ -27,6 +27,17 @@ describe('Header', () => {
     expect(useAppStore.getState().theme).toBe('light');
   });
 
+  it('toggles color theme back to dark when currently in light theme', () => {
+    useAppStore.setState({ theme: 'light' });
+    render(<Header />);
+
+    const themeBtn = screen.getByRole('button', { name: /toggle color theme/i });
+    expect(themeBtn).toHaveTextContent(/dark/i);
+
+    fireEvent.click(themeBtn);
+    expect(useAppStore.getState().theme).toBe('dark');
+  });
+
   it('opens keyboard shortcuts modal when keys button is clicked', () => {
     useAppStore.setState({ isShortcutsOpen: false });
     render(<Header />);

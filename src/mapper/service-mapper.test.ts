@@ -42,4 +42,43 @@ describe('service-mapper', () => {
     expect(edges.some((e) => e.id === 'edge-proxy-rules-1')).toBe(true);
     expect(edges.some((e) => e.id === 'edge-coredns-watch')).toBe(true);
   });
+
+  it('handles NodePort service type correctly', () => {
+    const nodePortSvc: ServiceResource = {
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: { name: 'nodeport-svc' },
+      spec: { type: 'NodePort', ports: [{ port: 80, nodePort: 30080 }] },
+    };
+
+    const { nodes } = mapServiceResource(nodePortSvc);
+    const svcNode = nodes.find((n) => n.id === 'node-service-nodeport-svc');
+    expect(svcNode?.data?.subtitle).toContain('NodePort');
+  });
+
+  it('handles LoadBalancer service type correctly', () => {
+    const lbSvc: ServiceResource = {
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: { name: 'lb-svc' },
+      spec: { type: 'LoadBalancer', ports: [{ port: 443 }] },
+    };
+
+    const { nodes } = mapServiceResource(lbSvc);
+    const svcNode = nodes.find((n) => n.id === 'node-service-lb-svc');
+    expect(svcNode?.data?.subtitle).toContain('LoadBalancer');
+  });
+
+  it('uses default clusterIP allocation when spec.clusterIP is omitted', () => {
+    const defaultSvc: ServiceResource = {
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: { name: 'default-svc' },
+      spec: { ports: [{ port: 80 }] },
+    };
+
+    const { nodes } = mapServiceResource(defaultSvc);
+    const svcNode = nodes.find((n) => n.id === 'node-service-default-svc');
+    expect(svcNode?.data?.label).toBe('Service: default-svc');
+  });
 });

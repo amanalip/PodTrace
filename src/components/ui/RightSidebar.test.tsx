@@ -24,11 +24,15 @@ describe('RightSidebar', () => {
     });
   });
 
-  it('renders Lifecycle Trace tab by default with step items', () => {
+  it('renders Lifecycle Trace tab by default with step items and ARIA selected', () => {
     render(<RightSidebar />);
 
-    expect(screen.getByText('Lifecycle Trace')).toBeInTheDocument();
-    expect(screen.getByText('Diagnostics')).toBeInTheDocument();
+    const lifecycleTab = screen.getByRole('tab', { name: /lifecycle trace/i });
+    const diagnosticsTab = screen.getByRole('tab', { name: /diagnostics/i });
+
+    expect(lifecycleTab).toHaveAttribute('aria-selected', 'true');
+    expect(diagnosticsTab).toHaveAttribute('aria-selected', 'false');
+
     expect(screen.getByTestId('explanation-panel')).toBeInTheDocument();
     expect(screen.getByText('kubectl submits manifest')).toBeInTheDocument();
   });
@@ -43,6 +47,17 @@ describe('RightSidebar', () => {
     expect(
       screen.getByText(/No active scenario loaded\. Select a scenario/i),
     ).toBeInTheDocument();
+  });
+
+  it('switches back to Lifecycle Trace tab when clicked', () => {
+    useAppStore.setState({ rightPanelTab: 'diagnostics' });
+    render(<RightSidebar />);
+
+    const lifecycleTab = screen.getByRole('tab', { name: /lifecycle trace/i });
+    fireEvent.click(lifecycleTab);
+
+    expect(useAppStore.getState().rightPanelTab).toBe('lifecycle');
+    expect(screen.getByTestId('explanation-panel')).toBeInTheDocument();
   });
 
   it('renders active failure badge count when a scenario is failed', () => {

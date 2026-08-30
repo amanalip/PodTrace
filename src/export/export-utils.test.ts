@@ -23,6 +23,16 @@ describe('export-utils', () => {
     expect(decoded).toEqual({ yaml, step, theme });
   });
 
+  it('handles Unicode characters in YAML encoding and decoding', () => {
+    const unicodeYaml = '# Kubernetes cluster configuration \nkind: Pod\nmetadata:\n  name: app-🚀';
+    const hash = encodeStateToHash(unicodeYaml, 1, 'light');
+    const decoded = decodeStateFromHash(hash);
+
+    expect(decoded?.yaml).toBe(unicodeYaml);
+    expect(decoded?.step).toBe(1);
+    expect(decoded?.theme).toBe('light');
+  });
+
   it('handles invalid hash gracefully', () => {
     expect(decodeStateFromHash('')).toBeNull();
     expect(decodeStateFromHash('#invalid=123')).toBeNull();
@@ -72,6 +82,33 @@ describe('export-utils', () => {
 
     const sequence = generateMermaidSequenceDiagram(steps);
     expect(sequence).toContain('Client->>Cluster: Internal cluster step');
+  });
+
+  it('handles empty step array in sequence generator', () => {
+    const sequence = generateMermaidSequenceDiagram([]);
+    expect(sequence).toContain('sequenceDiagram');
+  });
+
+  it('sanitizes double quotes and angle brackets in mermaid graph labels', () => {
+    const nodes: Node[] = [
+      {
+        id: 'node-special',
+        position: { x: 0, y: 0 },
+        data: { label: 'Node with "quotes" and <tags>' },
+      },
+    ];
+    const edges: Edge[] = [
+      {
+        id: 'edge-special',
+        source: 'node-special',
+        target: 'node-special',
+        data: { label: 'label with "quotes"' },
+      },
+    ];
+
+    const graph = generateMermaidGraphDiagram(nodes, edges);
+    expect(graph).toContain('graph TD');
+    expect(graph).not.toContain('""');
   });
 
   it('generates mermaid graph architecture accurately', () => {
